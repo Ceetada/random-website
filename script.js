@@ -151,4 +151,54 @@
       );
     });
   });
+
+  /* ---------- hero: cursor parallax — the "drawing you in" effect ---------- */
+  const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  const cine = document.querySelector(".cine");
+  const bg = document.querySelector(".cine__bg");
+  const heroInner = document.querySelector(".cine__inner");
+  const heroCard = document.querySelector(".cine__card");
+
+  if (cine && bg && fine && !reduceMotion) {
+    bg.style.animation = "none"; // JS takes over the transform for parallax
+
+    let tx = 0, ty = 0, cx = 0, cy = 0;
+    cine.addEventListener("pointermove", (e) => {
+      const r = cine.getBoundingClientRect();
+      tx = ((e.clientX - r.left) / r.width - 0.5) * 2;  // -1 … 1
+      ty = ((e.clientY - r.top) / r.height - 0.5) * 2;
+    });
+    cine.addEventListener("pointerleave", () => { tx = 0; ty = 0; });
+
+    (function loop() {
+      // ease current → target for a smooth, weighty feel
+      cx += (tx - cx) * 0.06;
+      cy += (ty - cy) * 0.06;
+      // gentle idle drift so the scene breathes even when the mouse is still
+      const t = performance.now() / 1000;
+      const dx = cx + Math.sin(t * 0.25) * 0.06;
+      const dy = cy + Math.cos(t * 0.2) * 0.05;
+      const dist = Math.min(Math.hypot(cx, cy), 1.4);
+
+      // photo scales up + drifts opposite the cursor = pulled into the archway
+      bg.style.transform =
+        `scale(${1.09 + dist * 0.03}) translate3d(${-dx * 26}px, ${-dy * 26}px, 0)`;
+      // foreground moves on its own plane for depth
+      if (heroInner) heroInner.style.transform = `translate3d(${dx * 12}px, ${dy * 10}px, 0)`;
+      if (heroCard) heroCard.style.transform = `translate3d(${-dx * 16}px, ${-dy * 14}px, 0)`;
+
+      requestAnimationFrame(loop);
+    })();
+  }
+
+  /* ---------- cards & vibes: cursor-follow golden glow ---------- */
+  if (fine) {
+    document.querySelectorAll(".card, .vibe").forEach((el) => {
+      el.addEventListener("pointermove", (e) => {
+        const r = el.getBoundingClientRect();
+        el.style.setProperty("--mx", ((e.clientX - r.left) / r.width) * 100 + "%");
+        el.style.setProperty("--my", ((e.clientY - r.top) / r.height) * 100 + "%");
+      });
+    });
+  }
 })();
