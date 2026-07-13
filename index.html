@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Field Notes</title>
+    <meta
+      name="description"
+      content="Field Notes — a small personal writing blog."
+    />
+    <style>
+      /* ------------------------------------------------------------------
+         DESIGN TOKENS
+         Colors and type live here so the whole look can be changed in one
+         place. Light theme is the default; the dark theme is defined below.
+      ------------------------------------------------------------------ */
+      :root {
+        --paper: #f5f5f1;
+        --paper-raised: #ffffff;
+        --ink: #1e1e24;
+        --ink-soft: #5b5b64;
+        --ink-faint: #8a8a92;
+        --line: #e3e0d7;
+        --accent: #1e6e64;
+        --accent-soft: #e7f0ed;
+
+        --serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
+        --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
+          sans-serif;
+
+        --measure: 40rem; /* ~62 characters of reading width */
+        --step: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --paper: #17171b;
+          --paper-raised: #1e1e23;
+          --ink: #ecebe4;
+          --ink-soft: #a6a6ae;
+          --ink-faint: #75757e;
+          --line: #2c2c33;
+          --accent: #58c3b3;
+          --accent-soft: #16332e;
+        }
+      }
+      /* The viewer's manual theme toggle wins over the OS preference. */
+      :root[data-theme="light"] {
+        --paper: #f5f5f1;
+        --paper-raised: #ffffff;
+        --ink: #1e1e24;
+        --ink-soft: #5b5b64;
+        --ink-faint: #8a8a92;
+        --line: #e3e0d7;
+        --accent: #1e6e64;
+        --accent-soft: #e7f0ed;
+      }
+      :root[data-theme="dark"] {
+        --paper: #17171b;
+        --paper-raised: #1e1e23;
+        --ink: #ecebe4;
+        --ink-soft: #a6a6ae;
+        --ink-faint: #75757e;
+        --line: #2c2c33;
+        --accent: #58c3b3;
+        --accent-soft: #16332e;
+      }
+
+      /* ------------------------------------------------------------------
+         BASE
+      ------------------------------------------------------------------ */
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        -webkit-text-size-adjust: 100%;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--serif);
+        font-size: var(--step);
+        line-height: 1.7;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+
+      .wrap {
+        max-width: var(--measure);
+        margin: 0 auto;
+        padding: 0 1.5rem;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .eyebrow {
+        font-family: var(--sans);
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-faint);
+        margin: 0;
+      }
+
+      /* ------------------------------------------------------------------
+         TOP BAR
+      ------------------------------------------------------------------ */
+      .topbar {
+        border-bottom: 1px solid var(--line);
+        position: sticky;
+        top: 0;
+        background: color-mix(in srgb, var(--paper) 88%, transparent);
+        backdrop-filter: blur(8px);
+        z-index: 5;
+      }
+      .topbar .wrap {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 3.25rem;
+      }
+      .topbar .home {
+        font-family: var(--sans);
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        text-decoration: none;
+        font-size: 0.95rem;
+      }
+      .theme-toggle {
+        font-family: var(--sans);
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        background: none;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 0.3rem 0.75rem;
+        cursor: pointer;
+      }
+      .theme-toggle:hover {
+        color: var(--ink);
+        border-color: var(--ink-faint);
+      }
+
+      /* ------------------------------------------------------------------
+         VIEWS + transitions
+      ------------------------------------------------------------------ */
+      .view[hidden] {
+        display: none;
+      }
+      .view {
+        animation: rise 0.45s ease both;
+      }
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .view {
+          animation: none;
+        }
+      }
+
+      /* ------------------------------------------------------------------
+         MASTHEAD (homepage header)
+      ------------------------------------------------------------------ */
+      .masthead {
+        padding: 4.5rem 0 3rem;
+        text-align: center;
+      }
+      .masthead .wordmark {
+        font-family: var(--serif);
+        font-weight: 700;
+        font-size: clamp(2.75rem, 2rem + 4vw, 4rem);
+        line-height: 1.02;
+        letter-spacing: -0.02em;
+        margin: 0.6rem 0 0;
+        text-wrap: balance;
+      }
+      .masthead .tagline {
+        color: var(--ink-soft);
+        font-style: italic;
+        margin: 1rem auto 0;
+        max-width: 32rem;
+      }
+
+      /* ------------------------------------------------------------------
+         POST INDEX
+      ------------------------------------------------------------------ */
+      .index {
+        border-top: 1px solid var(--line);
+        margin: 0;
+        padding: 0;
+      }
+      .entry {
+        display: block;
+        padding: 2rem 0;
+        border-bottom: 1px solid var(--line);
+        text-decoration: none;
+        color: inherit;
+      }
+      .entry .meta {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+        margin-bottom: 0.6rem;
+      }
+      .entry .cat {
+        font-family: var(--sans);
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+      .entry .date {
+        font-family: var(--sans);
+        font-size: 0.78rem;
+        color: var(--ink-faint);
+      }
+      .entry h2 {
+        font-family: var(--serif);
+        font-weight: 700;
+        font-size: 1.6rem;
+        line-height: 1.2;
+        margin: 0;
+        letter-spacing: -0.01em;
+        transition: color 0.15s ease;
+      }
+      .entry p {
+        color: var(--ink-soft);
+        margin: 0.5rem 0 0;
+      }
+      .entry .more {
+        font-family: var(--sans);
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--accent);
+        margin-top: 0.75rem;
+        display: inline-block;
+        opacity: 0;
+        transform: translateX(-4px);
+        transition: opacity 0.15s ease, transform 0.15s ease;
+      }
+      .entry:hover h2 {
+        color: var(--accent);
+      }
+      .entry:hover .more,
+      .entry:focus-visible .more {
+        opacity: 1;
+        transform: none;
+      }
+      .entry:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 6px;
+        border-radius: 4px;
+      }
+
+      /* ------------------------------------------------------------------
+         ARTICLE (full post)
+      ------------------------------------------------------------------ */
+      .article {
+        padding: 3rem 0 1rem;
+      }
+      .back {
+        font-family: var(--sans);
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-decoration: none;
+        color: var(--ink-soft);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+      .back:hover {
+        color: var(--accent);
+      }
+      .article-head {
+        margin: 2rem 0 2.5rem;
+      }
+      .article-head .meta {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+        margin-bottom: 0.9rem;
+      }
+      .article-head .cat {
+        font-family: var(--sans);
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+      .article-head .date {
+        font-family: var(--sans);
+        font-size: 0.8rem;
+        color: var(--ink-faint);
+      }
+      .article-head h1 {
+        font-family: var(--serif);
+        font-weight: 700;
+        font-size: clamp(2rem, 1.5rem + 2.5vw, 2.9rem);
+        line-height: 1.12;
+        letter-spacing: -0.02em;
+        margin: 0;
+        text-wrap: balance;
+      }
+      .article-head .byline {
+        font-family: var(--sans);
+        font-size: 0.85rem;
+        color: var(--ink-soft);
+        margin: 1rem 0 0;
+      }
+      .article-body > * {
+        margin: 0 0 1.4rem;
+      }
+      .article-body p:first-child::first-letter {
+        font-size: 3.1rem;
+        line-height: 0.8;
+        float: left;
+        padding: 0.1rem 0.6rem 0 0;
+        font-weight: 700;
+        color: var(--accent);
+      }
+      .article-body h3 {
+        font-family: var(--serif);
+        font-size: 1.3rem;
+        margin: 2.2rem 0 0.8rem;
+      }
+      .article-body blockquote {
+        margin: 2rem 0;
+        padding: 0.25rem 0 0.25rem 1.4rem;
+        border-left: 3px solid var(--accent);
+        font-style: italic;
+        color: var(--ink-soft);
+        font-size: 1.25rem;
+      }
+      .article-body a {
+        color: var(--accent);
+        text-underline-offset: 3px;
+      }
+      .article-foot {
+        margin: 3rem 0 0;
+        padding: 2rem 0 4rem;
+        border-top: 1px solid var(--line);
+      }
+
+      /* ------------------------------------------------------------------
+         FOOTER
+      ------------------------------------------------------------------ */
+      .site-foot {
+        border-top: 1px solid var(--line);
+        margin-top: 2rem;
+        padding: 2rem 0 3rem;
+        font-family: var(--sans);
+        font-size: 0.8rem;
+        color: var(--ink-faint);
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <div class="wrap">
+        <a class="home" href="#" data-home>Field&nbsp;Notes</a>
+        <button class="theme-toggle" type="button" data-toggle-theme>
+          Theme
+        </button>
+      </div>
+    </div>
+
+    <main>
+      <!-- ============================================================
+           HOME / INDEX VIEW
+           This is the list of posts visitors land on.
+      ============================================================= -->
+      <section class="view" id="view-index">
+        <header class="masthead">
+          <div class="wrap">
+            <p class="eyebrow">A writing blog</p>
+            <h1 class="wordmark">Field Notes</h1>
+            <p class="tagline">
+              Short essays and notes on the things I&rsquo;m paying attention
+              to &mdash; kept here so I don&rsquo;t forget them.
+            </p>
+          </div>
+        </header>
+
+        <div class="wrap">
+          <div class="index">
+            <!-- Each <a> below is one post in the list. Later, the backend
+                 will generate these automatically from your real posts. -->
+            <a class="entry" href="#starting-this-blog">
+              <span class="meta">
+                <span class="cat">Essay</span>
+                <span class="date">July 10, 2026</span>
+              </span>
+              <h2>Why I&rsquo;m starting this blog</h2>
+              <p>
+                I&rsquo;ve wanted a quiet corner of the internet that&rsquo;s
+                mine for years. Here&rsquo;s what I want it to be &mdash; and
+                what I&rsquo;m promising not to turn it into.
+              </p>
+              <span class="more">Read &rarr;</span>
+            </a>
+
+            <a class="entry" href="#keeping-a-notebook">
+              <span class="meta">
+                <span class="cat">Notes</span>
+                <span class="date">July 3, 2026</span>
+              </span>
+              <h2>On keeping a paper notebook</h2>
+              <p>
+                A phone can do everything a notebook does, faster. So why do I
+                keep going back to paper? A small case for slowing down.
+              </p>
+              <span class="more">Read &rarr;</span>
+            </a>
+
+            <a class="entry" href="#best-coffee">
+              <span class="meta">
+                <span class="cat">Everyday</span>
+                <span class="date">June 24, 2026</span>
+              </span>
+              <h2>The best cup of coffee I made this year</h2>
+              <p>
+                It wasn&rsquo;t the beans or the gear. It was a Tuesday, no
+                rush, and paying attention for once.
+              </p>
+              <span class="more">Read &rarr;</span>
+            </a>
+          </div>
+        </div>
+
+        <footer class="site-foot">
+          <div class="wrap">
+            Field Notes &middot; Written by Your&nbsp;Name &middot; 2026
+          </div>
+        </footer>
+      </section>
+
+      <!-- ============================================================
+           ARTICLE VIEWS
+           One <article> per post. They stay hidden until their link is
+           clicked. Later the backend will fill these in for you.
+      ============================================================= -->
+      <article class="view article" id="starting-this-blog" hidden>
+        <div class="wrap">
+          <a class="back" href="#" data-home>&larr; Field Notes</a>
+          <header class="article-head">
+            <span class="meta">
+              <span class="cat">Essay</span>
+              <span class="date">July 10, 2026</span>
+            </span>
+            <h1>Why I&rsquo;m starting this blog</h1>
+            <p class="byline">by Your Name</p>
+          </header>
+          <div class="article-body">
+            <p>
+              For years I&rsquo;ve had the same thought every few weeks: I
+              should write that down somewhere. Not for anyone in particular
+              &mdash; just somewhere that isn&rsquo;t a note-taking app I&rsquo;ll
+              abandon by spring. This is that somewhere.
+            </p>
+            <p>
+              I want it to be small on purpose. No metrics I check, no schedule
+              I resent, no growth strategy. A post goes up when I have something
+              worth keeping, and not a moment before.
+            </p>
+            <h3>What this is</h3>
+            <p>
+              Mostly short essays and notes &mdash; the kind of thing I&rsquo;d
+              tell a friend over coffee and then wish I&rsquo;d remembered
+              later. Some of it will be about work, most of it won&rsquo;t.
+            </p>
+            <blockquote>
+              Write the post you&rsquo;d want to re-read in a year, not the one
+              that does well this week.
+            </blockquote>
+            <p>
+              That&rsquo;s the whole plan. If you&rsquo;re reading this,
+              thanks for stopping by &mdash; there&rsquo;s more below whenever
+              you want it.
+            </p>
+          </div>
+          <div class="article-foot">
+            <a class="back" href="#" data-home>&larr; Back to all posts</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="view article" id="keeping-a-notebook" hidden>
+        <div class="wrap">
+          <a class="back" href="#" data-home>&larr; Field Notes</a>
+          <header class="article-head">
+            <span class="meta">
+              <span class="cat">Notes</span>
+              <span class="date">July 3, 2026</span>
+            </span>
+            <h1>On keeping a paper notebook</h1>
+            <p class="byline">by Your Name</p>
+          </header>
+          <div class="article-body">
+            <p>
+              My phone can capture a thought in two seconds, sync it to every
+              device I own, and remind me about it next Tuesday. My notebook
+              can do none of that. I keep reaching for the notebook.
+            </p>
+            <p>
+              Part of it is friction, in a good way. Writing by hand is slow
+              enough that I only bother with the thoughts that survive the
+              trip from my head to the page. The bad ideas quietly don&rsquo;t
+              make it.
+            </p>
+            <h3>The margins are the point</h3>
+            <p>
+              A page has room to be messy &mdash; an arrow here, a box around
+              the thing that matters, a question mark I&rsquo;ll answer later.
+              Apps make that hard. Paper just shrugs and lets me.
+            </p>
+            <p>
+              I&rsquo;m not precious about it. If you love your app, keep your
+              app. But if you&rsquo;ve never given a cheap notebook a real week,
+              it might surprise you.
+            </p>
+          </div>
+          <div class="article-foot">
+            <a class="back" href="#" data-home>&larr; Back to all posts</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="view article" id="best-coffee" hidden>
+        <div class="wrap">
+          <a class="back" href="#" data-home>&larr; Field Notes</a>
+          <header class="article-head">
+            <span class="meta">
+              <span class="cat">Everyday</span>
+              <span class="date">June 24, 2026</span>
+            </span>
+            <h1>The best cup of coffee I made this year</h1>
+            <p class="byline">by Your Name</p>
+          </header>
+          <div class="article-body">
+            <p>
+              It wasn&rsquo;t a special bean. It wasn&rsquo;t new gear. It was a
+              Tuesday morning with nowhere to be for twenty minutes, which
+              turns out to be the rarest ingredient in my kitchen.
+            </p>
+            <p>
+              I ground the beans I already had. I paid attention to the water
+              this time &mdash; off the boil, poured slow. I watched it bloom
+              instead of scrolling. That was the whole trick.
+            </p>
+            <blockquote>
+              The gear was never the bottleneck. My attention was.
+            </blockquote>
+            <p>
+              I think about that more than I&rsquo;d like to admit. Half the
+              things I want to do &ldquo;better&rdquo; don&rsquo;t need better
+              tools. They need me to slow down enough to do them properly once.
+            </p>
+          </div>
+          <div class="article-foot">
+            <a class="back" href="#" data-home>&larr; Back to all posts</a>
+          </div>
+        </div>
+      </article>
+    </main>
+
+    <script>
+      // -----------------------------------------------------------------
+      // Tiny bit of JavaScript that switches between the post list and a
+      // full article, based on the # in the address bar. No page reloads,
+      // no server. Later, the backend will provide the posts instead of
+      // them being written directly into this file.
+      // -----------------------------------------------------------------
+      const views = Array.from(document.querySelectorAll(".view"));
+      const INDEX_ID = "view-index";
+
+      function show(id) {
+        const target = document.getElementById(id) ? id : INDEX_ID;
+        views.forEach((v) => {
+          const active = v.id === target;
+          v.hidden = !active;
+          if (active) {
+            // Restart the fade-in animation each time a view appears.
+            v.style.animation = "none";
+            void v.offsetWidth;
+            v.style.animation = "";
+          }
+        });
+        window.scrollTo({ top: 0 });
+      }
+
+      function route() {
+        const id = location.hash.replace(/^#/, "");
+        show(id || INDEX_ID);
+      }
+
+      // "Home" / "Back" links clear the hash and return to the index.
+      document.querySelectorAll("[data-home]").forEach((el) => {
+        el.addEventListener("click", (e) => {
+          e.preventDefault();
+          if (location.hash) {
+            location.hash = "";
+          } else {
+            show(INDEX_ID);
+          }
+        });
+      });
+
+      window.addEventListener("hashchange", route);
+      route();
+
+      // -----------------------------------------------------------------
+      // Light / dark theme toggle. Remembers your choice for next visit.
+      // -----------------------------------------------------------------
+      const root = document.documentElement;
+      const saved = localStorage.getItem("theme");
+      if (saved) root.setAttribute("data-theme", saved);
+
+      document
+        .querySelector("[data-toggle-theme]")
+        .addEventListener("click", () => {
+          const current =
+            root.getAttribute("data-theme") ||
+            (window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light");
+          const next = current === "dark" ? "light" : "dark";
+          root.setAttribute("data-theme", next);
+          localStorage.setItem("theme", next);
+        });
+    </script>
+  </body>
+</html>
