@@ -3,647 +3,728 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Field Notes</title>
+    <title>Tada — Peer-reviewed nonsense</title>
     <meta
       name="description"
-      content="Field Notes — a small personal writing blog."
+      content="Tada: rigorously-argued proofs of things that absolutely did not need proving."
     />
     <style>
-      /* ------------------------------------------------------------------
-         DESIGN TOKENS
-         Colors and type live here so the whole look can be changed in one
-         place. Light theme is the default; the dark theme is defined below.
-      ------------------------------------------------------------------ */
+      /* =================================================================
+         TADA — design tokens
+         Brand accent: sky (from the box hero). Secondary: kraft (cardboard).
+         Semantic: signal-green / signal-red for the analysis dots only.
+      ================================================================= */
       :root {
-        --paper: #f5f5f1;
-        --paper-raised: #ffffff;
-        --ink: #1e1e24;
-        --ink-soft: #5b5b64;
-        --ink-faint: #8a8a92;
-        --line: #e3e0d7;
-        --accent: #1e6e64;
-        --accent-soft: #e7f0ed;
+        --canvas: #e8e8ea;   /* light-grey gallery ground */
+        --paper: #f7f2e8;    /* cream "paper" the papers are printed on */
+        --paper-edge: #ece4d3;
+        --ink: #17181d;
+        --ink-soft: #5c6068;
+        --ink-faint: #9a9aa2;
+        --line: #e0ddd3;
+        --line-strong: #d3cfc2;
+
+        --sky: #6ba9e6;      /* brand blue — the box / the sky */
+        --sky-deep: #4a86c9;
+        --sky-soft: #e7f0fb;
+        --kraft: #c58a4c;    /* cardboard warm secondary */
+        --kraft-soft: #f0e4d2;
+
+        --signal: #2fbf6b;   /* positive rating dots */
+        --signal-red: #e0655b;
+        --warn: #d8a53a;
 
         --serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
         --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
           sans-serif;
+        --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-        --measure: 40rem; /* ~62 characters of reading width */
-        --step: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+        --shadow: 0 24px 60px -20px rgba(20, 30, 55, 0.35);
       }
-
       @media (prefers-color-scheme: dark) {
         :root {
-          --paper: #17171b;
-          --paper-raised: #1e1e23;
-          --ink: #ecebe4;
-          --ink-soft: #a6a6ae;
-          --ink-faint: #75757e;
-          --line: #2c2c33;
-          --accent: #58c3b3;
-          --accent-soft: #16332e;
+          --canvas: #14151a;
+          --paper: #211f1b;
+          --paper-edge: #2a2722;
+          --ink: #efece3;
+          --ink-soft: #a7a49b;
+          --ink-faint: #74716a;
+          --line: #322f29;
+          --line-strong: #3d3931;
+          --sky: #7cb2e8;
+          --sky-deep: #5a92cf;
+          --sky-soft: #1a2735;
+          --kraft: #d29a5e;
+          --kraft-soft: #33291d;
+          --signal: #45cf7c;
+          --signal-red: #e77a70;
+          --shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.6);
         }
       }
-      /* The viewer's manual theme toggle wins over the OS preference. */
       :root[data-theme="light"] {
-        --paper: #f5f5f1;
-        --paper-raised: #ffffff;
-        --ink: #1e1e24;
-        --ink-soft: #5b5b64;
-        --ink-faint: #8a8a92;
-        --line: #e3e0d7;
-        --accent: #1e6e64;
-        --accent-soft: #e7f0ed;
+        --canvas: #e8e8ea; --paper: #f7f2e8; --paper-edge: #ece4d3;
+        --ink: #17181d; --ink-soft: #5c6068; --ink-faint: #9a9aa2;
+        --line: #e0ddd3; --line-strong: #d3cfc2;
+        --sky: #6ba9e6; --sky-deep: #4a86c9; --sky-soft: #e7f0fb;
+        --kraft: #c58a4c; --kraft-soft: #f0e4d2;
+        --signal: #2fbf6b; --signal-red: #e0655b; --warn: #d8a53a;
+        --shadow: 0 24px 60px -20px rgba(20, 30, 55, 0.35);
       }
       :root[data-theme="dark"] {
-        --paper: #17171b;
-        --paper-raised: #1e1e23;
-        --ink: #ecebe4;
-        --ink-soft: #a6a6ae;
-        --ink-faint: #75757e;
-        --line: #2c2c33;
-        --accent: #58c3b3;
-        --accent-soft: #16332e;
+        --canvas: #14151a; --paper: #211f1b; --paper-edge: #2a2722;
+        --ink: #efece3; --ink-soft: #a7a49b; --ink-faint: #74716a;
+        --line: #322f29; --line-strong: #3d3931;
+        --sky: #7cb2e8; --sky-deep: #5a92cf; --sky-soft: #1a2735;
+        --kraft: #d29a5e; --kraft-soft: #33291d;
+        --signal: #45cf7c; --signal-red: #e77a70; --warn: #d8a53a;
+        --shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.6);
       }
 
-      /* ------------------------------------------------------------------
-         BASE
-      ------------------------------------------------------------------ */
-      * {
-        box-sizing: border-box;
-      }
-      html {
-        -webkit-text-size-adjust: 100%;
-      }
+      * { box-sizing: border-box; }
+      html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
       body {
         margin: 0;
-        background: var(--paper);
+        background: var(--canvas);
         color: var(--ink);
-        font-family: var(--serif);
-        font-size: var(--step);
-        line-height: 1.7;
-        -webkit-font-smoothing: antialiased;
-        text-rendering: optimizeLegibility;
-      }
-
-      .wrap {
-        max-width: var(--measure);
-        margin: 0 auto;
-        padding: 0 1.5rem;
-      }
-
-      a {
-        color: inherit;
-      }
-
-      .eyebrow {
         font-family: var(--sans);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+      .eyebrow {
         font-size: 0.72rem;
-        font-weight: 600;
-        letter-spacing: 0.14em;
+        font-weight: 700;
+        letter-spacing: 0.16em;
         text-transform: uppercase;
         color: var(--ink-faint);
         margin: 0;
       }
 
-      /* ------------------------------------------------------------------
-         TOP BAR
-      ------------------------------------------------------------------ */
+      /* ---------------- top bar ---------------- */
       .topbar {
-        border-bottom: 1px solid var(--line);
-        position: sticky;
-        top: 0;
-        background: color-mix(in srgb, var(--paper) 88%, transparent);
-        backdrop-filter: blur(8px);
-        z-index: 5;
+        position: sticky; top: 0; z-index: 40;
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0.9rem 1.5rem;
+        background: color-mix(in srgb, var(--canvas) 82%, transparent);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid transparent;
       }
-      .topbar .wrap {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        height: 3.25rem;
+      .topbar.scrolled { border-bottom-color: var(--line); }
+      .brand {
+        font-weight: 800; font-size: 1.4rem; letter-spacing: -0.03em;
+        text-decoration: none; color: var(--ink);
+        display: inline-flex; align-items: baseline; gap: 0.28rem;
       }
-      .topbar .home {
-        font-family: var(--sans);
-        font-weight: 700;
-        letter-spacing: 0.02em;
-        text-decoration: none;
-        font-size: 0.95rem;
+      .brand .dot { color: var(--sky); }
+      .brand sup {
+        font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em;
+        color: var(--ink-faint); text-transform: uppercase;
       }
+      .topbar nav { display: flex; align-items: center; gap: 1.4rem; }
+      .topbar nav a {
+        font-size: 0.85rem; color: var(--ink-soft); text-decoration: none;
+        font-weight: 600;
+      }
+      .topbar nav a:hover { color: var(--ink); }
       .theme-toggle {
-        font-family: var(--sans);
-        font-size: 0.75rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--ink-soft);
-        background: none;
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        padding: 0.3rem 0.75rem;
-        cursor: pointer;
+        font: inherit; font-size: 0.72rem; font-weight: 700;
+        letter-spacing: 0.08em; text-transform: uppercase;
+        color: var(--ink-soft); background: none;
+        border: 1px solid var(--line-strong); border-radius: 999px;
+        padding: 0.35rem 0.8rem; cursor: pointer;
       }
-      .theme-toggle:hover {
-        color: var(--ink);
-        border-color: var(--ink-faint);
-      }
+      .theme-toggle:hover { color: var(--ink); border-color: var(--ink-faint); }
 
-      /* ------------------------------------------------------------------
-         VIEWS + transitions
-      ------------------------------------------------------------------ */
-      .view[hidden] {
-        display: none;
+      /* ================================================================
+         HERO — the box opening (ta-da!)
+      ================================================================= */
+      .hero {
+        min-height: calc(100vh - 60px);
+        display: grid; place-items: center;
+        padding: 2rem 1.5rem 4rem; text-align: center;
+        position: relative; overflow: hidden;
       }
-      .view {
-        animation: rise 0.45s ease both;
+      .hero-inner {
+        display: flex; flex-direction: column; align-items: center; gap: 2rem;
+        max-width: 900px;
       }
-      @keyframes rise {
-        from {
-          opacity: 0;
-          transform: translateY(8px);
-        }
-        to {
-          opacity: 1;
-          transform: none;
-        }
-      }
-      @media (prefers-reduced-motion: reduce) {
-        .view {
-          animation: none;
-        }
-      }
-
-      /* ------------------------------------------------------------------
-         MASTHEAD (homepage header)
-      ------------------------------------------------------------------ */
-      .masthead {
-        padding: 4.5rem 0 3rem;
-        text-align: center;
-      }
-      .masthead .wordmark {
-        font-family: var(--serif);
-        font-weight: 700;
-        font-size: clamp(2.75rem, 2rem + 4vw, 4rem);
-        line-height: 1.02;
-        letter-spacing: -0.02em;
-        margin: 0.6rem 0 0;
+      .hero-copy .headline {
+        font-family: var(--serif); font-weight: 700;
+        font-size: clamp(2.2rem, 1.4rem + 4vw, 4rem);
+        line-height: 1.02; letter-spacing: -0.02em; margin: 0.8rem 0 0;
         text-wrap: balance;
       }
-      .masthead .tagline {
-        color: var(--ink-soft);
-        font-style: italic;
-        margin: 1rem auto 0;
-        max-width: 32rem;
+      .hero-copy .sub {
+        color: var(--ink-soft); max-width: 34rem; margin: 1rem auto 0;
+        font-size: 1.05rem;
       }
 
-      /* ------------------------------------------------------------------
-         POST INDEX
-      ------------------------------------------------------------------ */
-      .index {
-        border-top: 1px solid var(--line);
-        margin: 0;
-        padding: 0;
+      /* the box: four sky-blue walls funnelling toward a centre window */
+      .box {
+        --size: clamp(230px, 46vw, 360px);
+        position: relative; width: var(--size); height: var(--size);
+        filter: drop-shadow(0 30px 45px rgba(30, 60, 110, 0.28));
       }
-      .entry {
-        display: block;
-        padding: 2rem 0;
-        border-bottom: 1px solid var(--line);
-        text-decoration: none;
-        color: inherit;
+      .wall {
+        position: absolute; inset: 0;
+        background: var(--sky);
       }
-      .entry .meta {
-        display: flex;
-        gap: 0.75rem;
-        align-items: center;
-        margin-bottom: 0.6rem;
+      .wall.top {
+        clip-path: polygon(0 0, 100% 0, 72% 30%, 28% 30%);
+        background: linear-gradient(var(--sky-deep), var(--sky));
       }
-      .entry .cat {
-        font-family: var(--sans);
-        font-size: 0.7rem;
-        font-weight: 600;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--accent);
+      .wall.bottom {
+        clip-path: polygon(28% 70%, 72% 70%, 100% 100%, 0 100%);
+        background: linear-gradient(var(--sky), var(--sky-deep));
       }
-      .entry .date {
-        font-family: var(--sans);
-        font-size: 0.78rem;
-        color: var(--ink-faint);
+      .wall.left {
+        clip-path: polygon(0 0, 28% 30%, 28% 70%, 0 100%);
+        background: linear-gradient(90deg, var(--sky-deep), var(--sky));
       }
-      .entry h2 {
-        font-family: var(--serif);
-        font-weight: 700;
-        font-size: 1.6rem;
-        line-height: 1.2;
-        margin: 0;
-        letter-spacing: -0.01em;
-        transition: color 0.15s ease;
+      .wall.right {
+        clip-path: polygon(100% 0, 100% 100%, 72% 70%, 72% 30%);
+        background: linear-gradient(90deg, var(--sky), var(--sky-deep));
       }
-      .entry p {
-        color: var(--ink-soft);
-        margin: 0.5rem 0 0;
+      /* the centre "window" — where the hero illustration drops in */
+      .box-window {
+        position: absolute; left: 28%; top: 30%; width: 44%; height: 40%;
+        border-radius: 6px; overflow: hidden;
+        background:
+          radial-gradient(120% 90% at 50% 15%, #cfe6ff 0%, var(--sky) 70%);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+        display: grid; place-items: center;
       }
-      .entry .more {
-        font-family: var(--sans);
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: var(--accent);
-        margin-top: 0.75rem;
-        display: inline-block;
-        opacity: 0;
-        transform: translateX(-4px);
-        transition: opacity 0.15s ease, transform 0.15s ease;
+      .box-window img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      /* friendly placeholder shown until the real art is dropped in */
+      .box-window .placeholder {
+        display: grid; place-items: center; gap: 0.4rem; text-align: center;
+        padding: 0.5rem;
       }
-      .entry:hover h2 {
-        color: var(--accent);
+      .box-window .placeholder .cloud {
+        width: 46%; height: 22%; background: #fff; border-radius: 999px;
+        box-shadow: -30% 0 0 -6% #fff, 34% 4% 0 -8% #fff;
+        opacity: 0.9;
       }
-      .entry:hover .more,
-      .entry:focus-visible .more {
-        opacity: 1;
-        transform: none;
-      }
-      .entry:focus-visible {
-        outline: 2px solid var(--accent);
-        outline-offset: 6px;
+      .box-window .placeholder small {
+        font-size: 0.62rem; font-weight: 700; letter-spacing: 0.08em;
+        text-transform: uppercase; color: rgba(255, 255, 255, 0.9);
+        background: rgba(20, 40, 70, 0.28); padding: 0.2rem 0.5rem;
         border-radius: 4px;
       }
+      /* cardboard flaps hint at the box edges */
+      .box::before, .box::after {
+        content: ""; position: absolute; left: -6%; right: -6%; height: 8%;
+        background: var(--kraft); border-radius: 4px; opacity: 0.9;
+      }
+      .box::before { top: -5%; transform: rotate(-1.5deg); }
+      .box::after { bottom: -5%; transform: rotate(1.2deg); }
 
-      /* ------------------------------------------------------------------
-         ARTICLE (full post)
-      ------------------------------------------------------------------ */
-      .article {
-        padding: 3rem 0 1rem;
+      /* open reveal on load */
+      .box-window, .hero-copy { opacity: 0; }
+      .hero.open .box-window {
+        animation: pop 0.7s cubic-bezier(0.2, 0.9, 0.25, 1) 0.15s both;
       }
-      .back {
-        font-family: var(--sans);
-        font-size: 0.85rem;
-        font-weight: 600;
-        text-decoration: none;
-        color: var(--ink-soft);
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
+      .hero.open .hero-copy {
+        animation: fadeup 0.7s ease 0.45s both;
       }
-      .back:hover {
-        color: var(--accent);
+      @keyframes pop {
+        from { opacity: 0; transform: scale(0.55); }
+        to { opacity: 1; transform: scale(1); }
       }
-      .article-head {
-        margin: 2rem 0 2.5rem;
+      @keyframes fadeup {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: none; }
       }
-      .article-head .meta {
-        display: flex;
-        gap: 0.75rem;
-        align-items: center;
-        margin-bottom: 0.9rem;
+      .scroll-cue {
+        position: absolute; bottom: 1.4rem; left: 50%; transform: translateX(-50%);
+        font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
+        color: var(--ink-faint); text-decoration: none;
+        display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
       }
-      .article-head .cat {
-        font-family: var(--sans);
-        font-size: 0.72rem;
-        font-weight: 600;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--accent);
+      .scroll-cue span { animation: bob 1.8s ease-in-out infinite; }
+      @keyframes bob { 0%,100%{transform:translateY(0);} 50%{transform:translateY(4px);} }
+
+      /* ================================================================
+         PAPERS — the flip-book
+      ================================================================= */
+      .papers { padding: 4rem 1.5rem 5rem; }
+      .papers-head { text-align: center; max-width: 40rem; margin: 0 auto 2.5rem; }
+      .papers-head h2 {
+        font-family: var(--serif); font-weight: 700;
+        font-size: clamp(1.8rem, 1.3rem + 2vw, 2.6rem);
+        letter-spacing: -0.02em; margin: 0.6rem 0 0.6rem; text-wrap: balance;
       }
-      .article-head .date {
-        font-family: var(--sans);
-        font-size: 0.8rem;
-        color: var(--ink-faint);
+      .papers-head p { color: var(--ink-soft); margin: 0; }
+
+      .book-stage {
+        display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+        max-width: 1120px; margin: 0 auto;
       }
-      .article-head h1 {
-        font-family: var(--serif);
-        font-weight: 700;
-        font-size: clamp(2rem, 1.5rem + 2.5vw, 2.9rem);
-        line-height: 1.12;
-        letter-spacing: -0.02em;
-        margin: 0;
-        text-wrap: balance;
+      .arrow {
+        flex: none; width: 46px; height: 46px; border-radius: 999px;
+        border: 1px solid var(--line-strong); background: var(--paper);
+        color: var(--ink); font-size: 1.2rem; cursor: pointer;
+        display: grid; place-items: center; transition: transform 0.15s ease;
       }
-      .article-head .byline {
-        font-family: var(--sans);
-        font-size: 0.85rem;
-        color: var(--ink-soft);
-        margin: 1rem 0 0;
+      .arrow:hover:not(:disabled) { transform: scale(1.08); border-color: var(--sky); color: var(--sky-deep); }
+      .arrow:disabled { opacity: 0.3; cursor: not-allowed; }
+
+      .book {
+        position: relative; flex: 1 1 auto; max-width: 940px;
+        aspect-ratio: 940 / 600; perspective: 2400px;
       }
-      .article-body > * {
-        margin: 0 0 1.4rem;
+      @media (max-width: 900px) { .book { aspect-ratio: 3 / 4; } }
+
+      .sheet, .turner {
+        position: absolute; inset: 0;
+        background: var(--paper);
+        border-radius: 4px 8px 8px 4px;
+        box-shadow: var(--shadow);
+        /* left "binding" edge */
+        border-left: 3px solid var(--line-strong);
+        overflow: hidden;
       }
-      .article-body p:first-child::first-letter {
-        font-size: 3.1rem;
-        line-height: 0.8;
-        float: left;
-        padding: 0.1rem 0.6rem 0 0;
-        font-weight: 700;
-        color: var(--accent);
+      .turner {
+        transform-origin: left center;
+        backface-visibility: hidden;
+        transition: transform 0.7s cubic-bezier(0.4, 0.15, 0.2, 1);
+        z-index: 3; display: none;
       }
-      .article-body h3 {
-        font-family: var(--serif);
-        font-size: 1.3rem;
-        margin: 2.2rem 0 0.8rem;
+      .turner.on { display: block; }
+      .turner::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(90deg, rgba(0,0,0,0.16), rgba(0,0,0,0) 22%);
+        pointer-events: none;
       }
-      .article-body blockquote {
-        margin: 2rem 0;
-        padding: 0.25rem 0 0.25rem 1.4rem;
-        border-left: 3px solid var(--accent);
+      @media (prefers-reduced-motion: reduce) {
+        .turner { transition-duration: 0.001s; }
+      }
+
+      /* ---- paper content: three-column analysis ---- */
+      .paper { height: 100%; display: flex; flex-direction: column; padding: 1.6rem 1.9rem; }
+      .paper-top { border-bottom: 1px solid var(--line); padding-bottom: 0.9rem; margin-bottom: 1.1rem; }
+      .paper-top .kicker { display: flex; gap: 0.7rem; align-items: center; }
+      .paper-top .kicker .cat { color: var(--kraft); }
+      .paper-top .kicker .byline { color: var(--ink-faint); }
+      .paper-top h3 {
+        font-family: var(--serif); font-weight: 700; letter-spacing: -0.015em;
+        font-size: clamp(1.15rem, 0.9rem + 1vw, 1.7rem); line-height: 1.15;
+        margin: 0.45rem 0 0; text-wrap: balance;
+      }
+      .cols {
+        flex: 1 1 auto; display: grid;
+        grid-template-columns: 1fr 1.05fr 1.1fr; gap: 1.4rem;
+        min-height: 0;
+      }
+      .col { min-width: 0; display: flex; flex-direction: column; }
+      .col h4 {
+        font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--ink-faint);
+        margin: 0 0 0.7rem; padding-bottom: 0.4rem;
+        border-bottom: 1px dotted var(--line-strong);
+      }
+      /* column 1 — premise */
+      .prompt {
+        font-family: var(--serif); font-style: italic; font-size: 0.95rem;
+        color: var(--ink); background: var(--sky-soft);
+        border-left: 3px solid var(--sky); border-radius: 0 6px 6px 0;
+        padding: 0.6rem 0.7rem; margin: 0 0 0.8rem;
+      }
+      .chips { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.9rem; }
+      .chip {
+        font-size: 0.7rem; font-weight: 600; color: var(--ink-soft);
+        background: var(--canvas); border: 1px solid var(--line-strong);
+        border-radius: 999px; padding: 0.22rem 0.55rem;
+      }
+      .understood { font-size: 0.82rem; color: var(--ink-soft); }
+      .understood b { color: var(--ink); font-family: var(--mono); font-size: 0.78rem; }
+      .eq {
+        margin-top: auto; font-family: var(--serif); font-style: italic;
+        text-align: center; font-size: 0.95rem; color: var(--ink);
+        background: var(--canvas); border: 1px dashed var(--line-strong);
+        border-radius: 6px; padding: 0.6rem 0.4rem;
+      }
+      .eq .frac { display: inline-flex; flex-direction: column; vertical-align: middle;
+        margin: 0 0.15rem; text-align: center; }
+      .eq .frac span:first-child { border-bottom: 1px solid currentColor; padding: 0 0.3rem; }
+      /* column 2 — signals */
+      .signal { display: flex; align-items: center; gap: 0.6rem; padding: 0.34rem 0; }
+      .signal .label { flex: 1 1 auto; font-size: 0.82rem; }
+      .dots { display: inline-flex; gap: 3px; flex: none; }
+      .dots i {
+        width: 8px; height: 8px; border-radius: 999px; background: var(--line-strong);
+      }
+      .dots i.f { background: var(--signal); }
+      .dots.bad i.f { background: var(--signal-red); }
+      .signals-note {
+        margin-top: 0.8rem; font-size: 0.75rem; color: var(--ink-faint);
         font-style: italic;
-        color: var(--ink-soft);
-        font-size: 1.25rem;
       }
-      .article-body a {
-        color: var(--accent);
-        text-underline-offset: 3px;
+      /* column 3 — verdict card */
+      .verdict {
+        background: var(--canvas); border: 1px solid var(--line);
+        border-radius: 10px; padding: 0.9rem 1rem; height: 100%;
+        display: flex; flex-direction: column;
       }
-      .article-foot {
-        margin: 3rem 0 0;
-        padding: 2rem 0 4rem;
-        border-top: 1px solid var(--line);
+      .score { display: flex; align-items: baseline; gap: 0.5rem; }
+      .score .n { font-family: var(--serif); font-weight: 700; font-size: 2.1rem; color: var(--sky-deep); line-height: 1; }
+      .score .lbl { font-size: 0.72rem; color: var(--ink-faint); }
+      .ratings { margin: 0.8rem 0; display: flex; flex-direction: column; gap: 0.35rem; }
+      .ratings .r { display: flex; justify-content: space-between; font-size: 0.8rem; border-bottom: 1px dotted var(--line); padding-bottom: 0.28rem; }
+      .ratings .r b { color: var(--signal); font-weight: 700; }
+      .verdict .vtxt { font-family: var(--serif); font-size: 0.9rem; color: var(--ink); margin: 0 0 0.6rem; }
+      .verdict .vtxt .stamp { color: var(--kraft); font-style: italic; }
+      .notes { display: flex; flex-direction: column; gap: 0.35rem; margin-top: auto; }
+      .note { display: flex; gap: 0.4rem; font-size: 0.75rem; color: var(--ink-soft); }
+      .note::before { content: "●"; font-size: 0.6rem; line-height: 1.5; }
+      .note.good::before { color: var(--signal); }
+      .note.warn::before { color: var(--warn); }
+      .paper-foot {
+        border-top: 1px solid var(--line); margin-top: 1.1rem; padding-top: 0.8rem;
+        display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
+      }
+      .btn {
+        font: inherit; font-size: 0.8rem; font-weight: 700; cursor: pointer;
+        border-radius: 999px; padding: 0.45rem 0.9rem; text-decoration: none;
+        border: 1px solid transparent;
+      }
+      .btn.primary { background: var(--ink); color: var(--canvas); }
+      .btn.ghost { background: transparent; color: var(--ink); border-color: var(--line-strong); }
+      .btn:hover { transform: translateY(-1px); }
+      .paper-foot .rel { margin-left: auto; font-size: 0.72rem; color: var(--ink-faint); }
+
+      .dots-nav { display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.4rem; }
+      .dots-nav button {
+        width: 9px; height: 9px; border-radius: 999px; border: none; padding: 0;
+        background: var(--line-strong); cursor: pointer;
+      }
+      .dots-nav button.active { background: var(--sky); transform: scale(1.25); }
+      .flip-hint { text-align: center; font-size: 0.75rem; color: var(--ink-faint); margin-top: 0.9rem; }
+
+      /* responsive: stack columns, flatten book */
+      @media (max-width: 900px) {
+        .cols { grid-template-columns: 1fr; gap: 1rem; overflow-y: auto; }
+        .paper { padding: 1.2rem 1.2rem; }
+        .book { perspective: none; }
+        .verdict { height: auto; }
       }
 
-      /* ------------------------------------------------------------------
-         FOOTER
-      ------------------------------------------------------------------ */
-      .site-foot {
-        border-top: 1px solid var(--line);
-        margin-top: 2rem;
-        padding: 2rem 0 3rem;
-        font-family: var(--sans);
-        font-size: 0.8rem;
-        color: var(--ink-faint);
-        text-align: center;
+      footer.site {
+        border-top: 1px solid var(--line); text-align: center;
+        padding: 2rem 1.5rem 3rem; color: var(--ink-faint); font-size: 0.8rem;
       }
+      :focus-visible { outline: 2px solid var(--sky); outline-offset: 3px; border-radius: 4px; }
     </style>
   </head>
   <body>
-    <div class="topbar">
-      <div class="wrap">
-        <a class="home" href="#" data-home>Field&nbsp;Notes</a>
-        <button class="theme-toggle" type="button" data-toggle-theme>
-          Theme
-        </button>
-      </div>
+    <div class="topbar" id="topbar">
+      <a class="brand" href="#top">Tada<span class="dot">.</span><sup>press</sup></a>
+      <nav>
+        <a href="#papers">The Papers</a>
+        <button class="theme-toggle" data-toggle-theme type="button">Theme</button>
+      </nav>
     </div>
 
-    <main>
-      <!-- ============================================================
-           HOME / INDEX VIEW
-           This is the list of posts visitors land on.
-      ============================================================= -->
-      <section class="view" id="view-index">
-        <header class="masthead">
-          <div class="wrap">
-            <p class="eyebrow">A writing blog</p>
-            <h1 class="wordmark">Field Notes</h1>
-            <p class="tagline">
-              Short essays and notes on the things I&rsquo;m paying attention
-              to &mdash; kept here so I don&rsquo;t forget them.
-            </p>
-          </div>
-        </header>
-
-        <div class="wrap">
-          <div class="index">
-            <!-- Each <a> below is one post in the list. Later, the backend
-                 will generate these automatically from your real posts. -->
-            <a class="entry" href="#starting-this-blog">
-              <span class="meta">
-                <span class="cat">Essay</span>
-                <span class="date">July 10, 2026</span>
-              </span>
-              <h2>Why I&rsquo;m starting this blog</h2>
-              <p>
-                I&rsquo;ve wanted a quiet corner of the internet that&rsquo;s
-                mine for years. Here&rsquo;s what I want it to be &mdash; and
-                what I&rsquo;m promising not to turn it into.
-              </p>
-              <span class="more">Read &rarr;</span>
-            </a>
-
-            <a class="entry" href="#keeping-a-notebook">
-              <span class="meta">
-                <span class="cat">Notes</span>
-                <span class="date">July 3, 2026</span>
-              </span>
-              <h2>On keeping a paper notebook</h2>
-              <p>
-                A phone can do everything a notebook does, faster. So why do I
-                keep going back to paper? A small case for slowing down.
-              </p>
-              <span class="more">Read &rarr;</span>
-            </a>
-
-            <a class="entry" href="#best-coffee">
-              <span class="meta">
-                <span class="cat">Everyday</span>
-                <span class="date">June 24, 2026</span>
-              </span>
-              <h2>The best cup of coffee I made this year</h2>
-              <p>
-                It wasn&rsquo;t the beans or the gear. It was a Tuesday, no
-                rush, and paying attention for once.
-              </p>
-              <span class="more">Read &rarr;</span>
-            </a>
+    <!-- =========================== HERO =========================== -->
+    <section class="hero" id="top">
+      <div class="hero-inner">
+        <div class="box" aria-hidden="true">
+          <div class="wall top"></div>
+          <div class="wall bottom"></div>
+          <div class="wall left"></div>
+          <div class="wall right"></div>
+          <div class="box-window">
+            <!-- HERO ART GOES HERE.
+                 Drop your illustration in as: <img src="hero.png" alt="" />
+                 (delete the .placeholder block below once you do). -->
+            <img id="hero-art" alt="" style="display:none" />
+            <div class="placeholder">
+              <div class="cloud"></div>
+              <small>your art here</small>
+            </div>
           </div>
         </div>
-
-        <footer class="site-foot">
-          <div class="wrap">
-            Field Notes &middot; Written by Your&nbsp;Name &middot; 2026
-          </div>
-        </footer>
-      </section>
-
-      <!-- ============================================================
-           ARTICLE VIEWS
-           One <article> per post. They stay hidden until their link is
-           clicked. Later the backend will fill these in for you.
-      ============================================================= -->
-      <article class="view article" id="starting-this-blog" hidden>
-        <div class="wrap">
-          <a class="back" href="#" data-home>&larr; Field Notes</a>
-          <header class="article-head">
-            <span class="meta">
-              <span class="cat">Essay</span>
-              <span class="date">July 10, 2026</span>
-            </span>
-            <h1>Why I&rsquo;m starting this blog</h1>
-            <p class="byline">by Your Name</p>
-          </header>
-          <div class="article-body">
-            <p>
-              For years I&rsquo;ve had the same thought every few weeks: I
-              should write that down somewhere. Not for anyone in particular
-              &mdash; just somewhere that isn&rsquo;t a note-taking app I&rsquo;ll
-              abandon by spring. This is that somewhere.
-            </p>
-            <p>
-              I want it to be small on purpose. No metrics I check, no schedule
-              I resent, no growth strategy. A post goes up when I have something
-              worth keeping, and not a moment before.
-            </p>
-            <h3>What this is</h3>
-            <p>
-              Mostly short essays and notes &mdash; the kind of thing I&rsquo;d
-              tell a friend over coffee and then wish I&rsquo;d remembered
-              later. Some of it will be about work, most of it won&rsquo;t.
-            </p>
-            <blockquote>
-              Write the post you&rsquo;d want to re-read in a year, not the one
-              that does well this week.
-            </blockquote>
-            <p>
-              That&rsquo;s the whole plan. If you&rsquo;re reading this,
-              thanks for stopping by &mdash; there&rsquo;s more below whenever
-              you want it.
-            </p>
-          </div>
-          <div class="article-foot">
-            <a class="back" href="#" data-home>&larr; Back to all posts</a>
-          </div>
+        <div class="hero-copy">
+          <p class="eyebrow">Peer-reviewed &middot; est. today</p>
+          <h1 class="headline">Serious math.<br />Unserious questions.</h1>
+          <p class="sub">
+            Tada publishes rigorously-argued proofs of things that absolutely
+            did not need proving. Open the box. The conclusion was inside the
+            whole time.
+          </p>
         </div>
-      </article>
+      </div>
+      <a class="scroll-cue" href="#papers"><span>&darr;</span>Read the papers</a>
+    </section>
 
-      <article class="view article" id="keeping-a-notebook" hidden>
-        <div class="wrap">
-          <a class="back" href="#" data-home>&larr; Field Notes</a>
-          <header class="article-head">
-            <span class="meta">
-              <span class="cat">Notes</span>
-              <span class="date">July 3, 2026</span>
-            </span>
-            <h1>On keeping a paper notebook</h1>
-            <p class="byline">by Your Name</p>
-          </header>
-          <div class="article-body">
-            <p>
-              My phone can capture a thought in two seconds, sync it to every
-              device I own, and remind me about it next Tuesday. My notebook
-              can do none of that. I keep reaching for the notebook.
-            </p>
-            <p>
-              Part of it is friction, in a good way. Writing by hand is slow
-              enough that I only bother with the thoughts that survive the
-              trip from my head to the page. The bad ideas quietly don&rsquo;t
-              make it.
-            </p>
-            <h3>The margins are the point</h3>
-            <p>
-              A page has room to be messy &mdash; an arrow here, a box around
-              the thing that matters, a question mark I&rsquo;ll answer later.
-              Apps make that hard. Paper just shrugs and lets me.
-            </p>
-            <p>
-              I&rsquo;m not precious about it. If you love your app, keep your
-              app. But if you&rsquo;ve never given a cheap notebook a real week,
-              it might surprise you.
-            </p>
-          </div>
-          <div class="article-foot">
-            <a class="back" href="#" data-home>&larr; Back to all posts</a>
-          </div>
-        </div>
-      </article>
+    <!-- =========================== PAPERS =========================== -->
+    <section class="papers" id="papers">
+      <div class="papers-head">
+        <p class="eyebrow">The Archive</p>
+        <h2>See how the math ruins the vibe</h2>
+        <p>
+          Each paper takes a real method and points it at a problem that isn&rsquo;t
+          one. Flip through &mdash; premise, evidence, verdict.
+        </p>
+      </div>
 
-      <article class="view article" id="best-coffee" hidden>
-        <div class="wrap">
-          <a class="back" href="#" data-home>&larr; Field Notes</a>
-          <header class="article-head">
-            <span class="meta">
-              <span class="cat">Everyday</span>
-              <span class="date">June 24, 2026</span>
-            </span>
-            <h1>The best cup of coffee I made this year</h1>
-            <p class="byline">by Your Name</p>
-          </header>
-          <div class="article-body">
-            <p>
-              It wasn&rsquo;t a special bean. It wasn&rsquo;t new gear. It was a
-              Tuesday morning with nowhere to be for twenty minutes, which
-              turns out to be the rarest ingredient in my kitchen.
-            </p>
-            <p>
-              I ground the beans I already had. I paid attention to the water
-              this time &mdash; off the boil, poured slow. I watched it bloom
-              instead of scrolling. That was the whole trick.
-            </p>
-            <blockquote>
-              The gear was never the bottleneck. My attention was.
-            </blockquote>
-            <p>
-              I think about that more than I&rsquo;d like to admit. Half the
-              things I want to do &ldquo;better&rdquo; don&rsquo;t need better
-              tools. They need me to slow down enough to do them properly once.
-            </p>
-          </div>
-          <div class="article-foot">
-            <a class="back" href="#" data-home>&larr; Back to all posts</a>
-          </div>
+      <div class="book-stage">
+        <button class="arrow" id="prev" aria-label="Previous paper">&lsaquo;</button>
+        <div class="book" id="book">
+          <div class="sheet" id="sheet"></div>
+          <div class="turner" id="turner"></div>
         </div>
-      </article>
-    </main>
+        <button class="arrow" id="next" aria-label="Next paper">&rsaquo;</button>
+      </div>
+      <div class="dots-nav" id="dotsNav"></div>
+      <p class="flip-hint">Use the arrows, swipe, or your &larr; &rarr; keys</p>
+    </section>
+
+    <footer class="site">
+      Tada Press &middot; A Journal of Applied Overthinking &middot; 2026
+    </footer>
 
     <script>
-      // -----------------------------------------------------------------
-      // Tiny bit of JavaScript that switches between the post list and a
-      // full article, based on the # in the address bar. No page reloads,
-      // no server. Later, the backend will provide the posts instead of
-      // them being written directly into this file.
-      // -----------------------------------------------------------------
-      const views = Array.from(document.querySelectorAll(".view"));
-      const INDEX_ID = "view-index";
+      // ================= content: the parody papers =================
+      const papers = [
+        {
+          cat: "Paper 01 · Applied Bayesian Heartbreak",
+          byline: "F. Nahadi",
+          title: "The Statistical Impossibility of “He’s Just Busy”",
+          prompt: "Prove they’re still interested despite 48 hours of silence.",
+          chips: ["Read receipts: ON", "Active 5 min ago", "Left on ‘Delivered’", "Prior: soulmate"],
+          understood: "Belief starts at <b>P(interested) = 99.999%</b>",
+          eq: 'O(H|E<sup>n</sup>) = O(H) · (0.052)<sup>n</sup>',
+          signals: [
+            { label: "Reply latency", f: 1, bad: true },
+            { label: "Read-receipt behaviour", f: 1, bad: true },
+            { label: "Instagram activity (theirs)", f: 0, bad: true },
+            { label: "Reciprocal effort", f: 1, bad: true },
+            { label: "Your double-text tolerance", f: 5, bad: false },
+            { label: "Objective red flags present", f: 5, bad: true },
+          ],
+          signalsNote: "We analysed 4 consecutive ignored texts.",
+          score: "90.9%",
+          scoreLbl: "P(still interested) after 4 texts",
+          ratings: [
+            { k: "Dignity remaining", v: "Low" },
+            { k: "Copium purity", v: "Excellent" },
+            { k: "Friends’ patience", v: "Depleted" },
+          ],
+          verdict: 'A Delusion Prior of 10⁵ does the heavy lifting: even hostile evidence needs ~5 rounds to become admissible. <span class="stamp">Technically, they’re just really busy right now.</span>',
+          notes: [
+            { t: "good", x: "Belief survives all incoming evidence." },
+            { t: "warn", x: "Updates only on a catastrophic shock (e.g. a soft-launch photo)." },
+          ],
+          rel: "cited by 0 · believed by many",
+        },
+        {
+          cat: "Paper 02 · Statistical Thermodynamics",
+          byline: "F. Nahadi",
+          title: "The Heat Death of a Group Chat",
+          prompt: "Determine whether the group chat is dead or merely resting.",
+          chips: ["Members: 7", "Last message: ‘lol’", "Unread by: 6", "Entropy: rising"],
+          understood: "Messages trend toward <b>maximum silence</b>",
+          eq: 'dS/dt &ge; 0',
+          signals: [
+            { label: "Message frequency", f: 1, bad: true },
+            { label: "Meme throughput", f: 1, bad: true },
+            { label: "Plans actually made", f: 0, bad: true },
+            { label: "‘We should hang out’ invocations", f: 5, bad: false },
+            { label: "Follow-through on the above", f: 0, bad: true },
+          ],
+          signalsNote: "Conversational entropy measured over 90 days.",
+          score: "0.4%",
+          scoreLbl: "Probability of revival",
+          ratings: [
+            { k: "Nostalgia", v: "High" },
+            { k: "Effort to revive", v: "Herculean" },
+            { k: "Someone says ‘we fell off’", v: "Certain" },
+          ],
+          verdict: 'By the Second Law, an isolated chat cannot spontaneously lower its entropy. It tends inexorably toward a single unanswered <span class="stamp">“we should all catch up soon.”</span>',
+          notes: [
+            { t: "good", x: "The chat isn’t dead — only thermodynamically inevitable." },
+            { t: "warn", x: "Revival requires external energy (one brave soul)." },
+          ],
+          rel: "cited by 0 · felt by all",
+        },
+        {
+          cat: "Paper 03 · Decision Theory",
+          byline: "F. Nahadi",
+          title: "A First-Principles Proof That Buying a Yoga Mat Is Exercise",
+          prompt: "Show the purchase itself constitutes fitness progress.",
+          chips: ["Mat: purchased", "Sessions: 0", "Intent: enormous", "Guilt: deferred"],
+          understood: "Future fitness discounted to <b>present spending</b>",
+          eq: 'U(intent) &rarr; U(action) as r &rarr; &infin;',
+          signals: [
+            { label: "Calories burned", f: 0, bad: true },
+            { label: "Aspirational value", f: 5, bad: false },
+            { label: "Instagram-story potential", f: 5, bad: false },
+            { label: "Actual flexibility gained", f: 0, bad: true },
+            { label: "Sense of being a Wellness Person", f: 5, bad: false },
+          ],
+          signalsNote: "Utility computed under a generous discount rate.",
+          score: "5%",
+          scoreLbl: "P(mat ever unrolled)",
+          ratings: [
+            { k: "Vibes", v: "Immaculate" },
+            { k: "Cardio benefit", v: "None" },
+            { k: "Moral credit claimed", v: "Full" },
+          ],
+          verdict: 'Under a sufficiently optimistic discount rate, the utility of intending to exercise converges on exercising. The mat is <span class="stamp">therefore a completed workout.</span>',
+          notes: [
+            { t: "good", x: "Purchase logged as an achievement." },
+            { t: "warn", x: "Effect decays if the mat is ever seen again." },
+          ],
+          rel: "cited by 0 · owned by everyone",
+        },
+      ];
 
-      function show(id) {
-        const target = document.getElementById(id) ? id : INDEX_ID;
-        views.forEach((v) => {
-          const active = v.id === target;
-          v.hidden = !active;
-          if (active) {
-            // Restart the fade-in animation each time a view appears.
-            v.style.animation = "none";
-            void v.offsetWidth;
-            v.style.animation = "";
-          }
-        });
-        window.scrollTo({ top: 0 });
+      // ================= render =================
+      function dotsRow(f, bad) {
+        let s = '<span class="dots' + (bad ? " bad" : "") + '">';
+        for (let i = 0; i < 5; i++) s += "<i" + (i < f ? ' class="f"' : "") + "></i>";
+        return s + "</span>";
+      }
+      function renderPaper(p) {
+        const chips = p.chips.map((c) => '<span class="chip">' + c + "</span>").join("");
+        const signals = p.signals
+          .map((s) => '<div class="signal"><span class="label">' + s.label + "</span>" + dotsRow(s.f, s.bad) + "</div>")
+          .join("");
+        const ratings = p.ratings
+          .map((r) => '<div class="r"><span>' + r.k + "</span><b>" + r.v + "</b></div>")
+          .join("");
+        const notes = p.notes
+          .map((n) => '<div class="note ' + n.t + '">' + n.x + "</div>")
+          .join("");
+        return (
+          '<div class="paper">' +
+          '<div class="paper-top"><div class="kicker eyebrow"><span class="cat">' +
+          p.cat + '</span><span class="byline">' + p.byline + "</span></div>" +
+          "<h3>" + p.title + "</h3></div>" +
+          '<div class="cols">' +
+          '<div class="col"><h4>The Premise</h4>' +
+          '<p class="prompt">' + p.prompt + "</p>" +
+          '<div class="chips">' + chips + "</div>" +
+          '<p class="understood">' + p.understood + "</p>" +
+          '<div class="eq">' + p.eq + "</div></div>" +
+          '<div class="col"><h4>Signals Analysed</h4>' + signals +
+          '<p class="signals-note">' + p.signalsNote + "</p></div>" +
+          '<div class="col"><h4>The Verdict</h4><div class="verdict">' +
+          '<div class="score"><span class="n">' + p.score + '</span><span class="lbl">' + p.scoreLbl + "</span></div>" +
+          '<div class="ratings">' + ratings + "</div>" +
+          '<p class="vtxt">' + p.verdict + "</p>" +
+          '<div class="notes">' + notes + "</div></div></div>" +
+          "</div>" +
+          '<div class="paper-foot"><a class="btn primary" href="#">Read the full paper</a>' +
+          '<a class="btn ghost" href="#">Inspect the math</a>' +
+          '<span class="rel">' + p.rel + "</span></div>" +
+          "</div>"
+        );
       }
 
-      function route() {
-        const id = location.hash.replace(/^#/, "");
-        show(id || INDEX_ID);
+      // ================= flip navigation =================
+      const sheet = document.getElementById("sheet");
+      const turner = document.getElementById("turner");
+      const prevBtn = document.getElementById("prev");
+      const nextBtn = document.getElementById("next");
+      const dotsNav = document.getElementById("dotsNav");
+      let idx = 0, animating = false;
+
+      papers.forEach((_, i) => {
+        const b = document.createElement("button");
+        b.setAttribute("aria-label", "Go to paper " + (i + 1));
+        b.addEventListener("click", () => jump(i));
+        dotsNav.appendChild(b);
+      });
+      const navDots = Array.from(dotsNav.children);
+
+      function syncControls() {
+        prevBtn.disabled = idx === 0;
+        nextBtn.disabled = idx === papers.length - 1;
+        navDots.forEach((d, i) => d.classList.toggle("active", i === idx));
+      }
+      function paint() {
+        sheet.innerHTML = renderPaper(papers[idx]);
+        syncControls();
       }
 
-      // "Home" / "Back" links clear the hash and return to the index.
-      document.querySelectorAll("[data-home]").forEach((el) => {
-        el.addEventListener("click", (e) => {
-          e.preventDefault();
-          if (location.hash) {
-            location.hash = "";
-          } else {
-            show(INDEX_ID);
-          }
-        });
+      function go(dir) {
+        const target = idx + dir;
+        if (animating || target < 0 || target >= papers.length) return;
+        animating = true;
+
+        // The sheet underneath always shows the destination page.
+        // The turner (backface-hidden) animates over the top.
+        if (dir > 0) {
+          sheet.innerHTML = renderPaper(papers[target]);
+          turner.innerHTML = renderPaper(papers[idx]);
+          turner.classList.add("on");
+          turner.style.transition = "none";
+          turner.style.transform = "rotateY(0deg)";
+          void turner.offsetWidth; // reflow
+          turner.style.transition = "";
+          turner.style.transform = "rotateY(-180deg)";
+        } else {
+          sheet.innerHTML = renderPaper(papers[idx]);
+          turner.innerHTML = renderPaper(papers[target]);
+          turner.classList.add("on");
+          turner.style.transition = "none";
+          turner.style.transform = "rotateY(-180deg)";
+          void turner.offsetWidth;
+          turner.style.transition = "";
+          turner.style.transform = "rotateY(0deg)";
+        }
+        idx = target;
+        syncControls();
+      }
+      turner.addEventListener("transitionend", (e) => {
+        if (e.propertyName !== "transform") return;
+        turner.classList.remove("on");
+        sheet.innerHTML = renderPaper(papers[idx]);
+        animating = false;
+      });
+      function jump(i) {
+        if (i === idx || animating) return;
+        go(i > idx ? 1 : -1); // one-step flip toward the target
+      }
+
+      prevBtn.addEventListener("click", () => go(-1));
+      nextBtn.addEventListener("click", () => go(1));
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight") go(1);
+        if (e.key === "ArrowLeft") go(-1);
       });
 
-      window.addEventListener("hashchange", route);
-      route();
+      // swipe
+      let sx = null;
+      const book = document.getElementById("book");
+      book.addEventListener("pointerdown", (e) => (sx = e.clientX));
+      book.addEventListener("pointerup", (e) => {
+        if (sx === null) return;
+        const dx = e.clientX - sx;
+        if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
+        sx = null;
+      });
 
-      // -----------------------------------------------------------------
-      // Light / dark theme toggle. Remembers your choice for next visit.
-      // -----------------------------------------------------------------
+      paint();
+
+      // ================= chrome: reveal + theme + topbar =================
+      requestAnimationFrame(() => document.querySelector(".hero").classList.add("open"));
+
+      const topbar = document.getElementById("topbar");
+      const onScroll = () => topbar.classList.toggle("scrolled", window.scrollY > 8);
+      window.addEventListener("scroll", onScroll); onScroll();
+
       const root = document.documentElement;
       const saved = localStorage.getItem("theme");
       if (saved) root.setAttribute("data-theme", saved);
-
-      document
-        .querySelector("[data-toggle-theme]")
-        .addEventListener("click", () => {
-          const current =
-            root.getAttribute("data-theme") ||
-            (window.matchMedia("(prefers-color-scheme: dark)").matches
-              ? "dark"
-              : "light");
-          const next = current === "dark" ? "light" : "dark";
-          root.setAttribute("data-theme", next);
-          localStorage.setItem("theme", next);
-        });
+      document.querySelector("[data-toggle-theme]").addEventListener("click", () => {
+        const cur = root.getAttribute("data-theme") ||
+          (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        const next = cur === "dark" ? "light" : "dark";
+        root.setAttribute("data-theme", next);
+        localStorage.setItem("theme", next);
+      });
     </script>
   </body>
 </html>
