@@ -136,7 +136,7 @@
     "The Deep Diver": "okay but what's really bugging you?",
     "The Goofball": "new plan: we overthink this together 🤪",
   };
-  document.querySelectorAll(".vibe").forEach((card) => {
+  document.querySelectorAll(".vrow").forEach((card) => {
     card.addEventListener("click", () => {
       const name = card.querySelector("h3")?.textContent?.trim();
       const line = vibeLines[name];
@@ -189,16 +189,5 @@
 
       requestAnimationFrame(loop);
     })();
-  }
-
-  /* ---------- cards & vibes: cursor-follow golden glow ---------- */
-  if (fine) {
-    document.querySelectorAll(".card, .vibe").forEach((el) => {
-      el.addEventListener("pointermove", (e) => {
-        const r = el.getBoundingClientRect();
-        el.style.setProperty("--mx", ((e.clientX - r.left) / r.width) * 100 + "%");
-        el.style.setProperty("--my", ((e.clientY - r.top) / r.height) * 100 + "%");
-      });
-    });
   }
 })();
