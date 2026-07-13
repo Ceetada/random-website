@@ -1,5 +1,5 @@
 /* ============================================================
-   Lumi — interactions
+   Witty — interactions
    - self-typing companion conversation (loops)
    - live "listening" timer
    - blur-in scroll reveals

@@ -1,6 +1,6 @@
-# Lumi — AI companion landing page
+# Witty — AI companion landing page
 
-A concept landing page for **Lumi**, a warm, funny AI companion you talk to when
+A concept landing page for **Witty**, a warm, funny AI companion you talk to when
 you're bored, overthinking, or just need to vent — therapist energy, minus the
 clinical part.
 
@@ -36,5 +36,5 @@ python3 -m http.server 8000   # then visit http://localhost:8000
 - **Accessible touches** — `prefers-reduced-motion`, keyboard-focusable cards, strong contrast
 - Fully responsive down to mobile
 
-> Note: Lumi is a concept for a supportive companion, not a substitute for
+> Note: Witty is a concept for a supportive companion, not a substitute for
 > professional care. The page includes a visible crisis-resources reminder.
