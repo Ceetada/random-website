@@ -379,50 +379,48 @@ main > section { position: relative; z-index: 2; }
 /* ============================================================
    WHY / VIBES / FEEL / CTA / FOOTER — dark glass on forest ground
    ============================================================ */
-/* ---- clean, uniform card columns (no icons) ---- */
-.why { max-width: 1120px; margin: 0 auto; padding: 64px 30px 34px; }
-.cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-.card {
-  display: flex; flex-direction: column;
-  background: rgba(255, 255, 255, 0.025);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px; padding: 28px 26px;
-  transition: transform .3s ease, border-color .3s ease, background .3s ease;
-}
-.card h3 { font-size: 16px; font-weight: 600; letter-spacing: -0.005em; margin-bottom: 10px; color: var(--cream); }
-.card p { font-size: 13.5px; color: var(--cream-dim); line-height: 1.62; }
-.card:hover { transform: translateY(-3px); border-color: rgba(236,199,96,.35);
-  background: rgba(255, 255, 255, 0.045); }
+/* ---- editorial divided lists (borderless, hairline rules) ---- */
+.why  { max-width: 1120px; margin: 0 auto; padding: 60px 30px 26px; }
+.vibes{ max-width: 1120px; margin: 0 auto; padding: 26px 30px 26px; }
+.feel { max-width: 1120px; margin: 0 auto; padding: 26px 30px 72px; }
 
-.vibes { max-width: 1120px; margin: 0 auto; padding: 36px 30px 34px; }
-.vibegrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-.vibe {
-  display: flex; flex-direction: column; cursor: pointer; color: var(--cream);
-  background: rgba(255, 255, 255, 0.025);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px; padding: 28px 26px;
-  transition: transform .3s ease, border-color .3s ease, background .3s ease;
+.flist { max-width: 1000px; margin: 0 auto; border-top: 1px solid rgba(255,255,255,0.1); }
+.frow {
+  display: grid; align-items: start; gap: 28px;
+  padding: 30px 12px; border-bottom: 1px solid rgba(255,255,255,0.1);
+  transition: background .3s ease;
 }
-.vibe:hover, .vibe:focus-visible { transform: translateY(-3px); outline: none;
-  border-color: rgba(236,199,96,.35); background: rgba(255, 255, 255, 0.045); }
-.vibe h3 { font-size: 16px; font-weight: 600; letter-spacing: -0.005em; margin-bottom: 10px; color: var(--cream); }
-.vibe p { font-size: 13.5px; color: var(--cream-dim); line-height: 1.6; margin-bottom: 20px; }
-.vibe__quote { display: block; margin-top: auto; font-size: 13px; font-style: italic;
-  color: rgba(244,239,227,.7); padding-left: 13px; border-left: 2px solid rgba(236,199,96,.5); }
+.frow:hover { background: rgba(255,255,255,0.022); }
+.frow__num {
+  font-family: var(--serif); font-size: 17px; color: rgba(236,199,96,0.55);
+  font-variant-numeric: tabular-nums; letter-spacing: 0.03em; padding-top: 3px;
+  transition: color .3s ease;
+}
+.frow:hover .frow__num { color: var(--gold); }
+.frow__title { font-size: 19px; font-weight: 600; letter-spacing: -0.01em; color: var(--cream); }
+.frow__desc { font-size: 14.5px; color: var(--cream-dim); line-height: 1.62; }
 
-.feel { max-width: 1120px; margin: 0 auto; padding: 36px 30px 72px; }
-.quotes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-.quote {
-  display: flex; flex-direction: column; justify-content: space-between; color: var(--cream);
-  background: rgba(255, 255, 255, 0.025);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px; padding: 30px 28px;
-  transition: border-color .3s ease, background .3s ease;
+/* WHY — index | title | description */
+.flist--why .frow { grid-template-columns: 46px minmax(150px, 0.9fr) 1.5fr; }
+
+/* VIBES — name (+ quote) | description */
+.flist--vibes .frow { grid-template-columns: 0.9fr 1.5fr; cursor: pointer; }
+.flist--vibes .frow:focus-visible { outline: none; background: rgba(255,255,255,0.03); }
+.vrow__l { display: flex; flex-direction: column; gap: 12px; }
+.vrow__quote { font-size: 13px; font-style: italic; color: rgba(244,239,227,0.62);
+  padding-left: 12px; border-left: 2px solid rgba(236,199,96,0.5); }
+
+/* TESTIMONIALS — quote | attribution */
+.qlist { max-width: 1000px; margin: 0 auto; border-top: 1px solid rgba(255,255,255,0.1); }
+.qrow {
+  display: grid; grid-template-columns: 1.55fr 0.5fr; align-items: baseline; gap: 34px;
+  padding: 34px 12px; border-bottom: 1px solid rgba(255,255,255,0.1);
+  transition: background .3s ease;
 }
-.quote:hover { border-color: rgba(236,199,96,.3); background: rgba(255, 255, 255, 0.045); }
-.quote p { font-family: var(--serif); font-size: 17px; line-height: 1.5; margin-bottom: 20px;
+.qrow:hover { background: rgba(255,255,255,0.022); }
+.qrow__text { font-family: var(--serif); font-size: clamp(18px, 1.7vw, 21px); line-height: 1.45;
   font-weight: 500; color: var(--cream); }
-.quote cite { font-style: normal; font-size: 13px; color: var(--cream-mute); }
+.qrow__by { font-style: normal; font-size: 13px; color: var(--cream-mute); text-align: right; }
 
 .cta { max-width: 1180px; margin: 0 auto; padding: 40px 30px 80px; }
 .cta__card {
@@ -471,11 +469,10 @@ main > section { position: relative; z-index: 2; }
 
 /* ---------- responsive ---------- */
 @media (max-width: 940px) {
-  .cards { grid-template-columns: repeat(2, 1fr); }
-  .vibegrid { grid-template-columns: repeat(2, 1fr); }
-  .quotes { grid-template-columns: 1fr; gap: 14px; max-width: 560px; margin: 0 auto; }
   .cine__card { display: none; }
   .cine__title { font-size: clamp(38px, 7.4vw, 66px); }
+  .qrow { grid-template-columns: 1fr; gap: 10px; }
+  .qrow__by { text-align: left; }
 }
 @media (max-width: 620px) {
   .nav { padding: 18px 20px; }
@@ -495,10 +492,15 @@ main > section { position: relative; z-index: 2; }
       linear-gradient(0deg, #050505 3%, rgba(5,5,5,0.88) 24%, rgba(5,5,5,0.35) 52%, rgba(5,5,5,0) 74%);
   }
 
-  /* sections stack + tighter gutters */
+  /* sections + editorial lists stack */
   .why, .vibes, .feel { padding-left: 18px; padding-right: 18px; }
   .why { padding-top: 44px; }
-  .cards, .vibegrid { grid-template-columns: 1fr; }
+  .flist--why .frow { grid-template-columns: 1fr; gap: 8px; }
+  .flist--why .frow__num { font-size: 14px; padding-top: 0; }
+  .flist--vibes .frow { grid-template-columns: 1fr; gap: 14px; }
+  .qrow { grid-template-columns: 1fr; gap: 10px; padding: 26px 4px; }
+  .qrow__by { text-align: left; }
+  .frow { padding: 24px 4px; }
   .glimpse { padding: 44px 16px 20px; }
   .stage { min-height: 0; padding: 18px 16px 22px; }
   .pillnav { flex-wrap: wrap; justify-content: center; }
