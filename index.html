@@ -3,130 +3,109 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lumi — your always-up-for-it AI companion</title>
-  <meta name="description" content="Bored, overthinking, or just need to vent? Lumi is a warm, funny AI companion who's always up to talk. Like a therapist — minus the couch." />
+  <title>Lumi — someone to talk to, whenever the world goes quiet</title>
+  <meta name="description" content="Lumi is a warm, funny AI companion — here for the 3 a.m. spirals, the bored afternoons, and everything you'd never text a friend. Like a therapist, minus the couch." />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- Ambient background light blooms -->
+  <!-- ============ CINEMATIC HERO ============ -->
+  <section class="cine">
+    <!-- Drop your photo at assets/hero.jpg — it layers over this atmospheric stand-in -->
+    <div class="cine__bg" aria-hidden="true"></div>
+    <div class="cine__grain" aria-hidden="true"></div>
+    <div class="cine__scrim" aria-hidden="true"></div>
+
+    <header class="nav">
+      <a class="nav__brand" href="#">
+        <span class="brand__orb-mini"></span>
+        Lumi
+      </a>
+      <nav class="nav__links">
+        <a href="#glimpse">How it works</a>
+        <a href="#vibes">Vibes</a>
+        <a href="#feel">Stories</a>
+      </nav>
+      <a href="#start" class="nav__cta">Talk to Lumi</a>
+    </header>
+
+    <div class="cine__inner">
+      <p class="cine__eyebrow">AI companion · always awake</p>
+      <h1 class="cine__title">
+        Someone to talk to,<br />
+        <em>whenever</em> the world goes quiet.
+      </h1>
+      <p class="cine__sub">
+        Lumi is a warm, funny companion for the 3&nbsp;a.m. spirals, the bored
+        afternoons, and everything you'd never text a friend. Like a therapist —
+        minus the couch.
+      </p>
+      <div class="cine__cta">
+        <a href="#start" class="btn btn--light">
+          Start talking <span class="btn__ico">→</span>
+        </a>
+        <a href="#glimpse" class="btn btn--watch">
+          <span class="play" aria-hidden="true">►</span> See how it feels
+        </a>
+      </div>
+    </div>
+
+    <aside class="cine__card">
+      <strong>Always here, never judging.</strong>
+      <span>Say the messy thing. Lumi meets it with warmth and a little humor.</span>
+    </aside>
+  </section>
+
+  <!-- ambient warmth for the sections below -->
   <div class="ambient" aria-hidden="true">
     <span class="bloom bloom--1"></span>
     <span class="bloom bloom--2"></span>
     <span class="bloom bloom--3"></span>
   </div>
 
-  <!-- ============ HERO ============ -->
-  <header class="page-head">
-    <div class="page-head__mark">
-      <span class="flag"></span>
-      <span>AI COMPANION · CONCEPT</span>
-    </div>
-    <div class="page-head__by">
-      <span>made with care</span>
-      <span class="heart">♥</span>
-    </div>
-  </header>
-
   <main>
-    <section class="hero">
-      <div class="showcase" id="showcase">
-        <!-- LEFT: pitch panel -->
-        <div class="panel panel--pitch">
-          <div class="brandbar">
-            <div class="brand">
-              <span class="brand__orb-mini"></span>
-              <span class="brand__name">Lumi</span>
+    <!-- ============ GLIMPSE — relocated live demo ============ -->
+    <section class="glimpse" id="glimpse">
+      <div class="section-head reveal">
+        <span class="eyebrow">a glimpse of lumi</span>
+        <h2>It reads the room, then meets you there.</h2>
+        <p class="section-head__p">A real, judgment-free conversation — watch it unfold.</p>
+      </div>
+
+      <div class="stage reveal">
+        <div class="dream" aria-hidden="true">
+          <span class="dream__blob dream__blob--a"></span>
+          <span class="dream__blob dream__blob--b"></span>
+          <span class="dream__blob dream__blob--c"></span>
+          <span class="dream__grid"></span>
+        </div>
+
+        <nav class="pillnav">
+          <a class="pill pill--on">Talk</a>
+          <a class="pill">Vibes</a>
+          <a class="pill">Journal</a>
+          <a class="pill pill--cta">Open app ●</a>
+        </nav>
+
+        <div class="chat" id="chat">
+          <div class="chat__head">
+            <span class="chat__avatar"></span>
+            <div class="chat__who">
+              <strong>Lumi</strong>
+              <small>your companion</small>
             </div>
-            <span class="badge">★ 4.9 · loved by night owls</span>
+            <span class="chat__status"><i></i>online now</span>
           </div>
-
-          <div class="pitch">
-            <div class="orb" aria-hidden="true">
-              <span class="orb__core"></span>
-              <span class="orb__gloss"></span>
-            </div>
-
-            <h1 class="pitch__title">
-              A friend who's <em>always</em><br />up to talk.
-            </h1>
-            <p class="pitch__sub">
-              Bored? Overthinking at 3&nbsp;a.m.? Just need to vent?
-              Lumi listens — warm, funny, and never judging.
-              Like a therapist, minus the couch.
-            </p>
-
-            <div class="pitch__cta">
-              <a href="#start" class="btn btn--primary">
-                Start talking
-                <span class="btn__ico">→</span>
-              </a>
-              <a href="#how" class="btn btn--ghost">How it works</a>
-            </div>
-          </div>
-
-          <div class="trust">
-            <p class="trust__label">AS FELT BY PEOPLE WHO JUST NEEDED SOMEONE</p>
-            <div class="marquee" aria-hidden="true">
-              <div class="marquee__track">
-                <span>the lonely</span><span>·</span>
-                <span>the overthinkers</span><span>·</span>
-                <span>the night owls</span><span>·</span>
-                <span>the anxious</span><span>·</span>
-                <span>the bored</span><span>·</span>
-                <span>the curious</span><span>·</span>
-                <span>the lonely</span><span>·</span>
-                <span>the overthinkers</span><span>·</span>
-                <span>the night owls</span><span>·</span>
-                <span>the anxious</span><span>·</span>
-                <span>the bored</span><span>·</span>
-                <span>the curious</span><span>·</span>
-              </div>
-            </div>
+          <div class="chat__body" id="chatBody"></div>
+          <div class="listening" id="listening">
+            <span class="listening__wave"><i></i><i></i><i></i><i></i><i></i></span>
+            <span class="listening__label">Listening…</span>
+            <span class="listening__time" id="listenTime">00:00</span>
           </div>
         </div>
 
-        <!-- RIGHT: dreamy live demo -->
-        <div class="panel panel--demo">
-          <div class="dream" aria-hidden="true">
-            <span class="dream__blob dream__blob--a"></span>
-            <span class="dream__blob dream__blob--b"></span>
-            <span class="dream__blob dream__blob--c"></span>
-            <span class="dream__grid"></span>
-          </div>
-
-          <nav class="pillnav">
-            <a class="pill pill--on">Talk</a>
-            <a class="pill">Vibes</a>
-            <a class="pill">Journal</a>
-            <a class="pill pill--cta">Open app ●</a>
-          </nav>
-
-          <!-- Glass chat card -->
-          <div class="chat" id="chat">
-            <div class="chat__head">
-              <span class="chat__avatar"></span>
-              <div class="chat__who">
-                <strong>Lumi</strong>
-                <small>your companion</small>
-              </div>
-              <span class="chat__status"><i></i>online now</span>
-            </div>
-
-            <div class="chat__body" id="chatBody">
-              <!-- messages injected by script.js -->
-            </div>
-
-            <div class="listening" id="listening">
-              <span class="listening__wave"><i></i><i></i><i></i><i></i><i></i></span>
-              <span class="listening__label">Listening…</span>
-              <span class="listening__time" id="listenTime">00:00</span>
-            </div>
-          </div>
-
-          <div class="demo__caption">
-            <strong>Always awake, always kind</strong>
-            <span>real conversations, zero judgment</span>
-          </div>
+        <div class="demo__caption">
+          <strong>Always awake, always kind</strong>
+          <span>real conversations, zero judgment</span>
         </div>
       </div>
     </section>
@@ -162,7 +141,7 @@
     </section>
 
     <!-- ============ VIBES ============ -->
-    <section class="vibes">
+    <section class="vibes" id="vibes">
       <div class="section-head reveal">
         <span class="eyebrow">choose your vibe</span>
         <h2>Pick who shows up.</h2>
@@ -197,7 +176,7 @@
     </section>
 
     <!-- ============ FEEL / TESTIMONIALS ============ -->
-    <section class="feel">
+    <section class="feel" id="feel">
       <div class="section-head reveal">
         <span class="eyebrow">how it feels</span>
         <h2>Little moments, all week long.</h2>
@@ -244,10 +223,10 @@
       <span class="brand__orb-mini"></span>
       <span>Lumi</span>
     </div>
-    <p class="foot__copy">A concept design · inspired by dreamy, calm interfaces · built to feel human.</p>
+    <p class="foot__copy">A concept design · cinematic hero · built to feel human.</p>
     <div class="foot__links">
       <a href="#">Privacy</a>
-      <a href="#how">How it works</a>
+      <a href="#glimpse">How it works</a>
       <a href="#start">Start talking</a>
     </div>
   </footer>
