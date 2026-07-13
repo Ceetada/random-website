@@ -48,7 +48,7 @@ body {
   background: #050505;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  overflow-x: clip;
   line-height: 1.5;
 }
 
@@ -379,17 +379,42 @@ main > section { position: relative; z-index: 2; }
 /* ============================================================
    WHY / VIBES / FEEL / CTA / FOOTER — dark glass on forest ground
    ============================================================ */
+/* ============================================================
+   STACKING CARDS — each section pins and the next slides over it
+   ============================================================ */
+.stack { position: relative; z-index: 2; }
+.stack__card {
+  position: sticky;
+  min-height: 100svh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 56px 0;
+  background: #070707;
+  border-top: 1px solid rgba(236, 199, 96, 0.18);
+  border-radius: 30px 30px 0 0;
+  box-shadow: 0 -24px 60px -12px rgba(0, 0, 0, 0.9);
+}
+/* small incremental offsets so the stacked card edges peek like a deck */
+.stack__card:nth-child(1) { top: 0; }
+.stack__card:nth-child(2) { top: 14px; }
+.stack__card:nth-child(3) { top: 28px; }
+.stack__card:nth-child(4) { top: 42px; }
+/* faint highlight along the sliding top edge */
+.stack__card::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 120px;
+  border-radius: 30px 30px 0 0; pointer-events: none;
+  background: radial-gradient(120% 80% at 50% 0%, rgba(236,199,96,0.06), transparent 70%);
+}
+
 /* ---- editorial divided lists (borderless, hairline rules) ---- */
-.why  { max-width: 1120px; margin: 0 auto; padding: 60px 30px 26px; }
-.vibes{ max-width: 1120px; margin: 0 auto; padding: 26px 30px 26px; }
-.feel { max-width: 1120px; margin: 0 auto; padding: 26px 30px 72px; }
+.why, .vibes, .feel { width: 100%; max-width: none; margin: 0; padding: 0 30px; }
 
 .flist { max-width: 1000px; margin: 0 auto; border-top: 1px solid rgba(255,255,255,0.1); }
 .frow {
   display: grid; align-items: start; gap: 28px;
-  padding: 30px 12px; border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding: 24px 12px; border-bottom: 1px solid rgba(255,255,255,0.1);
   transition: background .3s ease;
 }
+.stack .section-head { margin-bottom: 32px; }
 .frow:hover { background: rgba(255,255,255,0.022); }
 .frow__num {
   font-family: var(--serif); font-size: 17px; color: rgba(236,199,96,0.55);
@@ -414,7 +439,7 @@ main > section { position: relative; z-index: 2; }
 .qlist { max-width: 1000px; margin: 0 auto; border-top: 1px solid rgba(255,255,255,0.1); }
 .qrow {
   display: grid; grid-template-columns: 1.55fr 0.5fr; align-items: baseline; gap: 34px;
-  padding: 34px 12px; border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding: 28px 12px; border-bottom: 1px solid rgba(255,255,255,0.1);
   transition: background .3s ease;
 }
 .qrow:hover { background: rgba(255,255,255,0.022); }
@@ -422,9 +447,9 @@ main > section { position: relative; z-index: 2; }
   font-weight: 500; color: var(--cream); }
 .qrow__by { font-style: normal; font-size: 13px; color: var(--cream-mute); text-align: right; }
 
-.cta { max-width: 1180px; margin: 0 auto; padding: 40px 30px 80px; }
+.cta { width: 100%; max-width: none; margin: 0; padding: 0 30px; }
 .cta__card {
-  position: relative; overflow: hidden;
+  position: relative; overflow: hidden; max-width: 1120px; margin: 0 auto;
   border: 1px solid rgba(236, 199, 96, 0.28);
   border-radius: var(--radius-xl); box-shadow: var(--shadow-float);
   padding: 76px 30px 48px; text-align: center;
@@ -494,18 +519,28 @@ main > section { position: relative; z-index: 2; }
 
   /* sections + editorial lists stack */
   .why, .vibes, .feel { padding-left: 18px; padding-right: 18px; }
-  .why { padding-top: 44px; }
   .flist--why .frow { grid-template-columns: 1fr; gap: 8px; }
   .flist--why .frow__num { font-size: 14px; padding-top: 0; }
   .flist--vibes .frow { grid-template-columns: 1fr; gap: 14px; }
-  .qrow { grid-template-columns: 1fr; gap: 10px; padding: 26px 4px; }
+  .qrow { grid-template-columns: 1fr; gap: 10px; padding: 24px 4px; }
   .qrow__by { text-align: left; }
-  .frow { padding: 24px 4px; }
-  .glimpse { padding: 44px 16px 20px; }
-  .stage { min-height: 0; padding: 18px 16px 22px; }
-  .pillnav { flex-wrap: wrap; justify-content: center; }
-  .cta { padding: 24px 16px 56px; }
-  .cta__card { padding: 56px 22px 40px; }
+  .frow { padding: 22px 4px; }
+
+  /* stacking cards: one screen at a time, compacted to fit */
+  .stack__card { padding: 30px 0; }
+  .stack__card:nth-child(n) { top: 0; }
+  .stack .section-head { margin-bottom: 26px; }
+  .stack .section-head h2 { font-size: clamp(23px, 6.4vw, 30px); }
+
+  /* glimpse: declutter — drop the pill nav, tighten the empty chat space */
+  .glimpse { padding: 40px 16px 16px; }
+  .stage { min-height: 0; padding: 16px 14px 20px; }
+  .pillnav { display: none; }
+  .chat { margin: 0; }
+  .chat__body { min-height: 140px; }
+
+  .cta { padding: 0 16px; }
+  .cta__card { padding: 52px 22px 38px; }
   .foot { flex-direction: column; text-align: center; }
 }
 
