@@ -10,7 +10,7 @@
     />
     <style>
       :root {
-        --bg: #191a1c;
+        --bg: #08090a;
         --panel: #08090a;
         --card: #0c0e0d;
         --ink: #f3f2ec;
@@ -313,7 +313,10 @@
         .card-left { width: 140px; left: 3%; bottom: 22%; }
         .card-right { width: 150px; right: 3%; bottom: 16%; }
         .stats b { font-size: 0.66rem; }
-        .book { perspective: none; }
+        /* stack the flip-book: full-width card, arrows in a row below it */
+        .book-stage { flex-wrap: wrap; row-gap: 1.1rem; }
+        .book { flex: 1 1 100%; order: 0; perspective: none; }
+        .arrow { order: 1; }
       }
       @media (max-width: 460px) { .card-left, .heat { display: none; } .card-right { width: 140px; } }
       :focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
