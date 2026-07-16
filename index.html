@@ -203,12 +203,10 @@
       .arrow:hover:not(:disabled) { transform: scale(1.08); border-color: var(--teal); color: var(--teal); }
       .arrow:disabled { opacity: 0.3; cursor: not-allowed; }
 
-      .book { position: relative; flex: 1 1 auto; max-width: 900px;
-        aspect-ratio: 900 / 540; perspective: 2400px; }
-      @media (max-width: 860px) { .book { aspect-ratio: 3 / 4; } }
+      .book { position: relative; flex: 1 1 auto; max-width: 900px; perspective: 2400px; }
 
       .sheet, .turner {
-        position: absolute; inset: 0; border-radius: 14px; overflow: hidden;
+        border-radius: 14px; overflow: hidden;
         background:
           radial-gradient(500px 300px at 0% 0%, rgba(38, 132, 88, 0.12), transparent 60%),
           radial-gradient(500px 300px at 100% 100%, rgba(200, 150, 62, 0.12), transparent 60%),
@@ -216,14 +214,17 @@
         border: 1px solid rgba(255, 255, 255, 0.08);
         box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.8);
       }
-      .turner { transform-origin: left center; backface-visibility: hidden;
+      /* the sheet is in normal flow, so the card grows to fit the paper */
+      .sheet { position: relative; }
+      .turner { position: absolute; inset: 0; transform-origin: left center;
+        backface-visibility: hidden;
         transition: transform 0.7s cubic-bezier(0.4, 0.15, 0.2, 1); z-index: 3; display: none; }
       .turner.on { display: block; }
       .turner::after { content: ""; position: absolute; inset: 0;
         background: linear-gradient(90deg, rgba(0,0,0,0.28), rgba(0,0,0,0) 22%); pointer-events: none; }
       @media (prefers-reduced-motion: reduce) { .turner { transition-duration: 0.001s; } }
 
-      .paper { height: 100%; display: flex; flex-direction: column;
+      .paper { min-height: clamp(360px, 40vw, 460px); display: flex; flex-direction: column;
         padding: clamp(1.5rem, 3.5vw, 2.8rem) clamp(1.6rem, 4vw, 3rem); }
       .paper .kicker { display: flex; gap: 0.7rem; align-items: center; flex-wrap: wrap;
         font-size: 0.66rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
