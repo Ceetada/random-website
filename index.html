@@ -3,627 +3,374 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Tada — Peer-reviewed nonsense</title>
+    <title>NEXIS — The space where imagination becomes reality</title>
     <meta
       name="description"
-      content="Tada: rigorously-argued proofs of things that absolutely did not need proving."
+      content="Built for creators, thinkers, and innovators — where imagination meets intelligent execution."
     />
     <style>
-      /* =================================================================
-         TADA — design tokens
-         Brand accent: sky (from the box hero). Secondary: kraft (cardboard).
-         Semantic: signal-green / signal-red for the analysis dots only.
-      ================================================================= */
       :root {
-        --canvas: #ffffff;   /* white page ground */
-        --paper: #fbfaf7;    /* near-white "paper" the papers are printed on */
-        --paper-edge: #efece5;
-        --ink: #17181d;
-        --ink-soft: #5c6068;
-        --ink-faint: #9a9aa2;
-        --line: #e0ddd3;
-        --line-strong: #d3cfc2;
-
-        --sky: #6ba9e6;      /* brand blue — the box / the sky */
-        --sky-deep: #4a86c9;
-        --sky-soft: #e7f0fb;
-        --kraft: #c58a4c;    /* cardboard warm secondary */
-        --kraft-soft: #f0e4d2;
-
-        --signal: #2fbf6b;   /* positive rating dots */
-        --signal-red: #e0655b;
-        --warn: #d8a53a;
-
-        --serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
-        --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
-          sans-serif;
-        --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-
-        --shadow: 0 24px 60px -20px rgba(20, 30, 55, 0.35);
+        --bg: #191a1c;
+        --panel: #08090a;
+        --ink: #f3f2ec;
+        --muted: #93938c;
+        --faint: #6a6a64;
+        --teal: #3cc7bd;
+        --amber: #d9a441;
+        --line: rgba(255, 255, 255, 0.14);
+        --mono: "SFMono-Regular", ui-monospace, "JetBrains Mono", "DejaVu Sans Mono",
+          Menlo, Consolas, monospace;
       }
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --canvas: #14151a;
-          --paper: #211f1b;
-          --paper-edge: #2a2722;
-          --ink: #efece3;
-          --ink-soft: #a7a49b;
-          --ink-faint: #74716a;
-          --line: #322f29;
-          --line-strong: #3d3931;
-          --sky: #7cb2e8;
-          --sky-deep: #5a92cf;
-          --sky-soft: #1a2735;
-          --kraft: #d29a5e;
-          --kraft-soft: #33291d;
-          --signal: #45cf7c;
-          --signal-red: #e77a70;
-          --shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.6);
-        }
-      }
-      :root[data-theme="light"] {
-        --canvas: #ffffff; --paper: #fbfaf7; --paper-edge: #efece5;
-        --ink: #17181d; --ink-soft: #5c6068; --ink-faint: #9a9aa2;
-        --line: #e0ddd3; --line-strong: #d3cfc2;
-        --sky: #6ba9e6; --sky-deep: #4a86c9; --sky-soft: #e7f0fb;
-        --kraft: #c58a4c; --kraft-soft: #f0e4d2;
-        --signal: #2fbf6b; --signal-red: #e0655b; --warn: #d8a53a;
-        --shadow: 0 24px 60px -20px rgba(20, 30, 55, 0.35);
-      }
-      :root[data-theme="dark"] {
-        --canvas: #14151a; --paper: #211f1b; --paper-edge: #2a2722;
-        --ink: #efece3; --ink-soft: #a7a49b; --ink-faint: #74716a;
-        --line: #322f29; --line-strong: #3d3931;
-        --sky: #7cb2e8; --sky-deep: #5a92cf; --sky-soft: #1a2735;
-        --kraft: #d29a5e; --kraft-soft: #33291d;
-        --signal: #45cf7c; --signal-red: #e77a70; --warn: #d8a53a;
-        --shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.6);
-      }
-
       * { box-sizing: border-box; }
-      html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+      html { -webkit-text-size-adjust: 100%; }
       body {
         margin: 0;
-        background: var(--canvas);
+        min-height: 100vh;
+        background: var(--bg);
         color: var(--ink);
-        font-family: var(--sans);
-        line-height: 1.6;
+        font-family: var(--mono);
         -webkit-font-smoothing: antialiased;
-      }
-      .eyebrow {
-        font-size: 0.72rem;
-        font-weight: 700;
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-        color: var(--ink-faint);
-        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: clamp(0.75rem, 2vw, 2rem);
       }
 
-      /* ---------------- top bar ---------------- */
-      .topbar {
-        position: sticky; top: 0; z-index: 40;
-        display: flex; align-items: center; justify-content: space-between;
-        padding: 0.9rem 1.5rem;
-        background: color-mix(in srgb, var(--canvas) 82%, transparent);
-        backdrop-filter: blur(10px);
-        border-bottom: 1px solid transparent;
-      }
-      .topbar.scrolled { border-bottom-color: var(--line); }
-      .brand {
-        font-weight: 800; font-size: 1.4rem; letter-spacing: -0.03em;
-        text-decoration: none; color: var(--ink);
-        display: inline-flex; align-items: baseline; gap: 0.28rem;
-      }
-      .brand .dot { color: var(--sky); }
-      .brand sup {
-        font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em;
-        color: var(--ink-faint); text-transform: uppercase;
-      }
-      .topbar nav { display: flex; align-items: center; gap: 1.4rem; }
-      .topbar nav a {
-        font-size: 0.85rem; color: var(--ink-soft); text-decoration: none;
-        font-weight: 600;
-      }
-      .topbar nav a:hover { color: var(--ink); }
-      .theme-toggle {
-        font: inherit; font-size: 0.72rem; font-weight: 700;
-        letter-spacing: 0.08em; text-transform: uppercase;
-        color: var(--ink-soft); background: none;
-        border: 1px solid var(--line-strong); border-radius: 999px;
-        padding: 0.35rem 0.8rem; cursor: pointer;
-      }
-      .theme-toggle:hover { color: var(--ink); border-color: var(--ink-faint); }
-
-      /* ================================================================
-         HERO — the box opening (ta-da!)
-      ================================================================= */
-      .hero {
-        min-height: calc(100vh - 60px);
-        display: grid; place-items: center;
-        padding: 2rem 1.5rem 4rem; text-align: center;
-        position: relative; overflow: hidden;
-      }
-      .hero-inner {
-        display: flex; flex-direction: column; align-items: center; gap: 2rem;
-        max-width: 900px;
-        position: relative; z-index: 1;
-      }
-      /* parallax sky behind the box */
-      .clouds { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
-      .cloud {
-        position: absolute; width: var(--s); height: calc(var(--s) * 0.42);
-        background: radial-gradient(60% 100% at 50% 50%, rgba(122, 170, 232, 0.55), rgba(122, 170, 232, 0));
-        filter: blur(7px); opacity: 0.7; will-change: transform;
-      }
-      @media (prefers-color-scheme: dark) { .cloud { opacity: 0.1; } }
-      :root[data-theme="dark"] .cloud { opacity: 0.1; }
-      :root[data-theme="light"] .cloud { opacity: 0.7; }
-      .box { will-change: transform; }
-      .hero-copy .headline {
-        font-family: var(--serif); font-weight: 700;
-        font-size: clamp(2.2rem, 1.4rem + 4vw, 4rem);
-        line-height: 1.02; letter-spacing: -0.02em; margin: 0.8rem 0 0;
-        text-wrap: balance;
-      }
-      .hero-copy .sub {
-        color: var(--ink-soft); max-width: 34rem; margin: 1rem auto 0;
-        font-size: 1.05rem;
-      }
-
-      /* the box: four sky-blue walls funnelling toward a centre window */
-      .box {
-        --size: clamp(230px, 46vw, 360px);
-        position: relative; width: var(--size); height: var(--size);
-        filter: drop-shadow(0 30px 45px rgba(30, 60, 110, 0.28));
-      }
-      .wall {
-        position: absolute; inset: 0;
-        background: var(--sky);
-      }
-      .wall.top {
-        clip-path: polygon(0 0, 100% 0, 72% 30%, 28% 30%);
-        background: linear-gradient(var(--sky-deep), var(--sky));
-      }
-      .wall.bottom {
-        clip-path: polygon(28% 70%, 72% 70%, 100% 100%, 0 100%);
-        background: linear-gradient(var(--sky), var(--sky-deep));
-      }
-      .wall.left {
-        clip-path: polygon(0 0, 28% 30%, 28% 70%, 0 100%);
-        background: linear-gradient(90deg, var(--sky-deep), var(--sky));
-      }
-      .wall.right {
-        clip-path: polygon(100% 0, 100% 100%, 72% 70%, 72% 30%);
-        background: linear-gradient(90deg, var(--sky), var(--sky-deep));
-      }
-      /* the centre "window" — where the hero illustration drops in */
-      .box-window {
-        position: absolute; left: 28%; top: 30%; width: 44%; height: 40%;
-        border-radius: 6px; overflow: hidden;
-        background:
-          radial-gradient(120% 90% at 50% 15%, #cfe6ff 0%, var(--sky) 70%);
-        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
-        display: grid; place-items: center;
-      }
-      .box-window img { width: 100%; height: 100%; object-fit: cover; display: block; }
-      /* friendly placeholder shown until the real art is dropped in */
-      .box-window .placeholder {
-        display: grid; place-items: center; gap: 0.4rem; text-align: center;
-        padding: 0.5rem;
-      }
-      .box-window .placeholder .cloud {
-        width: 46%; height: 22%; background: #fff; border-radius: 999px;
-        box-shadow: -30% 0 0 -6% #fff, 34% 4% 0 -8% #fff;
-        opacity: 0.9;
-      }
-      .box-window .placeholder small {
-        font-size: 0.62rem; font-weight: 700; letter-spacing: 0.08em;
-        text-transform: uppercase; color: rgba(255, 255, 255, 0.9);
-        background: rgba(20, 40, 70, 0.28); padding: 0.2rem 0.5rem;
-        border-radius: 4px;
-      }
-      /* cardboard flaps hint at the box edges */
-      .box::before, .box::after {
-        content: ""; position: absolute; left: -6%; right: -6%; height: 8%;
-        background: var(--kraft); border-radius: 4px; opacity: 0.9;
-      }
-      .box::before { top: -5%; transform: rotate(-1.5deg); }
-      .box::after { bottom: -5%; transform: rotate(1.2deg); }
-
-      /* open reveal on load */
-      .box-window, .hero-copy { opacity: 0; }
-      .hero.open .box-window {
-        animation: pop 0.7s cubic-bezier(0.2, 0.9, 0.25, 1) 0.15s both;
-      }
-      .hero.open .hero-copy {
-        animation: fadeup 0.7s ease 0.45s both;
-      }
-      @keyframes pop {
-        from { opacity: 0; transform: scale(0.55); }
-        to { opacity: 1; transform: scale(1); }
-      }
-      @keyframes fadeup {
-        from { opacity: 0; transform: translateY(14px); }
-        to { opacity: 1; transform: none; }
-      }
-      .scroll-cue {
-        position: absolute; bottom: 1.4rem; left: 50%; transform: translateX(-50%);
-        font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
-        color: var(--ink-faint); text-decoration: none;
-        display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
-      }
-      .scroll-cue span { animation: bob 1.8s ease-in-out infinite; }
-      @keyframes bob { 0%,100%{transform:translateY(0);} 50%{transform:translateY(4px);} }
-
-      /* ================================================================
-         PAPERS — the flip-book
-      ================================================================= */
-      .papers { padding: 4rem 1.5rem 5rem; }
-      .papers-head { text-align: center; max-width: 40rem; margin: 0 auto 2.5rem; }
-      .papers-head h2 {
-        font-family: var(--serif); font-weight: 700;
-        font-size: clamp(1.8rem, 1.3rem + 2vw, 2.6rem);
-        letter-spacing: -0.02em; margin: 0.6rem 0 0.6rem; text-wrap: balance;
-      }
-      .papers-head p { color: var(--ink-soft); margin: 0; }
-
-      .book-stage {
-        display: flex; align-items: center; justify-content: center; gap: 0.75rem;
-        max-width: 1120px; margin: 0 auto;
-      }
-      .arrow {
-        flex: none; width: 46px; height: 46px; border-radius: 999px;
-        border: 1px solid var(--line-strong); background: var(--paper);
-        color: var(--ink); font-size: 1.2rem; cursor: pointer;
-        display: grid; place-items: center; transition: transform 0.15s ease;
-      }
-      .arrow:hover:not(:disabled) { transform: scale(1.08); border-color: var(--sky); color: var(--sky-deep); }
-      .arrow:disabled { opacity: 0.3; cursor: not-allowed; }
-
-      .book {
-        position: relative; flex: 1 1 auto; max-width: 940px;
-        aspect-ratio: 940 / 600; perspective: 2400px;
-      }
-      @media (max-width: 900px) { .book { aspect-ratio: 3 / 4; } }
-
-      .sheet, .turner {
-        position: absolute; inset: 0;
-        background: var(--paper);
-        border-radius: 4px 8px 8px 4px;
-        box-shadow: var(--shadow);
-        /* left "binding" edge */
-        border-left: 3px solid var(--line-strong);
+      /* ---------------- the panel ---------------- */
+      .panel {
+        position: relative;
+        width: 100%;
+        max-width: 1200px;
+        border-radius: 22px;
         overflow: hidden;
-      }
-      .turner {
-        transform-origin: left center;
-        backface-visibility: hidden;
-        transition: transform 0.7s cubic-bezier(0.4, 0.15, 0.2, 1);
-        z-index: 3; display: none;
-      }
-      .turner.on { display: block; }
-      .turner::after {
-        content: ""; position: absolute; inset: 0;
-        background: linear-gradient(90deg, rgba(0,0,0,0.16), rgba(0,0,0,0) 22%);
-        pointer-events: none;
-      }
-      @media (prefers-reduced-motion: reduce) {
-        .turner { transition-duration: 0.001s; }
+        background:
+          radial-gradient(720px 480px at 4% -8%, rgba(38, 132, 88, 0.55), transparent 55%),
+          radial-gradient(760px 480px at 98% -4%, rgba(200, 150, 62, 0.46), transparent 55%),
+          radial-gradient(1000px 520px at 50% 128%, rgba(28, 108, 118, 0.16), transparent 60%),
+          var(--panel);
+        box-shadow: 0 40px 120px -40px rgba(0, 0, 0, 0.8),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+        padding: clamp(1.1rem, 2.5vw, 2rem) clamp(1.1rem, 3.5vw, 3rem)
+          clamp(1.1rem, 2.5vw, 2rem);
       }
 
-      /* ---- paper page: one clean summary per page ---- */
-      .paper {
-        height: 100%; display: flex; flex-direction: column;
-        padding: clamp(1.8rem, 4vw, 3.4rem) clamp(1.8rem, 5vw, 3.8rem);
+      /* ---------------- nav ---------------- */
+      .nav {
+        position: relative; z-index: 2;
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 1rem; padding: 0.4rem 0 0.2rem;
       }
-      .paper .kicker {
-        display: flex; gap: 0.7rem; align-items: center; flex-wrap: wrap;
-        font-size: 0.72rem; font-weight: 700; letter-spacing: 0.16em;
-        text-transform: uppercase;
+      .logo { display: inline-flex; align-items: center; gap: 0.6rem;
+        font-weight: 600; letter-spacing: 0.18em; font-size: 0.92rem; }
+      .logo-mark {
+        display: grid; grid-template-columns: repeat(3, 4px);
+        grid-auto-rows: 4px; gap: 2px;
       }
-      .paper .kicker .cat { color: var(--kraft); }
-      .paper .kicker .byline { color: var(--ink-faint); }
-      .paper h3 {
-        font-family: var(--serif); font-weight: 700; letter-spacing: -0.02em;
-        font-size: clamp(1.5rem, 1.1rem + 2vw, 2.4rem); line-height: 1.08;
-        margin: 0.8rem 0 0; max-width: 20ch; text-wrap: balance;
-      }
-      .paper .lead {
-        font-family: var(--serif); color: var(--ink);
-        font-size: clamp(1.05rem, 0.95rem + 0.6vw, 1.3rem); line-height: 1.6;
-        margin: 1.35rem 0 0; max-width: 48ch;
-      }
-      .paper .stat { display: flex; align-items: baseline; gap: 0.8rem; margin: 1.7rem 0 0; }
-      .paper .stat .n {
-        font-family: var(--serif); font-weight: 700; line-height: 0.9;
-        font-size: clamp(2.4rem, 1.7rem + 3.4vw, 3.8rem); color: var(--sky-deep);
-      }
-      .paper .stat .lbl { font-size: 0.9rem; color: var(--ink-soft); max-width: 24ch; }
-      .paper .punch {
-        font-family: var(--serif); font-style: italic; color: var(--kraft);
-        font-size: clamp(1.02rem, 0.9rem + 0.5vw, 1.25rem);
-        margin: 1.3rem 0 0; max-width: 42ch;
-      }
-      .paper .foot {
-        margin-top: auto; padding-top: 1.4rem; border-top: 1px solid var(--line);
-        display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
-      }
-      .paper .eq { font-family: var(--serif); font-style: italic; color: var(--ink-soft); font-size: 0.95rem; }
-      .paper .read {
-        margin-left: auto; font-size: 0.85rem; font-weight: 700; color: var(--ink);
-        text-decoration: none; border-bottom: 2px solid var(--sky); padding-bottom: 1px;
-      }
-      .paper .read:hover { color: var(--sky-deep); }
+      .logo-mark i { border-radius: 1px; background: #2c2f2c; }
+      .logo-mark i.g { background: #57b877; }
+      .logo-mark i.a { background: var(--amber); }
+      .logo-mark i.t { background: var(--teal); }
 
-      .dots-nav { display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.4rem; }
-      .dots-nav button {
-        width: 9px; height: 9px; border-radius: 999px; border: none; padding: 0;
-        background: var(--line-strong); cursor: pointer;
+      .links { display: flex; gap: clamp(1rem, 2.4vw, 2.1rem); }
+      .links a {
+        color: var(--muted); text-decoration: none; font-size: 0.82rem;
+        letter-spacing: 0.02em; transition: color 0.15s ease;
       }
-      .dots-nav button.active { background: var(--sky); transform: scale(1.25); }
-      .flip-hint { text-align: center; font-size: 0.75rem; color: var(--ink-faint); margin-top: 0.9rem; }
+      .links a:hover { color: var(--ink); }
 
-      /* responsive: flatten the book */
-      @media (max-width: 900px) {
-        .paper { padding: 1.6rem 1.4rem; }
-        .book { perspective: none; }
+      .btn {
+        font-family: var(--mono); font-size: 0.8rem; letter-spacing: 0.02em;
+        color: var(--ink); text-decoration: none; cursor: pointer;
+        border: 1px solid var(--line); border-radius: 4px;
+        padding: 0.5rem 0.9rem; background: rgba(255, 255, 255, 0.02);
+        display: inline-flex; align-items: center; gap: 0.5rem;
+        transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+        white-space: nowrap;
+      }
+      .btn:hover { background: var(--ink); color: #0a0b0a; border-color: var(--ink); }
+      .btn .arw { transition: transform 0.15s ease; }
+      .btn:hover .arw { transform: translateX(3px); }
+
+      /* ---------------- hero text ---------------- */
+      .hero {
+        position: relative; z-index: 2; text-align: center;
+        padding: clamp(2.4rem, 6vw, 4.6rem) 1rem clamp(1.4rem, 3vw, 2.4rem);
+      }
+      .hero h1 {
+        margin: 0 auto; max-width: 24ch;
+        font-weight: 500; letter-spacing: -0.01em;
+        font-size: clamp(1.6rem, 0.9rem + 3.4vw, 3.3rem); line-height: 1.3;
+      }
+      .hl {
+        position: relative; display: inline-block; color: #fbf6ea;
+        padding: 0.02em 0.36em; margin-top: 0.15em;
+        border: 1.5px solid var(--amber); border-radius: 3px;
+        background: linear-gradient(rgba(217, 164, 65, 0.08), rgba(217, 164, 65, 0));
+      }
+      .hl::before {
+        content: ""; position: absolute; left: -9px; top: -9px;
+        width: 11px; height: 11px;
+        border-left: 2px solid var(--teal); border-top: 2px solid var(--teal);
+      }
+      .hl::after {
+        content: ""; position: absolute; right: -7px; bottom: -9px;
+        width: 11px; height: 11px;
+        border-right: 2px solid var(--amber); border-bottom: 2px solid var(--amber);
+      }
+      .hero .sub {
+        margin: clamp(1.2rem, 3vw, 1.8rem) auto 0; max-width: 46ch;
+        color: var(--muted); font-size: clamp(0.76rem, 0.7rem + 0.3vw, 0.9rem);
+        line-height: 1.85; letter-spacing: 0.01em;
+      }
+      .hero .cta { margin-top: clamp(1.6rem, 3.5vw, 2.3rem); }
+
+      /* ---------------- the scene (code-wall hero) ---------------- */
+      .scene {
+        position: relative; z-index: 1;
+        height: clamp(300px, 42vw, 470px);
+        border-radius: 14px; overflow: hidden;
+        background: #050606;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+      }
+      #matrix { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
+      .scene .vignette {
+        position: absolute; inset: 0; z-index: 2; pointer-events: none;
+        background:
+          radial-gradient(130% 100% at 50% 42%, transparent 26%, rgba(4, 5, 5, 0.6) 78%),
+          linear-gradient(90deg, rgba(4, 5, 5, 0.95), transparent 16%, transparent 84%, rgba(4, 5, 5, 0.95));
+      }
+      .scene .blooms {
+        position: absolute; inset: 0; z-index: 3; pointer-events: none;
+        background:
+          radial-gradient(280px 150px at 30% 90%, rgba(60, 210, 199, 0.5), transparent 70%),
+          radial-gradient(280px 150px at 70% 90%, rgba(230, 176, 74, 0.46), transparent 70%),
+          radial-gradient(300px 240px at 50% 56%, rgba(255, 255, 255, 0.17), transparent 72%),
+          linear-gradient(to bottom, transparent 60%, rgba(3, 4, 4, 0.5) 100%);
+      }
+      .figure {
+        position: absolute; left: 50%; bottom: 11%;
+        transform: translateX(-50%);
+        height: 47%; width: auto; z-index: 4;
+        fill: #050707;
+        filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.85));
       }
 
-      footer.site {
-        border-top: 1px solid var(--line); text-align: center;
-        padding: 2rem 1.5rem 3rem; color: var(--ink-faint); font-size: 0.8rem;
+      /* ---------------- overlay cards ---------------- */
+      .card {
+        position: absolute; z-index: 6;
+        background: rgba(9, 11, 11, 0.66);
+        backdrop-filter: blur(6px);
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        border-radius: 9px; padding: 0.6rem 0.75rem;
+        font-size: 0.56rem; letter-spacing: 0.06em; color: var(--muted);
+        box-shadow: 0 12px 30px -14px rgba(0, 0, 0, 0.8);
       }
-      :focus-visible { outline: 2px solid var(--sky); outline-offset: 3px; border-radius: 4px; }
+      .card-h {
+        display: flex; align-items: center; gap: 0.4rem;
+        color: var(--ink); font-size: 0.58rem; letter-spacing: 0.12em;
+        text-transform: uppercase; margin-bottom: 0.5rem;
+      }
+      .pulse {
+        width: 6px; height: 6px; border-radius: 999px; background: var(--teal);
+        box-shadow: 0 0 8px var(--teal); animation: pulse 1.6s ease-in-out infinite;
+      }
+      @keyframes pulse { 0%,100% { opacity: 0.35; } 50% { opacity: 1; } }
+      .card-left { left: 4%; bottom: 20%; width: 172px; }
+      .bar {
+        height: 5px; border-radius: 999px; background: rgba(255, 255, 255, 0.1);
+        overflow: hidden; margin-bottom: 0.5rem;
+      }
+      .bar span {
+        display: block; height: 100%;
+        background: linear-gradient(90deg, var(--teal), #7fe0d6);
+        box-shadow: 0 0 8px rgba(60, 199, 189, 0.7);
+        animation: fill 3.5s ease-in-out infinite alternate;
+      }
+      @keyframes fill { from { width: 46%; } to { width: 88%; } }
+      .card-row { display: flex; justify-content: space-between; }
+      .tealx { color: var(--teal); }
+      .amberx { color: var(--amber); }
+
+      .card-right { right: 4%; bottom: 15%; width: 200px; }
+      .heat { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2px; margin-bottom: 0.6rem; }
+      .heat i { aspect-ratio: 1; border-radius: 1px; background: rgba(255, 255, 255, 0.08); }
+      .stats { display: flex; justify-content: space-between; gap: 0.4rem; text-align: left; }
+      .stats > div { display: flex; flex-direction: column; gap: 0.15rem; }
+      .stats b { color: var(--ink); font-size: 0.82rem; letter-spacing: 0; font-weight: 600; }
+      .stats span { font-size: 0.5rem; color: var(--faint); }
+
+      /* ---------------- responsive ---------------- */
+      @media (max-width: 720px) {
+        .links { display: none; }
+        .card-left { width: 140px; left: 3%; bottom: 22%; }
+        .card-right { width: 150px; right: 3%; bottom: 16%; }
+        .stats b { font-size: 0.66rem; }
+      }
+      @media (max-width: 460px) {
+        .card-left, .heat { display: none; }
+        .card-right { width: 140px; }
+      }
+      :focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
     </style>
   </head>
   <body>
-    <div class="topbar" id="topbar">
-      <a class="brand" href="#top">Tada<span class="dot">.</span><sup>press</sup></a>
-      <nav>
-        <a href="#papers">The Papers</a>
-        <button class="theme-toggle" data-toggle-theme type="button">Theme</button>
-      </nav>
-    </div>
+    <main class="panel">
+      <header class="nav">
+        <div class="logo">
+          <span class="logo-mark" aria-hidden="true">
+            <i class="g"></i><i></i><i class="a"></i>
+            <i></i><i class="t"></i><i class="g"></i>
+            <i class="a"></i><i class="g"></i><i></i>
+          </span>
+          NEXIS
+        </div>
+        <nav class="links">
+          <a href="#">Product</a>
+          <a href="#">Technology</a>
+          <a href="#">Solutions</a>
+          <a href="#">About</a>
+        </nav>
+        <a class="btn" href="#">Start creating <span class="arw">&rarr;</span></a>
+      </header>
 
-    <!-- =========================== HERO =========================== -->
-    <section class="hero" id="top">
-      <div class="clouds" aria-hidden="true">
-        <span class="cloud" data-speed="0.12" style="top:10%; left:6%;  --s:240px;"></span>
-        <span class="cloud" data-speed="0.34" style="top:22%; right:5%; --s:170px;"></span>
-        <span class="cloud" data-speed="0.20" style="top:58%; left:12%; --s:200px;"></span>
-        <span class="cloud" data-speed="0.46" style="top:72%; right:10%;--s:130px;"></span>
-      </div>
-      <div class="hero-inner">
-        <div class="box" aria-hidden="true" data-speed="0.22">
-          <div class="wall top"></div>
-          <div class="wall bottom"></div>
-          <div class="wall left"></div>
-          <div class="wall right"></div>
-          <div class="box-window">
-            <!-- HERO ART GOES HERE.
-                 Drop your illustration in as: <img src="hero.png" alt="" />
-                 (delete the .placeholder block below once you do). -->
-            <img id="hero-art" alt="" style="display:none" />
-            <div class="placeholder">
-              <div class="cloud"></div>
-              <small>your art here</small>
-            </div>
+      <section class="hero">
+        <h1>
+          The space where<br />imagination becomes<br />
+          <span class="hl">reality</span>
+        </h1>
+        <p class="sub">
+          Built for creators, thinkers, and innovators, this is where imagination
+          meets intelligent execution to turn ambitious ideas into reality.
+        </p>
+        <div class="cta">
+          <a class="btn" href="#">Start creating <span class="arw">&rarr;</span></a>
+        </div>
+      </section>
+
+      <section class="scene">
+        <canvas id="matrix"></canvas>
+
+        <svg class="figure" viewBox="0 0 100 210" aria-hidden="true">
+          <path d="M50,9 a15,15 0 1,0 0.01,0 Z
+                   M30,42 Q50,34 70,42 L64,120 Q50,126 36,120 Z
+                   M40,120 L35,206 L47,206 L50,150 L53,206 L65,206 L60,120 Z" />
+        </svg>
+
+        <div class="vignette"></div>
+        <div class="blooms"></div>
+
+        <div class="card card-left">
+          <div class="card-h"><span class="pulse"></span>AI Processing</div>
+          <div class="bar"><span></span></div>
+          <div class="card-row"><span>NEURAL SYNC</span><span class="tealx">live</span></div>
+        </div>
+
+        <div class="card card-right">
+          <div class="card-h">Neural Network</div>
+          <div class="heat" id="heat" aria-hidden="true"></div>
+          <div class="stats">
+            <div><b>12.4M</b><span>PARAMS</span></div>
+            <div><b>128</b><span>LAYERS</span></div>
+            <div><b class="tealx">99.7%</b><span>ACCURACY</span></div>
           </div>
         </div>
-        <div class="hero-copy">
-          <p class="eyebrow">Peer-reviewed &middot; est. today</p>
-          <h1 class="headline">Serious math.<br />Unserious questions.</h1>
-          <p class="sub">
-            Tada publishes rigorously-argued proofs of things that absolutely
-            did not need proving. Open the box. The conclusion was inside the
-            whole time.
-          </p>
-        </div>
-      </div>
-      <a class="scroll-cue" href="#papers"><span>&darr;</span>Read the papers</a>
-    </section>
-
-    <!-- =========================== PAPERS =========================== -->
-    <section class="papers" id="papers">
-      <div class="papers-head">
-        <p class="eyebrow">The Archive</p>
-        <h2>See how the math ruins the vibe</h2>
-        <p>
-          Each paper takes a real method and points it at a problem that isn&rsquo;t
-          one. Flip through for the gist &mdash; the full proof is one click away.
-        </p>
-      </div>
-
-      <div class="book-stage">
-        <button class="arrow" id="prev" aria-label="Previous paper">&lsaquo;</button>
-        <div class="book" id="book">
-          <div class="sheet" id="sheet"></div>
-          <div class="turner" id="turner"></div>
-        </div>
-        <button class="arrow" id="next" aria-label="Next paper">&rsaquo;</button>
-      </div>
-      <div class="dots-nav" id="dotsNav"></div>
-      <p class="flip-hint">Use the arrows, swipe, or your &larr; &rarr; keys</p>
-    </section>
-
-    <footer class="site">
-      Tada Press &middot; A Journal of Applied Overthinking &middot; 2026
-    </footer>
+      </section>
+    </main>
 
     <script>
-      // ================= content: the parody papers =================
-      const papers = [
-        {
-          cat: "Paper 01 · Applied Bayesian Heartbreak",
-          byline: "F. Nahadi",
-          title: "The Statistical Impossibility of “He’s Just Busy”",
-          lead: "Start from a belief as extreme as “they’re my soulmate,” and Bayes’ theorem says it takes roughly five ignored texts before disinterest becomes the likelier explanation. Four simply isn’t enough to break the delusion.",
-          stat: "90.9%",
-          statLbl: "chance they’re still interested — after four ignored texts",
-          punch: "Technically, they’re just really busy right now.",
-          eq: 'O(H|E<sup>n</sup>) = O(H) · (0.052)<sup>n</sup>',
-        },
-        {
-          cat: "Paper 02 · Statistical Thermodynamics",
-          byline: "F. Nahadi",
-          title: "The Heat Death of a Group Chat",
-          lead: "A group chat is a closed system, so by the Second Law its entropy can only rise. Left alone, it drifts inexorably toward its final state: one unanswered “we should all catch up soon.”",
-          stat: "0.4%",
-          statLbl: "probability of spontaneous revival",
-          punch: "The chat isn’t dead — only thermodynamically inevitable.",
-          eq: "dS/dt &ge; 0",
-        },
-        {
-          cat: "Paper 03 · Decision Theory",
-          byline: "F. Nahadi",
-          title: "A First-Principles Proof That Buying a Yoga Mat Is Exercise",
-          lead: "Under a generous enough discount rate, the utility of intending to work out converges on the utility of actually working out. The purchase, therefore, already counts.",
-          stat: "5%",
-          statLbl: "chance the mat is ever unrolled",
-          punch: "The mat is, mathematically, a completed workout.",
-          eq: "U(intent) &rarr; U(action) as r &rarr; &infin;",
-        },
-      ];
-
-      // ================= render =================
-      function renderPaper(p) {
-        return (
-          '<div class="paper">' +
-          '<div class="kicker"><span class="cat">' + p.cat +
-          '</span><span class="byline">' + p.byline + "</span></div>" +
-          "<h3>" + p.title + "</h3>" +
-          '<p class="lead">' + p.lead + "</p>" +
-          '<div class="stat"><span class="n">' + p.stat +
-          '</span><span class="lbl">' + p.statLbl + "</span></div>" +
-          '<p class="punch">' + p.punch + "</p>" +
-          '<div class="foot"><span class="eq">' + p.eq + "</span>" +
-          '<a class="read" href="#">Read the full paper &rarr;</a></div>' +
-          "</div>"
-        );
-      }
-
-      // ================= flip navigation =================
-      const sheet = document.getElementById("sheet");
-      const turner = document.getElementById("turner");
-      const prevBtn = document.getElementById("prev");
-      const nextBtn = document.getElementById("next");
-      const dotsNav = document.getElementById("dotsNav");
-      let idx = 0, animating = false;
-
-      papers.forEach((_, i) => {
-        const b = document.createElement("button");
-        b.setAttribute("aria-label", "Go to paper " + (i + 1));
-        b.addEventListener("click", () => jump(i));
-        dotsNav.appendChild(b);
-      });
-      const navDots = Array.from(dotsNav.children);
-
-      function syncControls() {
-        prevBtn.disabled = idx === 0;
-        nextBtn.disabled = idx === papers.length - 1;
-        navDots.forEach((d, i) => d.classList.toggle("active", i === idx));
-      }
-      function paint() {
-        sheet.innerHTML = renderPaper(papers[idx]);
-        syncControls();
-      }
-
-      function go(dir) {
-        const target = idx + dir;
-        if (animating || target < 0 || target >= papers.length) return;
-        animating = true;
-
-        // The sheet underneath always shows the destination page.
-        // The turner (backface-hidden) animates over the top.
-        if (dir > 0) {
-          sheet.innerHTML = renderPaper(papers[target]);
-          turner.innerHTML = renderPaper(papers[idx]);
-          turner.classList.add("on");
-          turner.style.transition = "none";
-          turner.style.transform = "rotateY(0deg)";
-          void turner.offsetWidth; // reflow
-          turner.style.transition = "";
-          turner.style.transform = "rotateY(-180deg)";
-        } else {
-          sheet.innerHTML = renderPaper(papers[idx]);
-          turner.innerHTML = renderPaper(papers[target]);
-          turner.classList.add("on");
-          turner.style.transition = "none";
-          turner.style.transform = "rotateY(-180deg)";
-          void turner.offsetWidth;
-          turner.style.transition = "";
-          turner.style.transform = "rotateY(0deg)";
+      // ---- little heatmap in the Neural Network card ----
+      (function () {
+        const heat = document.getElementById("heat");
+        const cols = [
+          "rgba(60,199,189,", "rgba(217,164,65,", "rgba(255,255,255,",
+        ];
+        for (let i = 0; i < 36; i++) {
+          const s = document.createElement("i");
+          const c = cols[(Math.random() * cols.length) | 0];
+          const a = Math.random() < 0.55 ? 0.08 : 0.3 + Math.random() * 0.6;
+          s.style.background = c + a.toFixed(2) + ")";
+          heat.appendChild(s);
         }
-        idx = target;
-        syncControls();
-      }
-      turner.addEventListener("transitionend", (e) => {
-        if (e.propertyName !== "transform") return;
-        turner.classList.remove("on");
-        sheet.innerHTML = renderPaper(papers[idx]);
-        animating = false;
-      });
-      function jump(i) {
-        if (i === idx || animating) return;
-        go(i > idx ? 1 : -1); // one-step flip toward the target
-      }
+      })();
 
-      prevBtn.addEventListener("click", () => go(-1));
-      nextBtn.addEventListener("click", () => go(1));
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "ArrowRight") go(1);
-        if (e.key === "ArrowLeft") go(-1);
-      });
+      // ---- the code-wall canvas ----
+      (function () {
+        const cv = document.getElementById("matrix");
+        const ctx = cv.getContext("2d");
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const CHARS =
+          "アイウエオカキクケコサシスセソタチツテトナニヌネノﾊﾋﾌﾍﾎ0123456789ABCDEFXYZ<>/\\#*+=".split("");
+        const teal = [72, 224, 212], amber = [233, 179, 78];
+        const cell = 15;
+        let W, H, cols, rows, grid, heads;
+        const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const lerp = (a, b, t) => a + (b - a) * t;
 
-      // swipe
-      let sx = null;
-      const book = document.getElementById("book");
-      book.addEventListener("pointerdown", (e) => (sx = e.clientX));
-      book.addEventListener("pointerup", (e) => {
-        if (sx === null) return;
-        const dx = e.clientX - sx;
-        if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
-        sx = null;
-      });
+        function build() {
+          const r = cv.getBoundingClientRect();
+          W = r.width; H = r.height;
+          cv.width = W * dpr; cv.height = H * dpr;
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          cols = Math.ceil(W / cell); rows = Math.ceil(H / cell);
+          grid = []; heads = [];
+          for (let x = 0; x < cols; x++) {
+            grid[x] = [];
+            for (let y = 0; y < rows; y++) grid[x][y] = CHARS[(Math.random() * CHARS.length) | 0];
+            heads[x] = { y: Math.random() * rows, spd: 0.12 + Math.random() * 0.32 };
+          }
+          ctx.font = (cell - 2) + "px " + getComputedStyle(document.body).fontFamily;
+          ctx.textBaseline = "top";
+        }
 
-      paint();
+        // brightness map: bright vertical centre band, bright middle rows, faint floor line
+        function profile(fx, fy) {
+          const cx = 1 - Math.min(1, Math.abs(fx - 0.5) * 1.8);
+          const cy = Math.max(0, 1 - Math.abs(fy - 0.44) * 1.1);
+          const floor = Math.max(0, 0.5 - Math.abs(fy - 0.82) * 2.8);
+          return Math.min(1, Math.max(cx * cy, floor * Math.max(0, cx)) * 1.25);
+        }
 
-      // ================= chrome: reveal + theme + topbar =================
-      requestAnimationFrame(() => document.querySelector(".hero").classList.add("open"));
-
-      const topbar = document.getElementById("topbar");
-
-      // parallax: drift the clouds and box at their own rates while scrolling
-      const layers = Array.from(document.querySelectorAll("[data-speed]"));
-      const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-      let ticking = false;
-      function applyParallax() {
-        const y = window.scrollY;
-        if (!reduceMotion) {
-          for (const el of layers) {
-            const s = parseFloat(el.dataset.speed);
-            el.style.transform = "translate3d(0," + (y * s).toFixed(1) + "px,0)";
+        function render(t) {
+          ctx.clearRect(0, 0, W, H);
+          for (let x = 0; x < cols; x++) {
+            const h = heads[x];
+            if (!reduce) { h.y += h.spd; if (h.y > rows + 4) h.y = -Math.random() * 12; }
+            const fx = x / (cols - 1 || 1);
+            for (let y = 0; y < rows; y++) {
+              const fy = y / (rows - 1 || 1);
+              const g = profile(fx, fy);
+              if (g < 0.02) continue;
+              let head = 0;
+              const dh = y - h.y;
+              if (!reduce) { if (dh < 0 && dh > -1.4) head = 1; else if (dh < 0 && dh > -6) head = 0.22; }
+              const tw = reduce ? 0.85 : 0.55 + 0.45 * Math.sin(t * 0.003 + x * 1.7 + y * 0.9);
+              let a = Math.min(1, g * (0.42 + 0.95 * tw) + head * 0.85);
+              if (a < 0.03) continue;
+              const wl = head * 0.85;
+              const r = Math.round(lerp(lerp(teal[0], amber[0], fx), 245, wl));
+              const gg = Math.round(lerp(lerp(teal[1], amber[1], fx), 245, wl));
+              const b = Math.round(lerp(lerp(teal[2], amber[2], fx), 240, wl));
+              ctx.fillStyle = "rgba(" + r + "," + gg + "," + b + "," + a.toFixed(3) + ")";
+              if (!reduce && Math.random() < 0.03) grid[x][y] = CHARS[(Math.random() * CHARS.length) | 0];
+              ctx.fillText(grid[x][y], x * cell, y * cell);
+            }
           }
         }
-        ticking = false;
-      }
-      const onScroll = () => {
-        topbar.classList.toggle("scrolled", window.scrollY > 8);
-        if (!ticking) { requestAnimationFrame(applyParallax); ticking = true; }
-      };
-      window.addEventListener("scroll", onScroll, { passive: true });
-      onScroll(); applyParallax();
 
-      const root = document.documentElement;
-      const saved = localStorage.getItem("theme");
-      if (saved) root.setAttribute("data-theme", saved);
-      document.querySelector("[data-toggle-theme]").addEventListener("click", () => {
-        const cur = root.getAttribute("data-theme") ||
-          (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-        const next = cur === "dark" ? "light" : "dark";
-        root.setAttribute("data-theme", next);
-        localStorage.setItem("theme", next);
-      });
+        let last = 0;
+        function loop(t) {
+          requestAnimationFrame(loop);
+          if (t - last < 33) return;
+          last = t;
+          render(t);
+        }
+
+        build();
+        if (reduce) render(0);
+        else requestAnimationFrame(loop);
+        let rt;
+        addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(build, 150); });
+      })();
     </script>
   </body>
 </html>
