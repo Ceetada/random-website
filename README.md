@@ -1,40 +1,26 @@
-# Witty — AI companion landing page
+# Tada
 
-A concept landing page for **Witty**, a warm, funny AI companion you talk to when
-you're bored, overthinking, or just need to vent — therapist energy, minus the
-clinical part.
+*A Journal of Applied Overthinking* — rigorously-argued proofs of things that
+absolutely did not need proving.
 
-**Design direction:** one consistent cinematic world drawn from the hero
-photograph — deep mossy-forest greens, a glowing golden sky as the single
-accent, cream editorial-serif display type, and warm rust/amber pops. The page
-opens on a full-bleed cinematic hero and carries that palette all the way down.
+This is a **static site**: a single self-contained `index.html` (all CSS/JS
+inline, no build step, no dependencies). It deploys as-is on any static host.
 
-## Run it
+## Files
+- `index.html` — the site: math-wall hero, parody-paper flip-book, full-paper reader.
+- `tada.html` — an earlier "box reveal" design, kept for reference.
+- `backend/` — an early, superseded Next.js publishing prototype. **Not used by
+  the live site** and intentionally excluded from deploys. Preserved for when we
+  build the real "log in and publish" backend.
 
-Static site — no build step, no dependencies. Open `index.html`, or serve it:
+## Deploying on Vercel
+Import the repo and deploy — no configuration needed. Because the root has no
+`package.json`, Vercel treats it as a static site and serves `index.html`
+directly. (`vercel.json` just enables clean URLs, so `/tada` serves `tada.html`.)
+
+## Local preview
+Open `index.html` in a browser, or serve the folder:
 
 ```bash
 python3 -m http.server 8000   # then visit http://localhost:8000
 ```
-
-## Files
-
-| File | Purpose |
-| --- | --- |
-| `index.html` | Structure and copy |
-| `styles.css` | Cinematic hero, dark-forest palette, glass, animations, responsive |
-| `script.js` | Self-playing chat, live "listening" timer, scroll reveals, vibe previews |
-| `assets/hero.jpg` | The hero photograph (optimized). See `assets/README.md` to swap it |
-
-## Highlights
-
-- **Cinematic hero** — full-bleed photo, editorial serif headline, minimal nav,
-  legibility scrim, and a glass caption card
-- **Consistent palette** — forest green + golden light + cream, top to bottom
-- **Self-playing conversation** in a "glimpse" section — types, loops, judgment-free
-- **"Choose your vibe"** personality cards (Listener, Hype Friend, Deep Diver, Goofball)
-- **Accessible touches** — `prefers-reduced-motion`, keyboard-focusable cards, strong contrast
-- Fully responsive down to mobile
-
-> Note: Witty is a concept for a supportive companion, not a substitute for
-> professional care. The page includes a visible crisis-resources reminder.

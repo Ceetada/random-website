@@ -1,3 +1,31 @@
-_shot.cjs
-_*.cjs
-node_modules/
+# dependencies
+/node_modules
+/backend/node_modules
+
+# keep repo root static for Vercel — tooling must not add a root package.json
+# (the real Next.js project lives in backend/ and is tracked there)
+/package.json
+/package-lock.json
+
+# next.js
+/.next
+/out
+/backend/.next
+next-env.d.ts
+
+# production
+/build
+
+# local data (the SQLite database and its journal)
+/data/*.db
+/data/*.db-*
+
+# env files with secrets
+.env
+.env.local
+
+# misc
+.DS_Store
+*.pem
+npm-debug.log*
+*.tsbuildinfo
