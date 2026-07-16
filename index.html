@@ -263,6 +263,50 @@
       footer.site { color: var(--faint); font-size: 0.75rem; letter-spacing: 0.06em;
         text-align: center; padding: 0 0 1rem; }
 
+      /* ---- full-paper reader ---- */
+      .reader { position: fixed; inset: 0; z-index: 100; display: none; }
+      .reader.open { display: block; }
+      .reader .backdrop { position: absolute; inset: 0;
+        background: rgba(0, 0, 0, 0.78); backdrop-filter: blur(4px); }
+      .doc {
+        position: relative; max-width: 820px; margin: 4vh auto; max-height: 92vh;
+        display: flex; flex-direction: column; overflow: hidden;
+        background:
+          radial-gradient(600px 340px at 0% 0%, rgba(38, 132, 88, 0.1), transparent 60%),
+          radial-gradient(600px 340px at 100% 100%, rgba(200, 150, 62, 0.1), transparent 60%),
+          var(--card);
+        border: 1px solid var(--line); border-radius: 16px;
+        box-shadow: 0 50px 130px -30px #000;
+      }
+      .doc .close {
+        position: absolute; top: 12px; right: 14px; z-index: 3;
+        width: 34px; height: 34px; border-radius: 999px; cursor: pointer;
+        border: 1px solid var(--line); background: rgba(20, 22, 22, 0.85);
+        color: var(--ink); font-size: 0.95rem; font-family: var(--mono); line-height: 1;
+      }
+      .doc .close:hover { border-color: var(--teal); color: var(--teal); }
+      .doc-body { overflow-y: auto; padding: clamp(1.6rem, 4vw, 3.2rem); }
+      .doc-body h1 { font-weight: 500; font-size: clamp(1.35rem, 1rem + 1.6vw, 2rem);
+        line-height: 1.22; letter-spacing: -0.01em; margin: 0 2rem 0 0; }
+      .doc-body .subtitle { color: var(--amber); font-style: italic; margin: 0.5rem 0 0; font-size: 0.95rem; }
+      .doc-body .meta { color: var(--faint); font-size: 0.78rem; letter-spacing: 0.04em;
+        margin: 0.9rem 0 1.6rem; padding-bottom: 1.4rem; border-bottom: 1px solid var(--line); }
+      .doc-body h2 { color: var(--teal); font-size: 0.74rem; letter-spacing: 0.16em;
+        text-transform: uppercase; margin: 2.2rem 0 0.9rem; }
+      .doc-body p { color: #cfcec7; line-height: 1.85; font-size: 0.88rem; margin: 0 0 1.1rem; }
+      .doc-body .eqb { text-align: center; color: var(--ink); font-size: 0.92rem;
+        background: rgba(255, 255, 255, 0.03); border: 1px solid var(--line);
+        border-radius: 8px; padding: 0.9rem 0.6rem; margin: 1.3rem 0; line-height: 1.9; }
+      .doc-body .callout { border-left: 2px solid var(--amber); padding: 0.1rem 0 0.1rem 1rem; margin: 1.3rem 0; }
+      .doc-body .callout b { color: var(--amber); }
+      .doc-body table { width: 100%; border-collapse: collapse; font-size: 0.75rem; margin: 1.4rem 0; }
+      .doc-body th, .doc-body td { border-bottom: 1px solid var(--line); padding: 0.5rem 0.55rem; text-align: left; }
+      .doc-body th { color: var(--muted); font-weight: 600; letter-spacing: 0.04em; }
+      .doc-body caption { caption-side: bottom; color: var(--faint); font-size: 0.72rem;
+        padding-top: 0.7rem; font-style: italic; text-align: left; }
+      .doc-body .tealx { color: var(--teal); }
+      .doc-body .amberx { color: var(--amber); }
+
       @media (max-width: 720px) {
         .links { display: none; }
         .card-left { width: 140px; left: 3%; bottom: 22%; }
@@ -359,6 +403,14 @@
       <p class="flip-hint">Arrows &middot; swipe &middot; &larr; &rarr; keys</p>
     </section>
 
+    <div class="reader" id="reader" aria-hidden="true">
+      <div class="backdrop" data-close></div>
+      <div class="doc">
+        <button class="close" data-close aria-label="Close paper">&#10005;</button>
+        <div class="doc-body" id="docBody"></div>
+      </div>
+    </div>
+
     <footer class="site">Tada &middot; A Journal of Applied Overthinking &middot; 2026</footer>
 
     <script>
@@ -444,36 +496,123 @@
       })();
 
       // ---------- the parody papers (flip-book) ----------
+      const COMING = "<p>The full write-up is still clearing peer review — which, at this journal, means the author re-reading it alone at 2&nbsp;a.m. Check back soon.</p>";
+
       const papers = [
         {
-          cat: "Paper 01 · Applied Bayesian Heartbreak",
-          byline: "F. Nahadi",
-          title: "The Statistical Impossibility of “He’s Just Busy”",
-          lead: "Start from a belief as extreme as “they’re my soulmate,” and Bayes’ theorem says it takes roughly five ignored texts before disinterest becomes the likelier explanation. Four simply isn’t enough to break the delusion.",
-          stat: "90.9%",
-          statLbl: "chance they’re still interested — after four ignored texts",
-          punch: "Technically, they’re just really busy right now.",
-          eq: "O(H|Eⁿ) = O(H) · (0.052)ⁿ",
+          cat: "Paper 01 · Revealed-Preference Agronomy",
+          byline: "Ceetada",
+          title: "An Agronomic Proof That “If He Wanted To, He Would”",
+          lead: "Liebig’s Law says a field grows only as much as its scarcest nutrient allows — abundance in everything else is irrelevant. A text costs essentially zero on every axis but desire, so for a cheap enough act, output becomes a clean measurement of wanting. His own Instagram supplied the soil assay.",
+          stat: "4s",
+          statLbl: "the entire cost of the text — every other nutrient was in surplus",
+          punch: "On the balance of the evidence he published himself: no longer plausibly busy.",
+          eq: "Y = Yₘₐₓ · minᵢ (xᵢ ⁄ kᵢ)",
+          full: `<h1>A Revealed Preference Theory of Romantic Effort</h1>
+<p class="subtitle">An Agronomic Proof That If He Wanted To, He Would</p>
+<p class="meta">Ceetada &middot; Department of Things That Don’t Matter &middot; July 16, 2026</p>
+
+<h2>Introduction</h2>
+<p>In 1840, Justus von Liebig was shown a field that would not grow. The farmer had spread every nutrient he could afford. There was potassium in abundance. There was magnesium to spare. The crop died anyway.</p>
+<p>Liebig’s answer founded agricultural science. Growth is not governed by the total resources available; it is governed by the scarcest one. A field with a thousand kilograms of potassium and no nitrogen grows exactly as much as a field with nothing in it at all. The abundance is not merely insufficient. It is irrelevant.</p>
+<p>This law is generous, and we wish to be clear about its generosity before we use it. Liebig will excuse a great deal. He excuses the man who cannot fly to you because he cannot fund the flight. He excuses the woman who cannot come because her mother is dying and there is no one else. He excuses distance, poverty, exhaustion, and every season of survival — and he excuses them with a proof. Desire does not manufacture nitrogen, and nothing in this paper will pretend otherwise.</p>
+<p>We show, however, that the law’s generosity is precisely what convicts him. Liebig’s Law does not excuse a shortage in the abstract. It excuses a shortage <em>relative to a requirement</em>. And when we compute the requirement vector of the thing you actually asked for, every stave in the barrel goes to infinity except one.</p>
+<p class="callout"><b>The field was not lazy. The field had no nitrogen. This field has nitrogen. We checked.</b></p>
+
+<h2>1 · The Model</h2>
+<p><b class="amberx">Definition 1 (Liebig’s Law).</b> Let Y be observed output and let x₁,…,xₙ be the inputs. Let k = (k₁,…,kₙ) be the <em>requirement vector</em>: the quantity of each input consumed by one unit of output. Then</p>
+<div class="eqb">Y = Yₘₐₓ · minᵢ ( xᵢ ⁄ kᵢ ) &nbsp;&nbsp;(1)</div>
+<p>The inputs are the staves of a barrel. The water rises to the shortest stave and stops. It does not matter how tall the others are. This is not a metaphor; it is equation (1).</p>
+<p>The critical and universally forgotten feature of (1) is that <b>k is not a property of him. It is a property of the output.</b> Different acts have different requirement vectors, and therefore different limiting factors. A man may be genuinely, provably, unimpeachably constrained with respect to one output and entirely unconstrained with respect to another — on the same afternoon, in the same body.</p>
+<p>Which is why the whole argument turns on a question nobody thinks to ask: what, precisely, did you ask him for?</p>
+
+<h2>2 · The Requirement Vector of a Text Message</h2>
+<p>We compute k for the output “one text message.”</p>
+<div class="eqb">
+  k<sub>money</sub> = $0 &nbsp;&nbsp;<span class="tealx">(the plan is already paid for)</span><br />
+  k<sub>proximity</sub> = 0 km &nbsp;&nbsp;<span class="tealx">(this is the entire purpose of telephony)</span><br />
+  k<sub>time</sub> = 4 seconds &nbsp;&nbsp;<span class="tealx">(measured; two thumbs)</span><br />
+  k<sub>obligation</sub> = 0 &nbsp;&nbsp;<span class="tealx">(it can be done from a hospital corridor)</span><br />
+  k<sub>bandwidth</sub> ≈ 1 sentence &nbsp;&nbsp;<span class="tealx">(“thinking of you” is four words)</span>
+</div>
+<p class="callout"><b>Lemma 2 (Divergence of the Non-Desire Ratios).</b> For every input i ≠ D, kᵢ → 0, and therefore xᵢ ⁄ kᵢ → ∞ for any strictly positive supply xᵢ whatsoever.</p>
+<p>Note the strength of this. It does not require that he be rich, free, rested, or nearby. It requires only that he possess a nonzero quantity of each — which is to say, that he be alive.</p>
+<p class="callout"><b>Theorem 3 (Collapse of the Minimum).</b> For any output whose requirement vector satisfies kᵢ ≈ 0 for all i ≠ D, equation (1) reduces to Y = Yₘₐₓ · min(x_D⁄k_D, ∞, ∞, …) = Yₘₐₓ · x_D ⁄ k_D.</p>
+<p><em>Proof.</em> The minimum of a finite set containing one finite element and n − 1 divergent elements is the finite element. ∎</p>
+<p><b class="amberx">Corollary 4 (The Cheap Act is the Only Clean Test).</b> Liebig’s Law, applied to a text message, is no longer a barrel. It is a measurement. Output is a strictly increasing, injective function of desire, with no other input entering the expression.</p>
+<p>This inverts the entire folk defence. The cheapness of the act is produced in his favour (“it’s not a big deal, he’s just bad at texting”). It is the <em>most incriminating</em> fact in the paper. An expensive act is confounded: the aeroplane he did not board is confounded by the money he did not have, and no inference about his heart survives the confound. The text is confounded by nothing. It is the perfectly controlled experiment. It removes every stave from the barrel but one.</p>
+<p>He has been running that experiment daily, for six weeks, and it has returned the same result every time.</p>
+
+<h2>3 · Revealed Capacity: The Soil Assay</h2>
+<p>The defence will now assert that some stave is short after all: that he is exhausted, overwhelmed, drained, going through something. This is an empirical claim about xᵢ, and we are not required to take his word for it — because in Liebig’s field the nutrient claim is refutable by assay.</p>
+<p class="callout"><b>Lemma 5 (Stave Heights are Bounded Below by Realised Output).</b> If an agent produced output j with requirement vector k⁽ʲ⁾, then necessarily xᵢ ≥ kᵢ⁽ʲ⁾ for every i.</p>
+<p><em>Proof.</em> He could not have produced it otherwise. ∎</p>
+<p>The assay therefore does not require his cooperation. It requires only that we look at what he did. He went to the gym: x<sub>time</sub> ≥ 90 minutes. He bought the trainers: x<sub>money</sub> &gt; 0. He wrote two hundred words in the football group chat at 11:47&nbsp;pm: x<sub>bandwidth</sub> ≥ 200 words, and x<sub>obligation</sub> was not binding, and his thumbs were in working order, and his phone was in his hand.</p>
+<p class="callout"><b>Remark 6 (The Nitrogen Was There).</b> In Liebig’s field, the claim “there was no nitrogen” is settled by a soil assay. In this case the assay is his Instagram. He conducted it himself. He published the results. He tagged the location.</p>
+
+<h2>4 · Worked Example</h2>
+<p>We now perform the assay formally. Requirements are those of one text message. Supplies are taken from his own public disclosures — which is to say, from evidence he volunteered. Substituting into (1):</p>
+<div class="eqb">Y = Yₘₐₓ · min( ∞, ∞, ∞, 3405, 200, 2, <span class="amberx">0</span> ) = <span class="amberx">0</span> &nbsp;&nbsp;(10)</div>
+<table>
+  <thead><tr><th>Nutrient</th><th>Requirement kᵢ</th><th>Observed supply xᵢ</th><th>xᵢ ⁄ kᵢ</th></tr></thead>
+  <tbody>
+    <tr><td>Money</td><td>$0</td><td>bought the trainers</td><td class="tealx">∞</td></tr>
+    <tr><td>Proximity</td><td>0 km</td><td>it is a telephone</td><td class="tealx">∞</td></tr>
+    <tr><td>Obligation</td><td>0</td><td>posted from his bed</td><td class="tealx">∞</td></tr>
+    <tr><td>Time</td><td>4 s</td><td>13,620 s of screen time</td><td>3,405</td></tr>
+    <tr><td>Bandwidth</td><td>1 sentence</td><td>200 words re: the transfer window</td><td>200</td></tr>
+    <tr><td>Physical capacity</td><td>1 thumb</td><td>2 thumbs (verified)</td><td>2</td></tr>
+    <tr><td>Desire</td><td>1 unit</td><td>0</td><td class="amberx">0</td></tr>
+  </tbody>
+  <caption>Table 1: Soil assay. Every nutrient is present in surplus. One is not present at all.</caption>
+</table>
+<p>The minimum is attained uniquely, at desire, by a margin of infinity.</p>
+
+<h2>5 · The Moving Stave</h2>
+<p>One defence survives, and we dispose of it here.</p>
+<p class="callout"><b>Proposition 7 (Uniqueness of the Limiting Factor).</b> The minimum in (1) is generically attained at a single index. A barrel does not have six shortest staves.</p>
+<p>It follows that a genuine constraint can be named in advance, and named only once. This is what an agronomist does: he nominates the deficient nutrient, then enriches it, then measures.</p>
+<p>Observe what happens when his constraint is enriched. It was work, so you stopped texting during work hours; then it was that he is bad at texting, so you called instead; then it was that he had a lot on; then it was that he is not ready. Each stave, when raised, was found not to have been the short one — and a new stave was produced from somewhere to take its place.</p>
+<p>Liebig permits a short stave. He does not permit a <em>migratory</em> one. A limiting factor that relocates every time you relieve it is not a limiting factor; it is a sequence of alibis, and the correct inference is that the short stave never moved at all — and that it is the one nobody has been willing to name out loud.</p>
+
+<h2>6 · Limitations and Scope of the Claim</h2>
+<p>Honesty requires a retreat, and we conduct it here — in the section every paper reserves for the concessions it hopes the reader has stopped reading by.</p>
+<p><b class="amberx">1. This is a likelihood ratio, not a proof.</b> The title promises a proof. The mathematics does not deliver one, and we withdraw the word. What Theorem 3 actually licenses is an inference of the form</p>
+<div class="eqb">P(non-performance | low desire) ⁄ P(non-performance | high desire ∧ genuinely low-cost act) ≫ 1 &nbsp;&nbsp;(11)</div>
+<p>This is a number that shifts a posterior. It is not a number that closes a question. “If he wanted to, he would” is therefore not a theorem but a strong prior update: for sufficiently low-cost actions, observed non-performance is strong evidence against sufficient motivation. Evidence, not entailment. Strong, not decisive.</p>
+<p><b class="amberx">2. The bandwidth stave was set by assertion.</b> We priced k<sub>bandwidth</sub> at “one sentence” by fiat, accompanied by a joke, and never measured it. This was the one nutrient capable of exonerating him, and we declined to weigh it. The four-second figure for k<sub>time</sub> is a motor cost — the labour of two thumbs. It is not the psychological cost of those same four seconds directed at a specific person about whom the sender has complicated feelings and a three-week silence to account for. We measured the enthalpy of the product and called it the height of the barrier — precisely the error an earlier comment in this series was written to catch. Three papers in, the author has relapsed into the sin of the first.</p>
+<p><b class="amberx">3. Lemma 5 equivocates on the index.</b> The Revealed Capacity argument infers, from two hundred low-stakes words to a group chat, a supply of “bandwidth” available for four high-stakes words to you. This treats bandwidth as a single fungible nutrient. But the entire force of Section 2 was that k is a property of the <em>output</em>. Capacity in a cheap context does not establish capacity in a costly one, and the cost of a message lives not in its word count but in its recipient.</p>
+<p>In short, the model holds in exactly one regime, and leaks at each of its three boundaries — <b>low cost</b> (raise it and Liebig re-enters for the defence), <b>symmetric context</b> (group-chat words prove nothing about the harder ones), and <b>a single clean choice</b> (avoidance, freeze, and shame that compounds daily are not decisions).</p>
+<p class="callout"><b>Remark 8.</b> Each of these limitations has been available to the author for the full six weeks. He has invoked none of them either. The model, whatever its flaws, has at least been running the experiment. He has not been reading the results.</p>
+
+<h2>Conclusion</h2>
+<p>We have not argued that constraints are imaginary. They are not. Liebig’s Law is the most humane theorem in the physical sciences, and it will forgive nearly anything: the airfare, the distance, the double shift, the dying parent, the year that took everything. Desire does not manufacture resources, and any theory that says otherwise is cruel and also wrong.</p>
+<p>But Liebig forgives a shortage <em>relative to a requirement</em>, and you did not ask him for an aeroplane. You asked for four seconds.</p>
+<p>There is no nitrogen defence for four seconds. The soil was rich. The field was watered. Every nutrient he possessed, he possessed in surplus, and he possessed it publicly, and he spent it — and he spent it somewhere else, and he let you watch.</p>
+<p>Within the regime where looking is valid, every stave in the barrel stands full to overflowing but one. The law does not convict him; it is not built to convict. It does something narrower and harder to shake off: given a genuinely cheap act, freely forgone, it names the stave most likely to be short. It has been naming the same one, without hesitation, every single day for six weeks.</p>
+<p class="callout"><b>In agronomy, formally, with a citation going back to 1840, that stave has a name. The name is not a proof, and it is not a verdict. It is only, on the balance of all the evidence he has published himself — no longer plausibly busy.</b></p>`,
         },
         {
           cat: "Paper 02 · Statistical Thermodynamics",
-          byline: "F. Nahadi",
+          byline: "Ceetada",
           title: "The Heat Death of a Group Chat",
           lead: "A group chat is a closed system, so by the Second Law its entropy can only rise. Left alone, it drifts inexorably toward its final state: one unanswered “we should all catch up soon.”",
           stat: "0.4%",
           statLbl: "probability of spontaneous revival",
           punch: "The chat isn’t dead — only thermodynamically inevitable.",
           eq: "dS/dt ≥ 0",
+          full: COMING,
         },
         {
           cat: "Paper 03 · Decision Theory",
-          byline: "F. Nahadi",
+          byline: "Ceetada",
           title: "A First-Principles Proof That Buying a Yoga Mat Is Exercise",
           lead: "Under a generous enough discount rate, the utility of intending to work out converges on the utility of actually working out. The purchase, therefore, already counts.",
           stat: "5%",
           statLbl: "chance the mat is ever unrolled",
           punch: "The mat is, mathematically, a completed workout.",
           eq: "U(intent) → U(action) as r → ∞",
+          full: COMING,
         },
       ];
 
@@ -560,6 +699,30 @@
         sx = null;
       });
       paint();
+
+      // ---------- full-paper reader ----------
+      const reader = document.getElementById("reader");
+      const docBody = document.getElementById("docBody");
+      function openReader(i) {
+        docBody.innerHTML = papers[i].full || "<p>Full paper coming soon.</p>";
+        reader.classList.add("open");
+        reader.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        docBody.scrollTop = 0;
+      }
+      function closeReader() {
+        reader.classList.remove("open");
+        reader.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+      }
+      document.addEventListener("click", (e) => {
+        const read = e.target.closest(".read");
+        if (read) { e.preventDefault(); openReader(idx); return; }
+        if (e.target.closest("[data-close]")) closeReader();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && reader.classList.contains("open")) closeReader();
+      });
     </script>
   </body>
 </html>
