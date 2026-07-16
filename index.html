@@ -15,9 +15,9 @@
          Semantic: signal-green / signal-red for the analysis dots only.
       ================================================================= */
       :root {
-        --canvas: #e8e8ea;   /* light-grey gallery ground */
-        --paper: #f7f2e8;    /* cream "paper" the papers are printed on */
-        --paper-edge: #ece4d3;
+        --canvas: #ffffff;   /* white page ground */
+        --paper: #fbfaf7;    /* near-white "paper" the papers are printed on */
+        --paper-edge: #efece5;
         --ink: #17181d;
         --ink-soft: #5c6068;
         --ink-faint: #9a9aa2;
@@ -62,7 +62,7 @@
         }
       }
       :root[data-theme="light"] {
-        --canvas: #e8e8ea; --paper: #f7f2e8; --paper-edge: #ece4d3;
+        --canvas: #ffffff; --paper: #fbfaf7; --paper-edge: #efece5;
         --ink: #17181d; --ink-soft: #5c6068; --ink-faint: #9a9aa2;
         --line: #e0ddd3; --line-strong: #d3cfc2;
         --sky: #6ba9e6; --sky-deep: #4a86c9; --sky-soft: #e7f0fb;
@@ -152,12 +152,12 @@
       .clouds { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
       .cloud {
         position: absolute; width: var(--s); height: calc(var(--s) * 0.42);
-        background: radial-gradient(60% 100% at 50% 50%, #ffffff, rgba(255, 255, 255, 0));
-        filter: blur(7px); opacity: 0.6; will-change: transform;
+        background: radial-gradient(60% 100% at 50% 50%, rgba(122, 170, 232, 0.55), rgba(122, 170, 232, 0));
+        filter: blur(7px); opacity: 0.7; will-change: transform;
       }
       @media (prefers-color-scheme: dark) { .cloud { opacity: 0.1; } }
       :root[data-theme="dark"] .cloud { opacity: 0.1; }
-      :root[data-theme="light"] .cloud { opacity: 0.6; }
+      :root[data-theme="light"] .cloud { opacity: 0.7; }
       .box { will-change: transform; }
       .hero-copy .headline {
         font-family: var(--serif); font-weight: 700;
@@ -311,98 +311,49 @@
         .turner { transition-duration: 0.001s; }
       }
 
-      /* ---- paper content: three-column analysis ---- */
-      .paper { height: 100%; display: flex; flex-direction: column; padding: 1.6rem 1.9rem; }
-      .paper-top { border-bottom: 1px solid var(--line); padding-bottom: 0.9rem; margin-bottom: 1.1rem; }
-      .paper-top .kicker { display: flex; gap: 0.7rem; align-items: center; }
-      .paper-top .kicker .cat { color: var(--kraft); }
-      .paper-top .kicker .byline { color: var(--ink-faint); }
-      .paper-top h3 {
-        font-family: var(--serif); font-weight: 700; letter-spacing: -0.015em;
-        font-size: clamp(1.15rem, 0.9rem + 1vw, 1.7rem); line-height: 1.15;
-        margin: 0.45rem 0 0; text-wrap: balance;
+      /* ---- paper page: one clean summary per page ---- */
+      .paper {
+        height: 100%; display: flex; flex-direction: column;
+        padding: clamp(1.8rem, 4vw, 3.4rem) clamp(1.8rem, 5vw, 3.8rem);
       }
-      .cols {
-        flex: 1 1 auto; display: grid;
-        grid-template-columns: 1fr 1.05fr 1.1fr; gap: 1.4rem;
-        min-height: 0;
+      .paper .kicker {
+        display: flex; gap: 0.7rem; align-items: center; flex-wrap: wrap;
+        font-size: 0.72rem; font-weight: 700; letter-spacing: 0.16em;
+        text-transform: uppercase;
       }
-      .col { min-width: 0; display: flex; flex-direction: column; }
-      .col h4 {
-        font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em;
-        text-transform: uppercase; color: var(--ink-faint);
-        margin: 0 0 0.7rem; padding-bottom: 0.4rem;
-        border-bottom: 1px dotted var(--line-strong);
+      .paper .kicker .cat { color: var(--kraft); }
+      .paper .kicker .byline { color: var(--ink-faint); }
+      .paper h3 {
+        font-family: var(--serif); font-weight: 700; letter-spacing: -0.02em;
+        font-size: clamp(1.5rem, 1.1rem + 2vw, 2.4rem); line-height: 1.08;
+        margin: 0.8rem 0 0; max-width: 20ch; text-wrap: balance;
       }
-      /* column 1 — premise */
-      .prompt {
-        font-family: var(--serif); font-style: italic; font-size: 0.95rem;
-        color: var(--ink); background: var(--sky-soft);
-        border-left: 3px solid var(--sky); border-radius: 0 6px 6px 0;
-        padding: 0.6rem 0.7rem; margin: 0 0 0.8rem;
+      .paper .lead {
+        font-family: var(--serif); color: var(--ink);
+        font-size: clamp(1.05rem, 0.95rem + 0.6vw, 1.3rem); line-height: 1.6;
+        margin: 1.35rem 0 0; max-width: 48ch;
       }
-      .chips { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.9rem; }
-      .chip {
-        font-size: 0.7rem; font-weight: 600; color: var(--ink-soft);
-        background: var(--canvas); border: 1px solid var(--line-strong);
-        border-radius: 999px; padding: 0.22rem 0.55rem;
+      .paper .stat { display: flex; align-items: baseline; gap: 0.8rem; margin: 1.7rem 0 0; }
+      .paper .stat .n {
+        font-family: var(--serif); font-weight: 700; line-height: 0.9;
+        font-size: clamp(2.4rem, 1.7rem + 3.4vw, 3.8rem); color: var(--sky-deep);
       }
-      .understood { font-size: 0.82rem; color: var(--ink-soft); }
-      .understood b { color: var(--ink); font-family: var(--mono); font-size: 0.78rem; }
-      .eq {
-        margin-top: auto; font-family: var(--serif); font-style: italic;
-        text-align: center; font-size: 0.95rem; color: var(--ink);
-        background: var(--canvas); border: 1px dashed var(--line-strong);
-        border-radius: 6px; padding: 0.6rem 0.4rem;
+      .paper .stat .lbl { font-size: 0.9rem; color: var(--ink-soft); max-width: 24ch; }
+      .paper .punch {
+        font-family: var(--serif); font-style: italic; color: var(--kraft);
+        font-size: clamp(1.02rem, 0.9rem + 0.5vw, 1.25rem);
+        margin: 1.3rem 0 0; max-width: 42ch;
       }
-      .eq .frac { display: inline-flex; flex-direction: column; vertical-align: middle;
-        margin: 0 0.15rem; text-align: center; }
-      .eq .frac span:first-child { border-bottom: 1px solid currentColor; padding: 0 0.3rem; }
-      /* column 2 — signals */
-      .signal { display: flex; align-items: center; gap: 0.6rem; padding: 0.34rem 0; }
-      .signal .label { flex: 1 1 auto; font-size: 0.82rem; }
-      .dots { display: inline-flex; gap: 3px; flex: none; }
-      .dots i {
-        width: 8px; height: 8px; border-radius: 999px; background: var(--line-strong);
+      .paper .foot {
+        margin-top: auto; padding-top: 1.4rem; border-top: 1px solid var(--line);
+        display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
       }
-      .dots i.f { background: var(--signal); }
-      .dots.bad i.f { background: var(--signal-red); }
-      .signals-note {
-        margin-top: 0.8rem; font-size: 0.75rem; color: var(--ink-faint);
-        font-style: italic;
+      .paper .eq { font-family: var(--serif); font-style: italic; color: var(--ink-soft); font-size: 0.95rem; }
+      .paper .read {
+        margin-left: auto; font-size: 0.85rem; font-weight: 700; color: var(--ink);
+        text-decoration: none; border-bottom: 2px solid var(--sky); padding-bottom: 1px;
       }
-      /* column 3 — verdict card */
-      .verdict {
-        background: var(--canvas); border: 1px solid var(--line);
-        border-radius: 10px; padding: 0.9rem 1rem; height: 100%;
-        display: flex; flex-direction: column;
-      }
-      .score { display: flex; align-items: baseline; gap: 0.5rem; }
-      .score .n { font-family: var(--serif); font-weight: 700; font-size: 2.1rem; color: var(--sky-deep); line-height: 1; }
-      .score .lbl { font-size: 0.72rem; color: var(--ink-faint); }
-      .ratings { margin: 0.8rem 0; display: flex; flex-direction: column; gap: 0.35rem; }
-      .ratings .r { display: flex; justify-content: space-between; font-size: 0.8rem; border-bottom: 1px dotted var(--line); padding-bottom: 0.28rem; }
-      .ratings .r b { color: var(--signal); font-weight: 700; }
-      .verdict .vtxt { font-family: var(--serif); font-size: 0.9rem; color: var(--ink); margin: 0 0 0.6rem; }
-      .verdict .vtxt .stamp { color: var(--kraft); font-style: italic; }
-      .notes { display: flex; flex-direction: column; gap: 0.35rem; margin-top: auto; }
-      .note { display: flex; gap: 0.4rem; font-size: 0.75rem; color: var(--ink-soft); }
-      .note::before { content: "●"; font-size: 0.6rem; line-height: 1.5; }
-      .note.good::before { color: var(--signal); }
-      .note.warn::before { color: var(--warn); }
-      .paper-foot {
-        border-top: 1px solid var(--line); margin-top: 1.1rem; padding-top: 0.8rem;
-        display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
-      }
-      .btn {
-        font: inherit; font-size: 0.8rem; font-weight: 700; cursor: pointer;
-        border-radius: 999px; padding: 0.45rem 0.9rem; text-decoration: none;
-        border: 1px solid transparent;
-      }
-      .btn.primary { background: var(--ink); color: var(--canvas); }
-      .btn.ghost { background: transparent; color: var(--ink); border-color: var(--line-strong); }
-      .btn:hover { transform: translateY(-1px); }
-      .paper-foot .rel { margin-left: auto; font-size: 0.72rem; color: var(--ink-faint); }
+      .paper .read:hover { color: var(--sky-deep); }
 
       .dots-nav { display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.4rem; }
       .dots-nav button {
@@ -412,12 +363,10 @@
       .dots-nav button.active { background: var(--sky); transform: scale(1.25); }
       .flip-hint { text-align: center; font-size: 0.75rem; color: var(--ink-faint); margin-top: 0.9rem; }
 
-      /* responsive: stack columns, flatten book */
+      /* responsive: flatten the book */
       @media (max-width: 900px) {
-        .cols { grid-template-columns: 1fr; gap: 1rem; overflow-y: auto; }
-        .paper { padding: 1.2rem 1.2rem; }
+        .paper { padding: 1.6rem 1.4rem; }
         .book { perspective: none; }
-        .verdict { height: auto; }
       }
 
       footer.site {
@@ -481,7 +430,7 @@
         <h2>See how the math ruins the vibe</h2>
         <p>
           Each paper takes a real method and points it at a problem that isn&rsquo;t
-          one. Flip through &mdash; premise, evidence, verdict.
+          one. Flip through for the gist &mdash; the full proof is one click away.
         </p>
       </div>
 
@@ -508,134 +457,47 @@
           cat: "Paper 01 · Applied Bayesian Heartbreak",
           byline: "F. Nahadi",
           title: "The Statistical Impossibility of “He’s Just Busy”",
-          prompt: "Prove they’re still interested despite 48 hours of silence.",
-          chips: ["Read receipts: ON", "Active 5 min ago", "Left on ‘Delivered’", "Prior: soulmate"],
-          understood: "Belief starts at <b>P(interested) = 99.999%</b>",
+          lead: "Start from a belief as extreme as “they’re my soulmate,” and Bayes’ theorem says it takes roughly five ignored texts before disinterest becomes the likelier explanation. Four simply isn’t enough to break the delusion.",
+          stat: "90.9%",
+          statLbl: "chance they’re still interested — after four ignored texts",
+          punch: "Technically, they’re just really busy right now.",
           eq: 'O(H|E<sup>n</sup>) = O(H) · (0.052)<sup>n</sup>',
-          signals: [
-            { label: "Reply latency", f: 1, bad: true },
-            { label: "Read-receipt behaviour", f: 1, bad: true },
-            { label: "Instagram activity (theirs)", f: 0, bad: true },
-            { label: "Reciprocal effort", f: 1, bad: true },
-            { label: "Your double-text tolerance", f: 5, bad: false },
-            { label: "Objective red flags present", f: 5, bad: true },
-          ],
-          signalsNote: "We analysed 4 consecutive ignored texts.",
-          score: "90.9%",
-          scoreLbl: "P(still interested) after 4 texts",
-          ratings: [
-            { k: "Dignity remaining", v: "Low" },
-            { k: "Copium purity", v: "Excellent" },
-            { k: "Friends’ patience", v: "Depleted" },
-          ],
-          verdict: 'A Delusion Prior of 10⁵ does the heavy lifting: even hostile evidence needs ~5 rounds to become admissible. <span class="stamp">Technically, they’re just really busy right now.</span>',
-          notes: [
-            { t: "good", x: "Belief survives all incoming evidence." },
-            { t: "warn", x: "Updates only on a catastrophic shock (e.g. a soft-launch photo)." },
-          ],
-          rel: "cited by 0 · believed by many",
         },
         {
           cat: "Paper 02 · Statistical Thermodynamics",
           byline: "F. Nahadi",
           title: "The Heat Death of a Group Chat",
-          prompt: "Determine whether the group chat is dead or merely resting.",
-          chips: ["Members: 7", "Last message: ‘lol’", "Unread by: 6", "Entropy: rising"],
-          understood: "Messages trend toward <b>maximum silence</b>",
-          eq: 'dS/dt &ge; 0',
-          signals: [
-            { label: "Message frequency", f: 1, bad: true },
-            { label: "Meme throughput", f: 1, bad: true },
-            { label: "Plans actually made", f: 0, bad: true },
-            { label: "‘We should hang out’ invocations", f: 5, bad: false },
-            { label: "Follow-through on the above", f: 0, bad: true },
-          ],
-          signalsNote: "Conversational entropy measured over 90 days.",
-          score: "0.4%",
-          scoreLbl: "Probability of revival",
-          ratings: [
-            { k: "Nostalgia", v: "High" },
-            { k: "Effort to revive", v: "Herculean" },
-            { k: "Someone says ‘we fell off’", v: "Certain" },
-          ],
-          verdict: 'By the Second Law, an isolated chat cannot spontaneously lower its entropy. It tends inexorably toward a single unanswered <span class="stamp">“we should all catch up soon.”</span>',
-          notes: [
-            { t: "good", x: "The chat isn’t dead — only thermodynamically inevitable." },
-            { t: "warn", x: "Revival requires external energy (one brave soul)." },
-          ],
-          rel: "cited by 0 · felt by all",
+          lead: "A group chat is a closed system, so by the Second Law its entropy can only rise. Left alone, it drifts inexorably toward its final state: one unanswered “we should all catch up soon.”",
+          stat: "0.4%",
+          statLbl: "probability of spontaneous revival",
+          punch: "The chat isn’t dead — only thermodynamically inevitable.",
+          eq: "dS/dt &ge; 0",
         },
         {
           cat: "Paper 03 · Decision Theory",
           byline: "F. Nahadi",
           title: "A First-Principles Proof That Buying a Yoga Mat Is Exercise",
-          prompt: "Show the purchase itself constitutes fitness progress.",
-          chips: ["Mat: purchased", "Sessions: 0", "Intent: enormous", "Guilt: deferred"],
-          understood: "Future fitness discounted to <b>present spending</b>",
-          eq: 'U(intent) &rarr; U(action) as r &rarr; &infin;',
-          signals: [
-            { label: "Calories burned", f: 0, bad: true },
-            { label: "Aspirational value", f: 5, bad: false },
-            { label: "Instagram-story potential", f: 5, bad: false },
-            { label: "Actual flexibility gained", f: 0, bad: true },
-            { label: "Sense of being a Wellness Person", f: 5, bad: false },
-          ],
-          signalsNote: "Utility computed under a generous discount rate.",
-          score: "5%",
-          scoreLbl: "P(mat ever unrolled)",
-          ratings: [
-            { k: "Vibes", v: "Immaculate" },
-            { k: "Cardio benefit", v: "None" },
-            { k: "Moral credit claimed", v: "Full" },
-          ],
-          verdict: 'Under a sufficiently optimistic discount rate, the utility of intending to exercise converges on exercising. The mat is <span class="stamp">therefore a completed workout.</span>',
-          notes: [
-            { t: "good", x: "Purchase logged as an achievement." },
-            { t: "warn", x: "Effect decays if the mat is ever seen again." },
-          ],
-          rel: "cited by 0 · owned by everyone",
+          lead: "Under a generous enough discount rate, the utility of intending to work out converges on the utility of actually working out. The purchase, therefore, already counts.",
+          stat: "5%",
+          statLbl: "chance the mat is ever unrolled",
+          punch: "The mat is, mathematically, a completed workout.",
+          eq: "U(intent) &rarr; U(action) as r &rarr; &infin;",
         },
       ];
 
       // ================= render =================
-      function dotsRow(f, bad) {
-        let s = '<span class="dots' + (bad ? " bad" : "") + '">';
-        for (let i = 0; i < 5; i++) s += "<i" + (i < f ? ' class="f"' : "") + "></i>";
-        return s + "</span>";
-      }
       function renderPaper(p) {
-        const chips = p.chips.map((c) => '<span class="chip">' + c + "</span>").join("");
-        const signals = p.signals
-          .map((s) => '<div class="signal"><span class="label">' + s.label + "</span>" + dotsRow(s.f, s.bad) + "</div>")
-          .join("");
-        const ratings = p.ratings
-          .map((r) => '<div class="r"><span>' + r.k + "</span><b>" + r.v + "</b></div>")
-          .join("");
-        const notes = p.notes
-          .map((n) => '<div class="note ' + n.t + '">' + n.x + "</div>")
-          .join("");
         return (
           '<div class="paper">' +
-          '<div class="paper-top"><div class="kicker eyebrow"><span class="cat">' +
-          p.cat + '</span><span class="byline">' + p.byline + "</span></div>" +
-          "<h3>" + p.title + "</h3></div>" +
-          '<div class="cols">' +
-          '<div class="col"><h4>The Premise</h4>' +
-          '<p class="prompt">' + p.prompt + "</p>" +
-          '<div class="chips">' + chips + "</div>" +
-          '<p class="understood">' + p.understood + "</p>" +
-          '<div class="eq">' + p.eq + "</div></div>" +
-          '<div class="col"><h4>Signals Analysed</h4>' + signals +
-          '<p class="signals-note">' + p.signalsNote + "</p></div>" +
-          '<div class="col"><h4>The Verdict</h4><div class="verdict">' +
-          '<div class="score"><span class="n">' + p.score + '</span><span class="lbl">' + p.scoreLbl + "</span></div>" +
-          '<div class="ratings">' + ratings + "</div>" +
-          '<p class="vtxt">' + p.verdict + "</p>" +
-          '<div class="notes">' + notes + "</div></div></div>" +
-          "</div>" +
-          '<div class="paper-foot"><a class="btn primary" href="#">Read the full paper</a>' +
-          '<a class="btn ghost" href="#">Inspect the math</a>' +
-          '<span class="rel">' + p.rel + "</span></div>" +
+          '<div class="kicker"><span class="cat">' + p.cat +
+          '</span><span class="byline">' + p.byline + "</span></div>" +
+          "<h3>" + p.title + "</h3>" +
+          '<p class="lead">' + p.lead + "</p>" +
+          '<div class="stat"><span class="n">' + p.stat +
+          '</span><span class="lbl">' + p.statLbl + "</span></div>" +
+          '<p class="punch">' + p.punch + "</p>" +
+          '<div class="foot"><span class="eq">' + p.eq + "</span>" +
+          '<a class="read" href="#">Read the full paper &rarr;</a></div>' +
           "</div>"
         );
       }
