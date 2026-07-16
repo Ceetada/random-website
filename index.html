@@ -146,7 +146,19 @@
       .hero-inner {
         display: flex; flex-direction: column; align-items: center; gap: 2rem;
         max-width: 900px;
+        position: relative; z-index: 1;
       }
+      /* parallax sky behind the box */
+      .clouds { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+      .cloud {
+        position: absolute; width: var(--s); height: calc(var(--s) * 0.42);
+        background: radial-gradient(60% 100% at 50% 50%, #ffffff, rgba(255, 255, 255, 0));
+        filter: blur(7px); opacity: 0.6; will-change: transform;
+      }
+      @media (prefers-color-scheme: dark) { .cloud { opacity: 0.1; } }
+      :root[data-theme="dark"] .cloud { opacity: 0.1; }
+      :root[data-theme="light"] .cloud { opacity: 0.6; }
+      .box { will-change: transform; }
       .hero-copy .headline {
         font-family: var(--serif); font-weight: 700;
         font-size: clamp(2.2rem, 1.4rem + 4vw, 4rem);
@@ -426,8 +438,14 @@
 
     <!-- =========================== HERO =========================== -->
     <section class="hero" id="top">
+      <div class="clouds" aria-hidden="true">
+        <span class="cloud" data-speed="0.12" style="top:10%; left:6%;  --s:240px;"></span>
+        <span class="cloud" data-speed="0.34" style="top:22%; right:5%; --s:170px;"></span>
+        <span class="cloud" data-speed="0.20" style="top:58%; left:12%; --s:200px;"></span>
+        <span class="cloud" data-speed="0.46" style="top:72%; right:10%;--s:130px;"></span>
+      </div>
       <div class="hero-inner">
-        <div class="box" aria-hidden="true">
+        <div class="box" aria-hidden="true" data-speed="0.22">
           <div class="wall top"></div>
           <div class="wall bottom"></div>
           <div class="wall left"></div>
@@ -712,8 +730,27 @@
       requestAnimationFrame(() => document.querySelector(".hero").classList.add("open"));
 
       const topbar = document.getElementById("topbar");
-      const onScroll = () => topbar.classList.toggle("scrolled", window.scrollY > 8);
-      window.addEventListener("scroll", onScroll); onScroll();
+
+      // parallax: drift the clouds and box at their own rates while scrolling
+      const layers = Array.from(document.querySelectorAll("[data-speed]"));
+      const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let ticking = false;
+      function applyParallax() {
+        const y = window.scrollY;
+        if (!reduceMotion) {
+          for (const el of layers) {
+            const s = parseFloat(el.dataset.speed);
+            el.style.transform = "translate3d(0," + (y * s).toFixed(1) + "px,0)";
+          }
+        }
+        ticking = false;
+      }
+      const onScroll = () => {
+        topbar.classList.toggle("scrolled", window.scrollY > 8);
+        if (!ticking) { requestAnimationFrame(applyParallax); ticking = true; }
+      };
+      window.addEventListener("scroll", onScroll, { passive: true });
+      onScroll(); applyParallax();
 
       const root = document.documentElement;
       const saved = localStorage.getItem("theme");
