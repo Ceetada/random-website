@@ -3,46 +3,40 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>NEXIS — The space where imagination becomes reality</title>
+    <title>Tada — where overthinking becomes proof</title>
     <meta
       name="description"
-      content="Built for creators, thinkers, and innovators — where imagination meets intelligent execution."
+      content="Tada: rigorously-argued proofs of things that absolutely did not need proving."
     />
     <style>
       :root {
         --bg: #191a1c;
         --panel: #08090a;
+        --card: #0c0e0d;
         --ink: #f3f2ec;
         --muted: #93938c;
         --faint: #6a6a64;
         --teal: #3cc7bd;
         --amber: #d9a441;
-        --line: rgba(255, 255, 255, 0.14);
+        --line: rgba(255, 255, 255, 0.13);
         --mono: "SFMono-Regular", ui-monospace, "JetBrains Mono", "DejaVu Sans Mono",
           Menlo, Consolas, monospace;
       }
       * { box-sizing: border-box; }
-      html { -webkit-text-size-adjust: 100%; }
+      html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
       body {
-        margin: 0;
-        min-height: 100vh;
-        background: var(--bg);
-        color: var(--ink);
-        font-family: var(--mono);
-        -webkit-font-smoothing: antialiased;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
+        margin: 0; min-height: 100vh;
+        background: var(--bg); color: var(--ink);
+        font-family: var(--mono); -webkit-font-smoothing: antialiased;
+        display: flex; flex-direction: column; align-items: center;
         padding: clamp(0.75rem, 2vw, 2rem);
+        gap: clamp(2.5rem, 6vw, 5rem);
       }
 
-      /* ---------------- the panel ---------------- */
+      /* ============ the hero panel ============ */
       .panel {
-        position: relative;
-        width: 100%;
-        max-width: 1200px;
-        border-radius: 22px;
-        overflow: hidden;
+        position: relative; width: 100%; max-width: 1200px;
+        border-radius: 22px; overflow: hidden;
         background:
           radial-gradient(720px 480px at 4% -8%, rgba(38, 132, 88, 0.55), transparent 55%),
           radial-gradient(760px 480px at 98% -4%, rgba(200, 150, 62, 0.46), transparent 55%),
@@ -54,18 +48,16 @@
           clamp(1.1rem, 2.5vw, 2rem);
       }
 
-      /* ---------------- nav ---------------- */
+      /* ---- nav ---- */
       .nav {
         position: relative; z-index: 2;
         display: flex; align-items: center; justify-content: space-between;
         gap: 1rem; padding: 0.4rem 0 0.2rem;
       }
       .logo { display: inline-flex; align-items: center; gap: 0.6rem;
-        font-weight: 600; letter-spacing: 0.18em; font-size: 0.92rem; }
-      .logo-mark {
-        display: grid; grid-template-columns: repeat(3, 4px);
-        grid-auto-rows: 4px; gap: 2px;
-      }
+        font-weight: 600; letter-spacing: 0.2em; font-size: 0.92rem; }
+      .logo-mark { display: grid; grid-template-columns: repeat(3, 4px);
+        grid-auto-rows: 4px; gap: 2px; }
       .logo-mark i { border-radius: 1px; background: #2c2f2c; }
       .logo-mark i.g { background: #57b877; }
       .logo-mark i.a { background: var(--amber); }
@@ -74,31 +66,31 @@
       .links { display: flex; gap: clamp(1rem, 2.4vw, 2.1rem); }
       .links a {
         color: var(--muted); text-decoration: none; font-size: 0.82rem;
-        letter-spacing: 0.02em; transition: color 0.15s ease;
+        transition: color 0.15s ease;
       }
       .links a:hover { color: var(--ink); }
 
       .btn {
-        font-family: var(--mono); font-size: 0.8rem; letter-spacing: 0.02em;
-        color: var(--ink); text-decoration: none; cursor: pointer;
+        font-family: var(--mono); font-size: 0.8rem; color: var(--ink);
+        text-decoration: none; cursor: pointer;
         border: 1px solid var(--line); border-radius: 4px;
         padding: 0.5rem 0.9rem; background: rgba(255, 255, 255, 0.02);
         display: inline-flex; align-items: center; gap: 0.5rem;
-        transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+        transition: background 0.15s, border-color 0.15s, color 0.15s;
         white-space: nowrap;
       }
       .btn:hover { background: var(--ink); color: #0a0b0a; border-color: var(--ink); }
       .btn .arw { transition: transform 0.15s ease; }
       .btn:hover .arw { transform: translateX(3px); }
 
-      /* ---------------- hero text ---------------- */
+      /* ---- hero text ---- */
       .hero {
         position: relative; z-index: 2; text-align: center;
         padding: clamp(2.4rem, 6vw, 4.6rem) 1rem clamp(1.4rem, 3vw, 2.4rem);
       }
       .hero h1 {
-        margin: 0 auto; max-width: 24ch;
-        font-weight: 500; letter-spacing: -0.01em;
+        margin: 0 auto; max-width: 24ch; font-weight: 500;
+        letter-spacing: -0.01em;
         font-size: clamp(1.6rem, 0.9rem + 3.4vw, 3.3rem); line-height: 1.3;
       }
       .hl {
@@ -107,29 +99,24 @@
         border: 1.5px solid var(--amber); border-radius: 3px;
         background: linear-gradient(rgba(217, 164, 65, 0.08), rgba(217, 164, 65, 0));
       }
-      .hl::before {
-        content: ""; position: absolute; left: -9px; top: -9px;
+      .hl::before { content: ""; position: absolute; left: -9px; top: -9px;
         width: 11px; height: 11px;
-        border-left: 2px solid var(--teal); border-top: 2px solid var(--teal);
-      }
-      .hl::after {
-        content: ""; position: absolute; right: -7px; bottom: -9px;
+        border-left: 2px solid var(--teal); border-top: 2px solid var(--teal); }
+      .hl::after { content: ""; position: absolute; right: -7px; bottom: -9px;
         width: 11px; height: 11px;
-        border-right: 2px solid var(--amber); border-bottom: 2px solid var(--amber);
-      }
+        border-right: 2px solid var(--amber); border-bottom: 2px solid var(--amber); }
       .hero .sub {
-        margin: clamp(1.2rem, 3vw, 1.8rem) auto 0; max-width: 46ch;
+        margin: clamp(1.2rem, 3vw, 1.8rem) auto 0; max-width: 48ch;
         color: var(--muted); font-size: clamp(0.76rem, 0.7rem + 0.3vw, 0.9rem);
-        line-height: 1.85; letter-spacing: 0.01em;
+        line-height: 1.85;
       }
       .hero .cta { margin-top: clamp(1.6rem, 3.5vw, 2.3rem); }
 
-      /* ---------------- the scene (code-wall hero) ---------------- */
+      /* ---- the scene (math-wall) ---- */
       .scene {
         position: relative; z-index: 1;
         height: clamp(300px, 42vw, 470px);
-        border-radius: 14px; overflow: hidden;
-        background: #050606;
+        border-radius: 14px; overflow: hidden; background: #050606;
         box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
       }
       #matrix { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
@@ -148,50 +135,40 @@
           linear-gradient(to bottom, transparent 60%, rgba(3, 4, 4, 0.5) 100%);
       }
       .figure {
-        position: absolute; left: 50%; bottom: 11%;
-        transform: translateX(-50%);
-        height: 47%; width: auto; z-index: 4;
-        fill: #050707;
+        position: absolute; left: 50%; bottom: 11%; transform: translateX(-50%);
+        height: 47%; width: auto; z-index: 4; fill: #050707;
         filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.85));
       }
 
-      /* ---------------- overlay cards ---------------- */
+      /* ---- overlay cards ---- */
       .card {
         position: absolute; z-index: 6;
-        background: rgba(9, 11, 11, 0.66);
-        backdrop-filter: blur(6px);
-        border: 1px solid rgba(255, 255, 255, 0.09);
-        border-radius: 9px; padding: 0.6rem 0.75rem;
-        font-size: 0.56rem; letter-spacing: 0.06em; color: var(--muted);
-        box-shadow: 0 12px 30px -14px rgba(0, 0, 0, 0.8);
+        background: rgba(9, 11, 11, 0.66); backdrop-filter: blur(6px);
+        border: 1px solid rgba(255, 255, 255, 0.09); border-radius: 9px;
+        padding: 0.6rem 0.75rem; font-size: 0.56rem; letter-spacing: 0.06em;
+        color: var(--muted); box-shadow: 0 12px 30px -14px rgba(0, 0, 0, 0.8);
       }
       .card-h {
-        display: flex; align-items: center; gap: 0.4rem;
-        color: var(--ink); font-size: 0.58rem; letter-spacing: 0.12em;
-        text-transform: uppercase; margin-bottom: 0.5rem;
+        display: flex; align-items: center; gap: 0.4rem; color: var(--ink);
+        font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase;
+        margin-bottom: 0.5rem;
       }
-      .pulse {
-        width: 6px; height: 6px; border-radius: 999px; background: var(--teal);
-        box-shadow: 0 0 8px var(--teal); animation: pulse 1.6s ease-in-out infinite;
-      }
+      .pulse { width: 6px; height: 6px; border-radius: 999px; background: var(--teal);
+        box-shadow: 0 0 8px var(--teal); animation: pulse 1.6s ease-in-out infinite; }
       @keyframes pulse { 0%,100% { opacity: 0.35; } 50% { opacity: 1; } }
-      .card-left { left: 4%; bottom: 20%; width: 172px; }
-      .bar {
-        height: 5px; border-radius: 999px; background: rgba(255, 255, 255, 0.1);
-        overflow: hidden; margin-bottom: 0.5rem;
-      }
-      .bar span {
-        display: block; height: 100%;
+      .card-left { left: 4%; bottom: 20%; width: 176px; }
+      .bar { height: 5px; border-radius: 999px; background: rgba(255, 255, 255, 0.1);
+        overflow: hidden; margin-bottom: 0.5rem; }
+      .bar span { display: block; height: 100%;
         background: linear-gradient(90deg, var(--teal), #7fe0d6);
         box-shadow: 0 0 8px rgba(60, 199, 189, 0.7);
-        animation: fill 3.5s ease-in-out infinite alternate;
-      }
-      @keyframes fill { from { width: 46%; } to { width: 88%; } }
+        animation: fill 3.5s ease-in-out infinite alternate; }
+      @keyframes fill { from { width: 40%; } to { width: 84%; } }
       .card-row { display: flex; justify-content: space-between; }
       .tealx { color: var(--teal); }
       .amberx { color: var(--amber); }
 
-      .card-right { right: 4%; bottom: 15%; width: 200px; }
+      .card-right { right: 4%; bottom: 15%; width: 204px; }
       .heat { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2px; margin-bottom: 0.6rem; }
       .heat i { aspect-ratio: 1; border-radius: 1px; background: rgba(255, 255, 255, 0.08); }
       .stats { display: flex; justify-content: space-between; gap: 0.4rem; text-align: left; }
@@ -199,17 +176,101 @@
       .stats b { color: var(--ink); font-size: 0.82rem; letter-spacing: 0; font-weight: 600; }
       .stats span { font-size: 0.5rem; color: var(--faint); }
 
-      /* ---------------- responsive ---------------- */
+      /* ============ the archive (parody papers) ============ */
+      .archive {
+        position: relative; width: 100%; max-width: 1120px;
+        padding: 0 clamp(0.25rem, 2vw, 1rem) clamp(2rem, 5vw, 4rem);
+      }
+      .archive-head { text-align: center; max-width: 44rem; margin: 0 auto 2.4rem; }
+      .eyebrow { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--teal); margin: 0; }
+      .archive-head h2 {
+        margin: 0.7rem 0 0.6rem; font-weight: 500; letter-spacing: -0.01em;
+        font-size: clamp(1.5rem, 1rem + 2vw, 2.4rem); line-height: 1.2;
+      }
+      .archive-head .sub { color: var(--muted); font-size: 0.85rem; line-height: 1.8; margin: 0; }
+
+      .book-stage {
+        display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+      }
+      .arrow {
+        flex: none; width: 46px; height: 46px; border-radius: 999px;
+        border: 1px solid var(--line); background: rgba(255, 255, 255, 0.02);
+        color: var(--ink); font-size: 1.2rem; cursor: pointer;
+        display: grid; place-items: center; transition: transform 0.15s, border-color 0.15s, color 0.15s;
+        font-family: var(--mono);
+      }
+      .arrow:hover:not(:disabled) { transform: scale(1.08); border-color: var(--teal); color: var(--teal); }
+      .arrow:disabled { opacity: 0.3; cursor: not-allowed; }
+
+      .book { position: relative; flex: 1 1 auto; max-width: 900px;
+        aspect-ratio: 900 / 540; perspective: 2400px; }
+      @media (max-width: 860px) { .book { aspect-ratio: 3 / 4; } }
+
+      .sheet, .turner {
+        position: absolute; inset: 0; border-radius: 14px; overflow: hidden;
+        background:
+          radial-gradient(500px 300px at 0% 0%, rgba(38, 132, 88, 0.12), transparent 60%),
+          radial-gradient(500px 300px at 100% 100%, rgba(200, 150, 62, 0.12), transparent 60%),
+          var(--card);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.8);
+      }
+      .turner { transform-origin: left center; backface-visibility: hidden;
+        transition: transform 0.7s cubic-bezier(0.4, 0.15, 0.2, 1); z-index: 3; display: none; }
+      .turner.on { display: block; }
+      .turner::after { content: ""; position: absolute; inset: 0;
+        background: linear-gradient(90deg, rgba(0,0,0,0.28), rgba(0,0,0,0) 22%); pointer-events: none; }
+      @media (prefers-reduced-motion: reduce) { .turner { transition-duration: 0.001s; } }
+
+      .paper { height: 100%; display: flex; flex-direction: column;
+        padding: clamp(1.5rem, 3.5vw, 2.8rem) clamp(1.6rem, 4vw, 3rem); }
+      .paper .kicker { display: flex; gap: 0.7rem; align-items: center; flex-wrap: wrap;
+        font-size: 0.66rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
+      .paper .kicker .cat { color: var(--amber); }
+      .paper .kicker .byline { color: var(--faint); }
+      .paper h3 {
+        margin: 0.8rem 0 0; max-width: 22ch; font-weight: 500; letter-spacing: -0.01em;
+        font-size: clamp(1.25rem, 0.9rem + 1.6vw, 1.95rem); line-height: 1.2; color: var(--ink);
+      }
+      .paper .lead { color: var(--muted); font-size: clamp(0.8rem, 0.72rem + 0.4vw, 0.95rem);
+        line-height: 1.75; margin: 1.2rem 0 0; max-width: 52ch; }
+      .paper .stat { position: relative; display: flex; align-items: baseline;
+        gap: 0.8rem; margin: 1.5rem 0 0; padding-left: 0.4rem; }
+      .paper .stat::before { content: ""; position: absolute; left: -6px; top: -10px;
+        width: 12px; height: 12px; border-left: 2px solid var(--teal); border-top: 2px solid var(--teal); }
+      .paper .stat .n { font-weight: 600; line-height: 0.9;
+        font-size: clamp(2.1rem, 1.5rem + 2.6vw, 3.2rem); color: var(--teal); }
+      .paper .stat .lbl { font-size: 0.72rem; color: var(--muted); max-width: 26ch; line-height: 1.5; }
+      .paper .punch { color: var(--amber); font-style: italic;
+        font-size: clamp(0.9rem, 0.8rem + 0.4vw, 1.1rem); margin: 1.2rem 0 0; max-width: 44ch; }
+      .paper .foot { margin-top: auto; padding-top: 1.3rem; border-top: 1px solid var(--line);
+        display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+      .paper .eq { color: var(--faint); font-size: 0.82rem; }
+      .paper .read { margin-left: auto; font-size: 0.82rem; color: var(--teal);
+        text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; }
+      .paper .read:hover { color: #7fe0d6; }
+      .paper .read .arw { transition: transform 0.15s ease; }
+      .paper .read:hover .arw { transform: translateX(3px); }
+
+      .dots-nav { display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.4rem; }
+      .dots-nav button { width: 9px; height: 9px; border-radius: 999px; border: none;
+        padding: 0; background: rgba(255, 255, 255, 0.18); cursor: pointer; }
+      .dots-nav button.active { background: var(--teal); transform: scale(1.25); }
+      .flip-hint { text-align: center; font-size: 0.72rem; color: var(--faint);
+        letter-spacing: 0.08em; margin-top: 0.9rem; }
+
+      footer.site { color: var(--faint); font-size: 0.75rem; letter-spacing: 0.06em;
+        text-align: center; padding: 0 0 1rem; }
+
       @media (max-width: 720px) {
         .links { display: none; }
         .card-left { width: 140px; left: 3%; bottom: 22%; }
         .card-right { width: 150px; right: 3%; bottom: 16%; }
         .stats b { font-size: 0.66rem; }
+        .book { perspective: none; }
       }
-      @media (max-width: 460px) {
-        .card-left, .heat { display: none; }
-        .card-right { width: 140px; }
-      }
+      @media (max-width: 460px) { .card-left, .heat { display: none; } .card-right { width: 140px; } }
       :focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
     </style>
   </head>
@@ -222,68 +283,89 @@
             <i></i><i class="t"></i><i class="g"></i>
             <i class="a"></i><i class="g"></i><i></i>
           </span>
-          NEXIS
+          TADA
         </div>
         <nav class="links">
-          <a href="#">Product</a>
-          <a href="#">Technology</a>
-          <a href="#">Solutions</a>
+          <a href="#archive">Papers</a>
+          <a href="#">Method</a>
+          <a href="#archive">Archive</a>
           <a href="#">About</a>
         </nav>
-        <a class="btn" href="#">Start creating <span class="arw">&rarr;</span></a>
+        <a class="btn" href="#archive">Read the papers <span class="arw">&rarr;</span></a>
       </header>
 
       <section class="hero">
         <h1>
-          The space where<br />imagination becomes<br />
-          <span class="hl">reality</span>
+          The journal where<br />overthinking becomes<br />
+          <span class="hl">proof</span>
         </h1>
         <p class="sub">
-          Built for creators, thinkers, and innovators, this is where imagination
-          meets intelligent execution to turn ambitious ideas into reality.
+          Tada publishes rigorously-argued proofs of things that absolutely did
+          not need proving &mdash; real math, pointed squarely at problems that
+          aren&rsquo;t.
         </p>
         <div class="cta">
-          <a class="btn" href="#">Start creating <span class="arw">&rarr;</span></a>
+          <a class="btn" href="#archive">Read the papers <span class="arw">&rarr;</span></a>
         </div>
       </section>
 
       <section class="scene">
         <canvas id="matrix"></canvas>
-
         <svg class="figure" viewBox="0 0 100 210" aria-hidden="true">
           <path d="M50,9 a15,15 0 1,0 0.01,0 Z
                    M30,42 Q50,34 70,42 L64,120 Q50,126 36,120 Z
                    M40,120 L35,206 L47,206 L50,150 L53,206 L65,206 L60,120 Z" />
         </svg>
-
         <div class="vignette"></div>
         <div class="blooms"></div>
 
         <div class="card card-left">
-          <div class="card-h"><span class="pulse"></span>AI Processing</div>
+          <div class="card-h"><span class="pulse"></span>Compiling proof</div>
           <div class="bar"><span></span></div>
-          <div class="card-row"><span>NEURAL SYNC</span><span class="tealx">live</span></div>
+          <div class="card-row"><span>RIGOR</span><span class="tealx">live</span></div>
         </div>
 
         <div class="card card-right">
-          <div class="card-h">Neural Network</div>
+          <div class="card-h">Peer review</div>
           <div class="heat" id="heat" aria-hidden="true"></div>
           <div class="stats">
-            <div><b>12.4M</b><span>PARAMS</span></div>
-            <div><b>128</b><span>LAYERS</span></div>
-            <div><b class="tealx">99.7%</b><span>ACCURACY</span></div>
+            <div><b>03</b><span>PAPERS</span></div>
+            <div><b class="tealx">&infin;</b><span>CONFIDENCE</span></div>
+            <div><b>00</b><span>CITED</span></div>
           </div>
         </div>
       </section>
     </main>
 
+    <section class="archive" id="archive">
+      <div class="archive-head">
+        <p class="eyebrow">The Archive</p>
+        <h2>See how the math ruins the vibe</h2>
+        <p class="sub">
+          Real methods, absurd problems. Flip through for the gist &mdash; the
+          full proof is one click away.
+        </p>
+      </div>
+
+      <div class="book-stage">
+        <button class="arrow" id="prev" aria-label="Previous paper">&lsaquo;</button>
+        <div class="book" id="book">
+          <div class="sheet" id="sheet"></div>
+          <div class="turner" id="turner"></div>
+        </div>
+        <button class="arrow" id="next" aria-label="Next paper">&rsaquo;</button>
+      </div>
+      <div class="dots-nav" id="dotsNav"></div>
+      <p class="flip-hint">Arrows &middot; swipe &middot; &larr; &rarr; keys</p>
+    </section>
+
+    <footer class="site">Tada &middot; A Journal of Applied Overthinking &middot; 2026</footer>
+
     <script>
-      // ---- little heatmap in the Neural Network card ----
+      // ---------- heatmap in the Peer-review card ----------
       (function () {
         const heat = document.getElementById("heat");
-        const cols = [
-          "rgba(60,199,189,", "rgba(217,164,65,", "rgba(255,255,255,",
-        ];
+        const cols = ["rgba(60,199,189,", "rgba(217,164,65,", "rgba(255,255,255,"];
         for (let i = 0; i < 36; i++) {
           const s = document.createElement("i");
           const c = cols[(Math.random() * cols.length) | 0];
@@ -293,15 +375,16 @@
         }
       })();
 
-      // ---- the code-wall canvas ----
+      // ---------- the math-wall canvas ----------
       (function () {
         const cv = document.getElementById("matrix");
         const ctx = cv.getContext("2d");
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        // a wall of maths: greek, logic, operators, probability notation
         const CHARS =
-          "アイウエオカキクケコサシスセソタチツテトナニヌネノﾊﾋﾌﾍﾎ0123456789ABCDEFXYZ<>/\\#*+=".split("");
+          "αβγδεζηθλμνξπρστφχψωΣΠΩΘΛ∫∂√∞≈≠≤≥±×÷∀∃∈∉⊂∴∇⊕0123456789=<>|PHEOΛμσ".split("");
         const teal = [72, 224, 212], amber = [233, 179, 78];
-        const cell = 15;
+        const cell = 16;
         let W, H, cols, rows, grid, heads;
         const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
         const lerp = (a, b, t) => a + (b - a) * t;
@@ -321,15 +404,12 @@
           ctx.font = (cell - 2) + "px " + getComputedStyle(document.body).fontFamily;
           ctx.textBaseline = "top";
         }
-
-        // brightness map: bright vertical centre band, bright middle rows, faint floor line
         function profile(fx, fy) {
           const cx = 1 - Math.min(1, Math.abs(fx - 0.5) * 1.8);
           const cy = Math.max(0, 1 - Math.abs(fy - 0.44) * 1.1);
           const floor = Math.max(0, 0.5 - Math.abs(fy - 0.82) * 2.8);
           return Math.min(1, Math.max(cx * cy, floor * Math.max(0, cx)) * 1.25);
         }
-
         function render(t) {
           ctx.clearRect(0, 0, W, H);
           for (let x = 0; x < cols; x++) {
@@ -356,21 +436,130 @@
             }
           }
         }
-
         let last = 0;
-        function loop(t) {
-          requestAnimationFrame(loop);
-          if (t - last < 33) return;
-          last = t;
-          render(t);
-        }
-
+        function loop(t) { requestAnimationFrame(loop); if (t - last < 33) return; last = t; render(t); }
         build();
-        if (reduce) render(0);
-        else requestAnimationFrame(loop);
-        let rt;
-        addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(build, 150); });
+        if (reduce) render(0); else requestAnimationFrame(loop);
+        let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(build, 150); });
       })();
+
+      // ---------- the parody papers (flip-book) ----------
+      const papers = [
+        {
+          cat: "Paper 01 · Applied Bayesian Heartbreak",
+          byline: "F. Nahadi",
+          title: "The Statistical Impossibility of “He’s Just Busy”",
+          lead: "Start from a belief as extreme as “they’re my soulmate,” and Bayes’ theorem says it takes roughly five ignored texts before disinterest becomes the likelier explanation. Four simply isn’t enough to break the delusion.",
+          stat: "90.9%",
+          statLbl: "chance they’re still interested — after four ignored texts",
+          punch: "Technically, they’re just really busy right now.",
+          eq: "O(H|Eⁿ) = O(H) · (0.052)ⁿ",
+        },
+        {
+          cat: "Paper 02 · Statistical Thermodynamics",
+          byline: "F. Nahadi",
+          title: "The Heat Death of a Group Chat",
+          lead: "A group chat is a closed system, so by the Second Law its entropy can only rise. Left alone, it drifts inexorably toward its final state: one unanswered “we should all catch up soon.”",
+          stat: "0.4%",
+          statLbl: "probability of spontaneous revival",
+          punch: "The chat isn’t dead — only thermodynamically inevitable.",
+          eq: "dS/dt ≥ 0",
+        },
+        {
+          cat: "Paper 03 · Decision Theory",
+          byline: "F. Nahadi",
+          title: "A First-Principles Proof That Buying a Yoga Mat Is Exercise",
+          lead: "Under a generous enough discount rate, the utility of intending to work out converges on the utility of actually working out. The purchase, therefore, already counts.",
+          stat: "5%",
+          statLbl: "chance the mat is ever unrolled",
+          punch: "The mat is, mathematically, a completed workout.",
+          eq: "U(intent) → U(action) as r → ∞",
+        },
+      ];
+
+      function renderPaper(p) {
+        return (
+          '<div class="paper">' +
+          '<div class="kicker"><span class="cat">' + p.cat +
+          '</span><span class="byline">' + p.byline + "</span></div>" +
+          "<h3>" + p.title + "</h3>" +
+          '<p class="lead">' + p.lead + "</p>" +
+          '<div class="stat"><span class="n">' + p.stat +
+          '</span><span class="lbl">' + p.statLbl + "</span></div>" +
+          '<p class="punch">' + p.punch + "</p>" +
+          '<div class="foot"><span class="eq">' + p.eq + "</span>" +
+          '<a class="read" href="#">Read the full paper <span class="arw">&rarr;</span></a></div>' +
+          "</div>"
+        );
+      }
+
+      const sheet = document.getElementById("sheet");
+      const turner = document.getElementById("turner");
+      const prevBtn = document.getElementById("prev");
+      const nextBtn = document.getElementById("next");
+      const dotsNav = document.getElementById("dotsNav");
+      let idx = 0, animating = false;
+
+      papers.forEach((_, i) => {
+        const b = document.createElement("button");
+        b.setAttribute("aria-label", "Go to paper " + (i + 1));
+        b.addEventListener("click", () => jump(i));
+        dotsNav.appendChild(b);
+      });
+      const navDots = Array.from(dotsNav.children);
+
+      function syncControls() {
+        prevBtn.disabled = idx === 0;
+        nextBtn.disabled = idx === papers.length - 1;
+        navDots.forEach((d, i) => d.classList.toggle("active", i === idx));
+      }
+      function paint() { sheet.innerHTML = renderPaper(papers[idx]); syncControls(); }
+
+      function go(dir) {
+        const target = idx + dir;
+        if (animating || target < 0 || target >= papers.length) return;
+        animating = true;
+        if (dir > 0) {
+          sheet.innerHTML = renderPaper(papers[target]);
+          turner.innerHTML = renderPaper(papers[idx]);
+          turner.classList.add("on");
+          turner.style.transition = "none"; turner.style.transform = "rotateY(0deg)";
+          void turner.offsetWidth;
+          turner.style.transition = ""; turner.style.transform = "rotateY(-180deg)";
+        } else {
+          sheet.innerHTML = renderPaper(papers[idx]);
+          turner.innerHTML = renderPaper(papers[target]);
+          turner.classList.add("on");
+          turner.style.transition = "none"; turner.style.transform = "rotateY(-180deg)";
+          void turner.offsetWidth;
+          turner.style.transition = ""; turner.style.transform = "rotateY(0deg)";
+        }
+        idx = target; syncControls();
+      }
+      turner.addEventListener("transitionend", (e) => {
+        if (e.propertyName !== "transform") return;
+        turner.classList.remove("on");
+        sheet.innerHTML = renderPaper(papers[idx]);
+        animating = false;
+      });
+      function jump(i) { if (i === idx || animating) return; go(i > idx ? 1 : -1); }
+
+      prevBtn.addEventListener("click", () => go(-1));
+      nextBtn.addEventListener("click", () => go(1));
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight") go(1);
+        if (e.key === "ArrowLeft") go(-1);
+      });
+      let sx = null;
+      const book = document.getElementById("book");
+      book.addEventListener("pointerdown", (e) => (sx = e.clientX));
+      book.addEventListener("pointerup", (e) => {
+        if (sx === null) return;
+        const dx = e.clientX - sx;
+        if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
+        sx = null;
+      });
+      paint();
     </script>
   </body>
 </html>
