@@ -1,0 +1,844 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tada — where overthinking becomes proof</title>
+    <meta
+      name="description"
+      content="Tada: rigorously-argued proofs of things that absolutely did not need proving."
+    />
+    <style>
+      :root {
+        --bg: #08090a;
+        --panel: #08090a;
+        --card: #0c0e0d;
+        --ink: #f3f2ec;
+        --muted: #93938c;
+        --faint: #6a6a64;
+        --teal: #3cc7bd;
+        --amber: #d9a441;
+        --line: rgba(255, 255, 255, 0.13);
+        --mono: "SFMono-Regular", ui-monospace, "JetBrains Mono", "DejaVu Sans Mono",
+          Menlo, Consolas, monospace;
+      }
+      * { box-sizing: border-box; }
+      html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+      body {
+        margin: 0; min-height: 100vh;
+        background: var(--bg); color: var(--ink);
+        font-family: var(--mono); -webkit-font-smoothing: antialiased;
+        display: flex; flex-direction: column; align-items: center;
+        padding: clamp(0.75rem, 2vw, 2rem);
+        gap: clamp(2.5rem, 6vw, 5rem);
+      }
+
+      /* ============ the hero panel ============ */
+      .panel {
+        position: relative; width: 100%; max-width: 1200px;
+        border-radius: 22px; overflow: hidden;
+        background:
+          radial-gradient(720px 480px at 4% -8%, rgba(38, 132, 88, 0.55), transparent 55%),
+          radial-gradient(760px 480px at 98% -4%, rgba(200, 150, 62, 0.46), transparent 55%),
+          radial-gradient(1000px 520px at 50% 128%, rgba(28, 108, 118, 0.16), transparent 60%),
+          var(--panel);
+        box-shadow: 0 40px 120px -40px rgba(0, 0, 0, 0.8),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+        padding: clamp(1.1rem, 2.5vw, 2rem) clamp(1.1rem, 3.5vw, 3rem)
+          clamp(1.1rem, 2.5vw, 2rem);
+      }
+
+      /* ---- nav ---- */
+      .nav {
+        position: relative; z-index: 2;
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 1rem; padding: 0.4rem 0 0.2rem;
+      }
+      .logo { display: inline-flex; align-items: center; gap: 0.6rem;
+        font-weight: 600; letter-spacing: 0.2em; font-size: 0.92rem; }
+      .logo-mark { display: grid; grid-template-columns: repeat(3, 4px);
+        grid-auto-rows: 4px; gap: 2px; }
+      .logo-mark i { border-radius: 1px; background: #2c2f2c; }
+      .logo-mark i.g { background: #57b877; }
+      .logo-mark i.a { background: var(--amber); }
+      .logo-mark i.t { background: var(--teal); }
+
+      .links { display: flex; gap: clamp(1rem, 2.4vw, 2.1rem); }
+      .links a {
+        color: var(--muted); text-decoration: none; font-size: 0.82rem;
+        transition: color 0.15s ease;
+      }
+      .links a:hover { color: var(--ink); }
+
+      .btn {
+        font-family: var(--mono); font-size: 0.8rem; color: var(--ink);
+        text-decoration: none; cursor: pointer;
+        border: 1px solid var(--line); border-radius: 4px;
+        padding: 0.5rem 0.9rem; background: rgba(255, 255, 255, 0.02);
+        display: inline-flex; align-items: center; gap: 0.5rem;
+        transition: background 0.15s, border-color 0.15s, color 0.15s;
+        white-space: nowrap;
+      }
+      .btn:hover { background: var(--ink); color: #0a0b0a; border-color: var(--ink); }
+      .btn .arw { transition: transform 0.15s ease; }
+      .btn:hover .arw { transform: translateX(3px); }
+
+      /* ---- hero text ---- */
+      .hero {
+        position: relative; z-index: 2; text-align: center;
+        padding: clamp(2.4rem, 6vw, 4.6rem) 1rem clamp(1.4rem, 3vw, 2.4rem);
+      }
+      .hero h1 {
+        margin: 0 auto; max-width: 24ch; font-weight: 500;
+        letter-spacing: -0.01em;
+        font-size: clamp(1.6rem, 0.9rem + 3.4vw, 3.3rem); line-height: 1.3;
+      }
+      .hl {
+        position: relative; display: inline-block; color: #fbf6ea;
+        padding: 0.02em 0.36em; margin-top: 0.15em;
+        border: 1.5px solid var(--amber); border-radius: 3px;
+        background: linear-gradient(rgba(217, 164, 65, 0.08), rgba(217, 164, 65, 0));
+      }
+      .hl::before { content: ""; position: absolute; left: -9px; top: -9px;
+        width: 11px; height: 11px;
+        border-left: 2px solid var(--teal); border-top: 2px solid var(--teal); }
+      .hl::after { content: ""; position: absolute; right: -7px; bottom: -9px;
+        width: 11px; height: 11px;
+        border-right: 2px solid var(--amber); border-bottom: 2px solid var(--amber); }
+      .hero .sub {
+        margin: clamp(1.2rem, 3vw, 1.8rem) auto 0; max-width: 48ch;
+        color: var(--muted); font-size: clamp(0.76rem, 0.7rem + 0.3vw, 0.9rem);
+        line-height: 1.85;
+      }
+      .hero .cta { margin-top: clamp(1.6rem, 3.5vw, 2.3rem); }
+
+      /* ---- the scene (math-wall) ---- */
+      .scene {
+        position: relative; z-index: 1;
+        height: clamp(300px, 42vw, 470px);
+        border-radius: 14px; overflow: hidden; background: #050606;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+      }
+      #matrix { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
+      .scene .vignette {
+        position: absolute; inset: 0; z-index: 2; pointer-events: none;
+        background:
+          radial-gradient(130% 100% at 50% 42%, transparent 26%, rgba(4, 5, 5, 0.6) 78%),
+          linear-gradient(90deg, rgba(4, 5, 5, 0.95), transparent 16%, transparent 84%, rgba(4, 5, 5, 0.95));
+      }
+      .scene .blooms {
+        position: absolute; inset: 0; z-index: 3; pointer-events: none;
+        background:
+          radial-gradient(280px 150px at 30% 90%, rgba(60, 210, 199, 0.5), transparent 70%),
+          radial-gradient(280px 150px at 70% 90%, rgba(230, 176, 74, 0.46), transparent 70%),
+          radial-gradient(300px 240px at 50% 56%, rgba(255, 255, 255, 0.17), transparent 72%),
+          linear-gradient(to bottom, transparent 60%, rgba(3, 4, 4, 0.5) 100%);
+      }
+      .figure {
+        position: absolute; left: 50%; bottom: 11%; transform: translateX(-50%);
+        height: 47%; width: auto; z-index: 4; fill: #050707;
+        filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.85));
+      }
+
+      /* ---- overlay cards ---- */
+      .card {
+        position: absolute; z-index: 6;
+        background: rgba(9, 11, 11, 0.66); backdrop-filter: blur(6px);
+        border: 1px solid rgba(255, 255, 255, 0.09); border-radius: 9px;
+        padding: 0.6rem 0.75rem; font-size: 0.56rem; letter-spacing: 0.06em;
+        color: var(--muted); box-shadow: 0 12px 30px -14px rgba(0, 0, 0, 0.8);
+      }
+      .card-h {
+        display: flex; align-items: center; gap: 0.4rem; color: var(--ink);
+        font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase;
+        margin-bottom: 0.5rem;
+      }
+      .pulse { width: 6px; height: 6px; border-radius: 999px; background: var(--teal);
+        box-shadow: 0 0 8px var(--teal); animation: pulse 1.6s ease-in-out infinite; }
+      @keyframes pulse { 0%,100% { opacity: 0.35; } 50% { opacity: 1; } }
+      .card-left { left: 4%; bottom: 20%; width: 176px; }
+      .bar { height: 5px; border-radius: 999px; background: rgba(255, 255, 255, 0.1);
+        overflow: hidden; margin-bottom: 0.5rem; }
+      .bar span { display: block; height: 100%;
+        background: linear-gradient(90deg, var(--teal), #7fe0d6);
+        box-shadow: 0 0 8px rgba(60, 199, 189, 0.7);
+        animation: fill 3.5s ease-in-out infinite alternate; }
+      @keyframes fill { from { width: 40%; } to { width: 84%; } }
+      .card-row { display: flex; justify-content: space-between; }
+      .tealx { color: var(--teal); }
+      .amberx { color: var(--amber); }
+
+      .card-right { right: 4%; bottom: 15%; width: 204px; }
+      .heat { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2px; margin-bottom: 0.6rem; }
+      .heat i { aspect-ratio: 1; border-radius: 1px; background: rgba(255, 255, 255, 0.08); }
+      .stats { display: flex; justify-content: space-between; gap: 0.4rem; text-align: left; }
+      .stats > div { display: flex; flex-direction: column; gap: 0.15rem; }
+      .stats b { color: var(--ink); font-size: 0.82rem; letter-spacing: 0; font-weight: 600; }
+      .stats span { font-size: 0.5rem; color: var(--faint); }
+
+      /* ============ the archive (parody papers) ============ */
+      .archive {
+        position: relative; width: 100%; max-width: 1120px;
+        padding: 0 clamp(0.25rem, 2vw, 1rem) clamp(2rem, 5vw, 4rem);
+      }
+      .archive-head { text-align: center; max-width: 44rem; margin: 0 auto 2.4rem; }
+      .eyebrow { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--teal); margin: 0; }
+      .archive-head h2 {
+        margin: 0.7rem 0 0.6rem; font-weight: 500; letter-spacing: -0.01em;
+        font-size: clamp(1.5rem, 1rem + 2vw, 2.4rem); line-height: 1.2;
+      }
+      .archive-head .sub { color: var(--muted); font-size: 0.85rem; line-height: 1.8; margin: 0; }
+
+      .book-stage {
+        display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+      }
+      .arrow {
+        flex: none; width: 46px; height: 46px; border-radius: 999px;
+        border: 1px solid var(--line); background: rgba(255, 255, 255, 0.02);
+        color: var(--ink); font-size: 1.2rem; cursor: pointer;
+        display: grid; place-items: center; transition: transform 0.15s, border-color 0.15s, color 0.15s;
+        font-family: var(--mono);
+      }
+      .arrow:hover:not(:disabled) { transform: scale(1.08); border-color: var(--teal); color: var(--teal); }
+      .arrow:disabled { opacity: 0.3; cursor: not-allowed; }
+
+      .book { position: relative; flex: 1 1 auto; max-width: 900px; perspective: 2400px; }
+
+      .sheet, .turner {
+        border-radius: 14px; overflow: hidden;
+        background:
+          radial-gradient(500px 300px at 0% 0%, rgba(38, 132, 88, 0.12), transparent 60%),
+          radial-gradient(500px 300px at 100% 100%, rgba(200, 150, 62, 0.12), transparent 60%),
+          var(--card);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.8);
+      }
+      /* the sheet is in normal flow, so the card grows to fit the paper */
+      .sheet { position: relative; }
+      .turner { position: absolute; inset: 0; transform-origin: left center;
+        backface-visibility: hidden;
+        transition: transform 0.7s cubic-bezier(0.4, 0.15, 0.2, 1); z-index: 3; display: none; }
+      .turner.on { display: block; }
+      .turner::after { content: ""; position: absolute; inset: 0;
+        background: linear-gradient(90deg, rgba(0,0,0,0.28), rgba(0,0,0,0) 22%); pointer-events: none; }
+      @media (prefers-reduced-motion: reduce) { .turner { transition-duration: 0.001s; } }
+
+      .paper { min-height: clamp(360px, 40vw, 460px); display: flex; flex-direction: column;
+        padding: clamp(1.5rem, 3.5vw, 2.8rem) clamp(1.6rem, 4vw, 3rem); }
+      .paper .kicker { display: flex; gap: 0.7rem; align-items: center; flex-wrap: wrap;
+        font-size: 0.66rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
+      .paper .kicker .cat { color: var(--amber); }
+      .paper .kicker .byline { color: var(--faint); }
+      .paper h3 {
+        margin: 0.8rem 0 0; max-width: 22ch; font-weight: 500; letter-spacing: -0.01em;
+        font-size: clamp(1.25rem, 0.9rem + 1.6vw, 1.95rem); line-height: 1.2; color: var(--ink);
+      }
+      .paper .lead { color: var(--muted); font-size: clamp(0.8rem, 0.72rem + 0.4vw, 0.95rem);
+        line-height: 1.75; margin: 1.2rem 0 0; max-width: 52ch; }
+      .paper .stat { position: relative; display: flex; align-items: baseline;
+        gap: 0.8rem; margin: 1.5rem 0 0; padding-left: 0.4rem; }
+      .paper .stat::before { content: ""; position: absolute; left: -6px; top: -10px;
+        width: 12px; height: 12px; border-left: 2px solid var(--teal); border-top: 2px solid var(--teal); }
+      .paper .stat .n { font-weight: 600; line-height: 0.9;
+        font-size: clamp(2.1rem, 1.5rem + 2.6vw, 3.2rem); color: var(--teal); }
+      .paper .stat .lbl { font-size: 0.72rem; color: var(--muted); max-width: 26ch; line-height: 1.5; }
+      .paper .punch { color: var(--amber); font-style: italic;
+        font-size: clamp(0.9rem, 0.8rem + 0.4vw, 1.1rem); margin: 1.2rem 0 0; max-width: 44ch; }
+      .paper .foot { margin-top: auto; padding-top: 1.3rem; border-top: 1px solid var(--line);
+        display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+      .paper .eq { color: var(--faint); font-size: 0.82rem; }
+      .paper .read { margin-left: auto; font-size: 0.82rem; color: var(--teal);
+        text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; }
+      .paper .read:hover { color: #7fe0d6; }
+      .paper .read .arw { transition: transform 0.15s ease; }
+      .paper .read:hover .arw { transform: translateX(3px); }
+
+      .dots-nav { display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.4rem; }
+      .dots-nav button { width: 9px; height: 9px; border-radius: 999px; border: none;
+        padding: 0; background: rgba(255, 255, 255, 0.18); cursor: pointer; }
+      .dots-nav button.active { background: var(--teal); transform: scale(1.25); }
+      .flip-hint { text-align: center; font-size: 0.72rem; color: var(--faint);
+        letter-spacing: 0.08em; margin-top: 0.9rem; }
+
+      /* ---- homepage "how a paper happens" illustration ---- */
+      .how { width: 100%; max-width: 620px; padding: 0 1.5rem; }
+      .how .eyebrow { text-align: center; margin: 0 0 1.1rem; }
+      .how svg { width: 100%; height: auto; display: block; }
+
+      footer.site { color: var(--faint); font-size: 0.75rem; letter-spacing: 0.06em;
+        text-align: center; padding: 0 0 1rem; }
+
+      /* ---- full-paper reader ---- */
+      .reader { position: fixed; inset: 0; z-index: 100; display: none; }
+      .reader.open { display: block; }
+      .reader .backdrop { position: absolute; inset: 0;
+        background: rgba(0, 0, 0, 0.78); backdrop-filter: blur(4px); }
+      .doc {
+        position: relative; max-width: 820px; margin: 4vh auto; max-height: 92vh;
+        display: flex; flex-direction: column; overflow: hidden;
+        background:
+          radial-gradient(600px 340px at 0% 0%, rgba(38, 132, 88, 0.1), transparent 60%),
+          radial-gradient(600px 340px at 100% 100%, rgba(200, 150, 62, 0.1), transparent 60%),
+          var(--card);
+        border: 1px solid var(--line); border-radius: 16px;
+        box-shadow: 0 50px 130px -30px #000;
+      }
+      .doc .close {
+        position: absolute; top: 12px; right: 14px; z-index: 3;
+        width: 34px; height: 34px; border-radius: 999px; cursor: pointer;
+        border: 1px solid var(--line); background: rgba(20, 22, 22, 0.85);
+        color: var(--ink); font-size: 0.95rem; font-family: var(--mono); line-height: 1;
+      }
+      .doc .close:hover { border-color: var(--teal); color: var(--teal); }
+      .doc-body { overflow-y: auto; padding: clamp(1.6rem, 4vw, 3.2rem); }
+      .doc-body h1 { font-weight: 500; font-size: clamp(1.35rem, 1rem + 1.6vw, 2rem);
+        line-height: 1.22; letter-spacing: -0.01em; margin: 0 2rem 0 0; }
+      .doc-body .subtitle { color: var(--amber); font-style: italic; margin: 0.5rem 0 0; font-size: 0.95rem; }
+      .doc-body .meta { color: var(--faint); font-size: 0.78rem; letter-spacing: 0.04em;
+        margin: 0.9rem 0 1.6rem; padding-bottom: 1.4rem; border-bottom: 1px solid var(--line); }
+      .doc-body h2 { color: var(--teal); font-size: 0.74rem; letter-spacing: 0.16em;
+        text-transform: uppercase; margin: 2.2rem 0 0.9rem; }
+      .doc-body p { color: #cfcec7; line-height: 1.85; font-size: 0.88rem; margin: 0 0 1.1rem; }
+      .doc-body .eqb { text-align: center; color: var(--ink); font-size: 0.92rem;
+        background: rgba(255, 255, 255, 0.03); border: 1px solid var(--line);
+        border-radius: 8px; padding: 0.9rem 0.6rem; margin: 1.3rem 0; line-height: 1.9; }
+      .doc-body .callout { border-left: 2px solid var(--amber); padding: 0.1rem 0 0.1rem 1rem; margin: 1.3rem 0; }
+      .doc-body .callout b { color: var(--amber); }
+      .doc-body table { width: 100%; border-collapse: collapse; font-size: 0.75rem; margin: 1.4rem 0; }
+      .doc-body th, .doc-body td { border-bottom: 1px solid var(--line); padding: 0.5rem 0.55rem; text-align: left; }
+      .doc-body th { color: var(--muted); font-weight: 600; letter-spacing: 0.04em; }
+      .doc-body caption { caption-side: bottom; color: var(--faint); font-size: 0.72rem;
+        padding-top: 0.7rem; font-style: italic; text-align: left; }
+      .doc-body .tealx { color: var(--teal); }
+      .doc-body .amberx { color: var(--amber); }
+      .doc-body .viz { margin: 1.8rem 0; padding: 1rem 1.1rem 0.9rem;
+        border: 1px solid var(--line); border-radius: 10px; background: rgba(255, 255, 255, 0.015); }
+      .doc-body .viz svg { width: 100%; height: auto; display: block; }
+      .doc-body .viz figcaption { color: var(--faint); font-size: 0.72rem; font-style: italic;
+        padding-top: 0.7rem; line-height: 1.6; }
+
+      @media (max-width: 720px) {
+        .links { display: none; }
+        .card-left { width: 140px; left: 3%; bottom: 22%; }
+        .card-right { width: 150px; right: 3%; bottom: 16%; }
+        .stats b { font-size: 0.66rem; }
+        /* stack the flip-book: full-width card, arrows in a row below it */
+        .book-stage { flex-wrap: wrap; row-gap: 1.1rem; }
+        .book { flex: 1 1 100%; order: 0; perspective: none; }
+        .arrow { order: 1; }
+      }
+      @media (max-width: 460px) { .card-left, .heat { display: none; } .card-right { width: 140px; } }
+      :focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
+    </style>
+  </head>
+  <body>
+    <main class="panel">
+      <header class="nav">
+        <div class="logo">
+          <span class="logo-mark" aria-hidden="true">
+            <i class="g"></i><i></i><i class="a"></i>
+            <i></i><i class="t"></i><i class="g"></i>
+            <i class="a"></i><i class="g"></i><i></i>
+          </span>
+          TADA
+        </div>
+        <nav class="links">
+          <a href="#archive">Papers</a>
+          <a href="#">Method</a>
+          <a href="#archive">Archive</a>
+          <a href="#">About</a>
+        </nav>
+        <a class="btn" href="#archive">Read the papers <span class="arw">&rarr;</span></a>
+      </header>
+
+      <section class="hero">
+        <h1>
+          The journal where<br />overthinking becomes<br />
+          <span class="hl">proof</span>
+        </h1>
+        <p class="sub">
+          Tada publishes rigorously-argued proofs of things that absolutely did
+          not need proving &mdash; real math, pointed squarely at problems that
+          aren&rsquo;t.
+        </p>
+        <div class="cta">
+          <a class="btn" href="#archive">Read the papers <span class="arw">&rarr;</span></a>
+        </div>
+      </section>
+
+      <section class="scene">
+        <canvas id="matrix"></canvas>
+        <svg class="figure" viewBox="0 0 100 210" aria-hidden="true">
+          <path d="M50,9 a15,15 0 1,0 0.01,0 Z
+                   M30,42 Q50,34 70,42 L64,120 Q50,126 36,120 Z
+                   M40,120 L35,206 L47,206 L50,150 L53,206 L65,206 L60,120 Z" />
+        </svg>
+        <div class="vignette"></div>
+        <div class="blooms"></div>
+
+        <div class="card card-left">
+          <div class="card-h"><span class="pulse"></span>Compiling proof</div>
+          <div class="bar"><span></span></div>
+          <div class="card-row"><span>RIGOR</span><span class="tealx">live</span></div>
+        </div>
+
+        <div class="card card-right">
+          <div class="card-h">Peer review</div>
+          <div class="heat" id="heat" aria-hidden="true"></div>
+          <div class="stats">
+            <div><b>03</b><span>PAPERS</span></div>
+            <div><b class="tealx">&infin;</b><span>CONFIDENCE</span></div>
+            <div><b>00</b><span>CITED</span></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <section class="how" aria-label="How a paper happens">
+      <p class="eyebrow">How a paper happens</p>
+      <svg viewBox="0 0 560 200" role="img"
+        aria-label="An overthought worry runs through real math and comes out a clean verdict">
+        <!-- flow arrows -->
+        <g stroke-dasharray="4 3" stroke-width="1.6" fill="none">
+          <line x1="142" y1="82" x2="214" y2="82" stroke="#3cc7bd"/>
+          <line x1="346" y1="82" x2="418" y2="82" stroke="#d9a441"/>
+        </g>
+        <polygon points="214,82 205,77 205,87" fill="#3cc7bd"/>
+        <polygon points="418,82 409,77 409,87" fill="#d9a441"/>
+
+        <!-- 1 · the thought: a bubble with a tangled scribble -->
+        <ellipse cx="82" cy="80" rx="54" ry="42" fill="rgba(255,255,255,0.02)" stroke="#cfcec7" stroke-width="1.3"/>
+        <circle cx="42" cy="126" r="5" fill="none" stroke="#cfcec7" stroke-width="1.1"/>
+        <circle cx="32" cy="140" r="3" fill="none" stroke="#cfcec7" stroke-width="1"/>
+        <path d="M58,86 C62,60 96,64 94,82 C92,96 66,94 74,74 C80,60 104,66 108,88"
+          fill="none" stroke="#d9a441" stroke-width="1.6" stroke-linecap="round"/>
+        <text x="82" y="176" text-anchor="middle" fill="#8a8a82" font-size="12" font-family="monospace">an overthought worry</text>
+
+        <!-- 2 · the math: the character examining symbols -->
+        <text x="238" y="52" fill="#3cc7bd" font-size="15" font-family="monospace">&#8747;</text>
+        <text x="300" y="50" fill="#3cc7bd" font-size="13" font-family="monospace">&#931;</text>
+        <text x="236" y="108" fill="#3cc7bd" font-size="12" font-family="monospace">P(H)</text>
+        <g fill="#e6e5dd">
+          <circle cx="288" cy="70" r="12"/>
+          <rect x="281" y="81" width="14" height="30" rx="6"/>
+          <rect x="282" y="109" width="4" height="20"/>
+          <rect x="290" y="109" width="4" height="20"/>
+          <rect x="270" y="84" width="20" height="4" rx="2" transform="rotate(24 280 86)"/>
+        </g>
+        <circle cx="285" cy="68" r="1.8" fill="#0c0e0d"/>
+        <circle cx="292" cy="68" r="1.8" fill="#0c0e0d"/>
+        <!-- magnifier the character holds -->
+        <circle cx="266" cy="98" r="9" fill="none" stroke="#d9a441" stroke-width="1.6"/>
+        <line x1="272" y1="105" x2="279" y2="112" stroke="#d9a441" stroke-width="1.8" stroke-linecap="round"/>
+        <text x="280" y="176" text-anchor="middle" fill="#8a8a82" font-size="12" font-family="monospace">run real math</text>
+
+        <!-- 3 · the verdict: a stamped card -->
+        <rect x="448" y="44" width="64" height="76" rx="7" fill="rgba(255,255,255,0.02)" stroke="#cfcec7" stroke-width="1.3"/>
+        <line x1="460" y1="62" x2="500" y2="62" stroke="#5a5a52" stroke-width="1.4"/>
+        <line x1="460" y1="72" x2="492" y2="72" stroke="#5a5a52" stroke-width="1.4"/>
+        <path d="M462,96 l7,7 l14,-16" fill="none" stroke="#3cc7bd" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="480" y="114" text-anchor="middle" fill="#d9a441" font-size="10" font-family="monospace" letter-spacing="1">Q.E.D.</text>
+        <text x="480" y="176" text-anchor="middle" fill="#8a8a82" font-size="12" font-family="monospace">a clean verdict</text>
+      </svg>
+    </section>
+
+    <section class="archive" id="archive">
+      <div class="archive-head">
+        <p class="eyebrow">The Archive</p>
+        <h2>See how the math ruins the vibe</h2>
+        <p class="sub">
+          Real methods, absurd problems. Flip through for the gist &mdash; the
+          full proof is one click away.
+        </p>
+      </div>
+
+      <div class="book-stage">
+        <button class="arrow" id="prev" aria-label="Previous paper">&lsaquo;</button>
+        <div class="book" id="book">
+          <div class="sheet" id="sheet"></div>
+          <div class="turner" id="turner"></div>
+        </div>
+        <button class="arrow" id="next" aria-label="Next paper">&rsaquo;</button>
+      </div>
+      <div class="dots-nav" id="dotsNav"></div>
+      <p class="flip-hint">Arrows &middot; swipe &middot; &larr; &rarr; keys</p>
+    </section>
+
+    <div class="reader" id="reader" aria-hidden="true">
+      <div class="backdrop" data-close></div>
+      <div class="doc">
+        <button class="close" data-close aria-label="Close paper">&#10005;</button>
+        <div class="doc-body" id="docBody"></div>
+      </div>
+    </div>
+
+    <footer class="site">Tada &middot; A Journal of Applied Overthinking &middot; 2026</footer>
+
+    <script>
+      // ---------- heatmap in the Peer-review card ----------
+      (function () {
+        const heat = document.getElementById("heat");
+        const cols = ["rgba(60,199,189,", "rgba(217,164,65,", "rgba(255,255,255,"];
+        for (let i = 0; i < 36; i++) {
+          const s = document.createElement("i");
+          const c = cols[(Math.random() * cols.length) | 0];
+          const a = Math.random() < 0.55 ? 0.08 : 0.3 + Math.random() * 0.6;
+          s.style.background = c + a.toFixed(2) + ")";
+          heat.appendChild(s);
+        }
+      })();
+
+      // ---------- the math-wall canvas ----------
+      (function () {
+        const cv = document.getElementById("matrix");
+        const ctx = cv.getContext("2d");
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        // a wall of maths: greek, logic, operators, probability notation
+        const CHARS =
+          "αβγδεζηθλμνξπρστφχψωΣΠΩΘΛ∫∂√∞≈≠≤≥±×÷∀∃∈∉⊂∴∇⊕0123456789=<>|PHEOΛμσ".split("");
+        const teal = [72, 224, 212], amber = [233, 179, 78];
+        const cell = 16;
+        let W, H, cols, rows, grid, heads;
+        const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const lerp = (a, b, t) => a + (b - a) * t;
+
+        function build() {
+          const r = cv.getBoundingClientRect();
+          W = r.width; H = r.height;
+          cv.width = W * dpr; cv.height = H * dpr;
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          cols = Math.ceil(W / cell); rows = Math.ceil(H / cell);
+          grid = []; heads = [];
+          for (let x = 0; x < cols; x++) {
+            grid[x] = [];
+            for (let y = 0; y < rows; y++) grid[x][y] = CHARS[(Math.random() * CHARS.length) | 0];
+            heads[x] = { y: Math.random() * rows, spd: 0.12 + Math.random() * 0.32 };
+          }
+          ctx.font = (cell - 2) + "px " + getComputedStyle(document.body).fontFamily;
+          ctx.textBaseline = "top";
+        }
+        function profile(fx, fy) {
+          const cx = 1 - Math.min(1, Math.abs(fx - 0.5) * 1.8);
+          const cy = Math.max(0, 1 - Math.abs(fy - 0.44) * 1.1);
+          const floor = Math.max(0, 0.5 - Math.abs(fy - 0.82) * 2.8);
+          return Math.min(1, Math.max(cx * cy, floor * Math.max(0, cx)) * 1.25);
+        }
+        function render(t) {
+          ctx.clearRect(0, 0, W, H);
+          for (let x = 0; x < cols; x++) {
+            const h = heads[x];
+            if (!reduce) { h.y += h.spd; if (h.y > rows + 4) h.y = -Math.random() * 12; }
+            const fx = x / (cols - 1 || 1);
+            for (let y = 0; y < rows; y++) {
+              const fy = y / (rows - 1 || 1);
+              const g = profile(fx, fy);
+              if (g < 0.02) continue;
+              let head = 0;
+              const dh = y - h.y;
+              if (!reduce) { if (dh < 0 && dh > -1.4) head = 1; else if (dh < 0 && dh > -6) head = 0.22; }
+              const tw = reduce ? 0.85 : 0.55 + 0.45 * Math.sin(t * 0.003 + x * 1.7 + y * 0.9);
+              let a = Math.min(1, g * (0.42 + 0.95 * tw) + head * 0.85);
+              if (a < 0.03) continue;
+              const wl = head * 0.85;
+              const r = Math.round(lerp(lerp(teal[0], amber[0], fx), 245, wl));
+              const gg = Math.round(lerp(lerp(teal[1], amber[1], fx), 245, wl));
+              const b = Math.round(lerp(lerp(teal[2], amber[2], fx), 240, wl));
+              ctx.fillStyle = "rgba(" + r + "," + gg + "," + b + "," + a.toFixed(3) + ")";
+              if (!reduce && Math.random() < 0.03) grid[x][y] = CHARS[(Math.random() * CHARS.length) | 0];
+              ctx.fillText(grid[x][y], x * cell, y * cell);
+            }
+          }
+        }
+        let last = 0;
+        function loop(t) { requestAnimationFrame(loop); if (t - last < 33) return; last = t; render(t); }
+        build();
+        if (reduce) render(0); else requestAnimationFrame(loop);
+        let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(build, 150); });
+      })();
+
+      // ---------- the parody papers (flip-book) ----------
+      const COMING = "<p>The full write-up is still clearing peer review — which, at this journal, means the author re-reading it alone at 2&nbsp;a.m. Check back soon.</p>";
+
+      const papers = [
+        {
+          cat: "Paper 01 · Revealed-Preference Agronomy",
+          byline: "Ceetada",
+          title: "An Agronomic Proof That “If He Wanted To, He Would”",
+          lead: "Liebig’s Law says a field grows only as much as its scarcest nutrient allows — abundance in everything else is irrelevant. A text costs essentially zero on every axis but desire, so for a cheap enough act, output becomes a clean measurement of wanting. His own Instagram supplied the soil assay.",
+          stat: "4s",
+          statLbl: "the entire cost of the text — every other nutrient was in surplus",
+          punch: "On the balance of the evidence he published himself: no longer plausibly busy.",
+          eq: "Y = Yₘₐₓ · minᵢ (xᵢ ⁄ kᵢ)",
+          full: `<h1>A Revealed Preference Theory of Romantic Effort</h1>
+<p class="subtitle">An Agronomic Proof That If He Wanted To, He Would</p>
+<p class="meta">Ceetada &middot; Department of Things That Don’t Matter &middot; July 16, 2026</p>
+
+<h2>Introduction</h2>
+<p>In 1840, Justus von Liebig was shown a field that would not grow. The farmer had spread every nutrient he could afford. There was potassium in abundance. There was magnesium to spare. The crop died anyway.</p>
+<p>Liebig’s answer founded agricultural science. Growth is not governed by the total resources available; it is governed by the scarcest one. A field with a thousand kilograms of potassium and no nitrogen grows exactly as much as a field with nothing in it at all. The abundance is not merely insufficient. It is irrelevant.</p>
+<p>This law is generous, and we wish to be clear about its generosity before we use it. Liebig will excuse a great deal. He excuses the man who cannot fly to you because he cannot fund the flight. He excuses the woman who cannot come because her mother is dying and there is no one else. He excuses distance, poverty, exhaustion, and every season of survival — and he excuses them with a proof. Desire does not manufacture nitrogen, and nothing in this paper will pretend otherwise.</p>
+<p>We show, however, that the law’s generosity is precisely what convicts him. Liebig’s Law does not excuse a shortage in the abstract. It excuses a shortage <em>relative to a requirement</em>. And when we compute the requirement vector of the thing you actually asked for, every stave in the barrel goes to infinity except one.</p>
+<p class="callout"><b>The field was not lazy. The field had no nitrogen. This field has nitrogen. We checked.</b></p>
+
+<h2>1 · The Model</h2>
+<p><b class="amberx">Definition 1 (Liebig’s Law).</b> Let Y be observed output and let x₁,…,xₙ be the inputs. Let k = (k₁,…,kₙ) be the <em>requirement vector</em>: the quantity of each input consumed by one unit of output. Then</p>
+<div class="eqb">Y = Yₘₐₓ · minᵢ ( xᵢ ⁄ kᵢ ) &nbsp;&nbsp;(1)</div>
+<p>The inputs are the staves of a barrel. The water rises to the shortest stave and stops. It does not matter how tall the others are. This is not a metaphor; it is equation (1).</p>
+<p>The critical and universally forgotten feature of (1) is that <b>k is not a property of him. It is a property of the output.</b> Different acts have different requirement vectors, and therefore different limiting factors. A man may be genuinely, provably, unimpeachably constrained with respect to one output and entirely unconstrained with respect to another — on the same afternoon, in the same body.</p>
+<p>Which is why the whole argument turns on a question nobody thinks to ask: what, precisely, did you ask him for?</p>
+
+<h2>2 · The Requirement Vector of a Text Message</h2>
+<p>We compute k for the output “one text message.”</p>
+<div class="eqb">
+  k<sub>money</sub> = $0 &nbsp;&nbsp;<span class="tealx">(the plan is already paid for)</span><br />
+  k<sub>proximity</sub> = 0 km &nbsp;&nbsp;<span class="tealx">(this is the entire purpose of telephony)</span><br />
+  k<sub>time</sub> = 4 seconds &nbsp;&nbsp;<span class="tealx">(measured; two thumbs)</span><br />
+  k<sub>obligation</sub> = 0 &nbsp;&nbsp;<span class="tealx">(it can be done from a hospital corridor)</span><br />
+  k<sub>bandwidth</sub> ≈ 1 sentence &nbsp;&nbsp;<span class="tealx">(“thinking of you” is four words)</span>
+</div>
+<p class="callout"><b>Lemma 2 (Divergence of the Non-Desire Ratios).</b> For every input i ≠ D, kᵢ → 0, and therefore xᵢ ⁄ kᵢ → ∞ for any strictly positive supply xᵢ whatsoever.</p>
+<p>Note the strength of this. It does not require that he be rich, free, rested, or nearby. It requires only that he possess a nonzero quantity of each — which is to say, that he be alive.</p>
+<p class="callout"><b>Theorem 3 (Collapse of the Minimum).</b> For any output whose requirement vector satisfies kᵢ ≈ 0 for all i ≠ D, equation (1) reduces to Y = Yₘₐₓ · min(x_D⁄k_D, ∞, ∞, …) = Yₘₐₓ · x_D ⁄ k_D.</p>
+<p><em>Proof.</em> The minimum of a finite set containing one finite element and n − 1 divergent elements is the finite element. ∎</p>
+<p><b class="amberx">Corollary 4 (The Cheap Act is the Only Clean Test).</b> Liebig’s Law, applied to a text message, is no longer a barrel. It is a measurement. Output is a strictly increasing, injective function of desire, with no other input entering the expression.</p>
+<p>This inverts the entire folk defence. The cheapness of the act is produced in his favour (“it’s not a big deal, he’s just bad at texting”). It is the <em>most incriminating</em> fact in the paper. An expensive act is confounded: the aeroplane he did not board is confounded by the money he did not have, and no inference about his heart survives the confound. The text is confounded by nothing. It is the perfectly controlled experiment. It removes every stave from the barrel but one.</p>
+<p>He has been running that experiment daily, for six weeks, and it has returned the same result every time.</p>
+
+<h2>3 · Revealed Capacity: The Soil Assay</h2>
+<p>The defence will now assert that some stave is short after all: that he is exhausted, overwhelmed, drained, going through something. This is an empirical claim about xᵢ, and we are not required to take his word for it — because in Liebig’s field the nutrient claim is refutable by assay.</p>
+<p class="callout"><b>Lemma 5 (Stave Heights are Bounded Below by Realised Output).</b> If an agent produced output j with requirement vector k⁽ʲ⁾, then necessarily xᵢ ≥ kᵢ⁽ʲ⁾ for every i.</p>
+<p><em>Proof.</em> He could not have produced it otherwise. ∎</p>
+<p>The assay therefore does not require his cooperation. It requires only that we look at what he did. He went to the gym: x<sub>time</sub> ≥ 90 minutes. He bought the trainers: x<sub>money</sub> &gt; 0. He wrote two hundred words in the football group chat at 11:47&nbsp;pm: x<sub>bandwidth</sub> ≥ 200 words, and x<sub>obligation</sub> was not binding, and his thumbs were in working order, and his phone was in his hand.</p>
+<p class="callout"><b>Remark 6 (The Nitrogen Was There).</b> In Liebig’s field, the claim “there was no nitrogen” is settled by a soil assay. In this case the assay is his Instagram. He conducted it himself. He published the results. He tagged the location.</p>
+
+<h2>4 · Worked Example</h2>
+<p>We now perform the assay formally. Requirements are those of one text message. Supplies are taken from his own public disclosures — which is to say, from evidence he volunteered. Substituting into (1):</p>
+<div class="eqb">Y = Yₘₐₓ · min( ∞, ∞, ∞, 3405, 200, 2, <span class="amberx">0</span> ) = <span class="amberx">0</span> &nbsp;&nbsp;(10)</div>
+<table>
+  <thead><tr><th>Nutrient</th><th>Requirement kᵢ</th><th>Observed supply xᵢ</th><th>xᵢ ⁄ kᵢ</th></tr></thead>
+  <tbody>
+    <tr><td>Money</td><td>$0</td><td>bought the trainers</td><td class="tealx">∞</td></tr>
+    <tr><td>Proximity</td><td>0 km</td><td>it is a telephone</td><td class="tealx">∞</td></tr>
+    <tr><td>Obligation</td><td>0</td><td>posted from his bed</td><td class="tealx">∞</td></tr>
+    <tr><td>Time</td><td>4 s</td><td>13,620 s of screen time</td><td>3,405</td></tr>
+    <tr><td>Bandwidth</td><td>1 sentence</td><td>200 words re: the transfer window</td><td>200</td></tr>
+    <tr><td>Physical capacity</td><td>1 thumb</td><td>2 thumbs (verified)</td><td>2</td></tr>
+    <tr><td>Desire</td><td>1 unit</td><td>0</td><td class="amberx">0</td></tr>
+  </tbody>
+  <caption>Table 1: Soil assay. Every nutrient is present in surplus. One is not present at all.</caption>
+</table>
+<p>The minimum is attained uniquely, at desire, by a margin of infinity.</p>
+
+<h2>5 · Visualization</h2>
+<p>The same man, the same afternoon, two different requests. The water rises only to the shortest stave &mdash; and that changes everything.</p>
+<figure class="viz">
+<svg viewBox="0 0 640 320" role="img" aria-label="Two barrels of staves comparing the flight and the text message">
+  <line x1="30" y1="250" x2="610" y2="250" stroke="#4a4a44" stroke-width="1.5"/>
+
+  <text x="138" y="40" text-anchor="middle" fill="#9a9a92" font-size="12" font-family="monospace">(a) the flight he describes</text>
+  <g fill="rgba(207,206,199,0.10)" stroke="#cfcec7" stroke-width="1.4">
+    <rect x="70" y="80" width="28" height="170" rx="4"/>
+    <rect x="106" y="110" width="28" height="140" rx="4"/>
+    <rect x="142" y="175" width="28" height="75" rx="4"/>
+    <rect x="178" y="185" width="28" height="65" rx="4"/>
+  </g>
+  <rect x="70" y="185" width="136" height="65" fill="rgba(60,199,189,0.22)"/>
+  <line x1="66" y1="185" x2="210" y2="185" stroke="#3cc7bd" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <text x="138" y="228" text-anchor="middle" fill="#d9a441" font-size="13" font-family="monospace">Y = 1.8</text>
+  <g fill="#8a8a82" font-size="9" font-family="monospace">
+    <text x="88" y="245" transform="rotate(-90 88 245)">Desire</text>
+    <text x="124" y="245" transform="rotate(-90 124 245)">Time</text>
+    <text x="160" y="245" transform="rotate(-90 160 245)">Money</text>
+    <text x="196" y="245" transform="rotate(-90 196 245)">Distance</text>
+  </g>
+
+  <text x="468" y="40" text-anchor="middle" fill="#9a9a92" font-size="12" font-family="monospace">(b) the text you asked for</text>
+  <g fill="rgba(207,206,199,0.10)" stroke="#cfcec7" stroke-width="1.4">
+    <rect x="400" y="70" width="28" height="180" rx="4"/>
+    <rect x="436" y="70" width="28" height="180" rx="4"/>
+    <rect x="472" y="85" width="28" height="165" rx="4"/>
+    <rect x="508" y="242" width="28" height="8" rx="3"/>
+  </g>
+  <rect x="400" y="242" width="136" height="8" fill="rgba(60,199,189,0.22)"/>
+  <line x1="396" y1="242" x2="540" y2="242" stroke="#3cc7bd" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <text x="452" y="150" text-anchor="middle" fill="#d9a441" font-size="20" font-family="monospace" font-weight="600">Y = 0</text>
+  <g fill="#8a8a82" font-size="9" font-family="monospace">
+    <text x="418" y="245" transform="rotate(-90 418 245)">Money &#8734;</text>
+    <text x="454" y="245" transform="rotate(-90 454 245)">Distance &#8734;</text>
+    <text x="490" y="245" transform="rotate(-90 490 245)">Time</text>
+    <text x="524" y="245" transform="rotate(-90 524 245)" fill="#d9a441">Desire = 0</text>
+  </g>
+
+  <path d="M576 205 Q552 214 534 240" fill="none" stroke="#d9a441" stroke-width="1.3" stroke-dasharray="3 3"/>
+  <g fill="#e6e5dd">
+    <circle cx="590" cy="182" r="13"/>
+    <rect x="583" y="194" width="14" height="34" rx="6"/>
+    <rect x="584" y="226" width="4" height="22"/>
+    <rect x="592" y="226" width="4" height="22"/>
+    <rect x="565" y="199" width="22" height="4" rx="2" transform="rotate(14 587 201)"/>
+  </g>
+  <circle cx="586" cy="180" r="2" fill="#0c0e0d"/>
+  <circle cx="595" cy="180" r="2" fill="#0c0e0d"/>
+</svg>
+<figcaption>Figure&nbsp;1 &mdash; Water rises only to the shortest stave. For the flight, that stave is money, and his defence holds. For the text, every stave stands full but one &mdash; so the output is zero, and the short stave is the one nobody names.</figcaption>
+</figure>
+
+<h2>6 · The Moving Stave</h2>
+<p>One defence survives, and we dispose of it here.</p>
+<p class="callout"><b>Proposition 7 (Uniqueness of the Limiting Factor).</b> The minimum in (1) is generically attained at a single index. A barrel does not have six shortest staves.</p>
+<p>It follows that a genuine constraint can be named in advance, and named only once. This is what an agronomist does: he nominates the deficient nutrient, then enriches it, then measures.</p>
+<p>Observe what happens when his constraint is enriched. It was work, so you stopped texting during work hours; then it was that he is bad at texting, so you called instead; then it was that he had a lot on; then it was that he is not ready. Each stave, when raised, was found not to have been the short one — and a new stave was produced from somewhere to take its place.</p>
+<p>Liebig permits a short stave. He does not permit a <em>migratory</em> one. A limiting factor that relocates every time you relieve it is not a limiting factor; it is a sequence of alibis, and the correct inference is that the short stave never moved at all — and that it is the one nobody has been willing to name out loud.</p>
+
+<h2>7 · Limitations and Scope of the Claim</h2>
+<p>Honesty requires a retreat, and we conduct it here — in the section every paper reserves for the concessions it hopes the reader has stopped reading by.</p>
+<p><b class="amberx">1. This is a likelihood ratio, not a proof.</b> The title promises a proof. The mathematics does not deliver one, and we withdraw the word. What Theorem 3 actually licenses is an inference of the form</p>
+<div class="eqb">P(non-performance | low desire) ⁄ P(non-performance | high desire ∧ genuinely low-cost act) ≫ 1 &nbsp;&nbsp;(11)</div>
+<p>This is a number that shifts a posterior. It is not a number that closes a question. “If he wanted to, he would” is therefore not a theorem but a strong prior update: for sufficiently low-cost actions, observed non-performance is strong evidence against sufficient motivation. Evidence, not entailment. Strong, not decisive.</p>
+<p><b class="amberx">2. The bandwidth stave was set by assertion.</b> We priced k<sub>bandwidth</sub> at “one sentence” by fiat, accompanied by a joke, and never measured it. This was the one nutrient capable of exonerating him, and we declined to weigh it. The four-second figure for k<sub>time</sub> is a motor cost — the labour of two thumbs. It is not the psychological cost of those same four seconds directed at a specific person about whom the sender has complicated feelings and a three-week silence to account for. We measured the enthalpy of the product and called it the height of the barrier — precisely the error an earlier comment in this series was written to catch. Three papers in, the author has relapsed into the sin of the first.</p>
+<p><b class="amberx">3. Lemma 5 equivocates on the index.</b> The Revealed Capacity argument infers, from two hundred low-stakes words to a group chat, a supply of “bandwidth” available for four high-stakes words to you. This treats bandwidth as a single fungible nutrient. But the entire force of Section 2 was that k is a property of the <em>output</em>. Capacity in a cheap context does not establish capacity in a costly one, and the cost of a message lives not in its word count but in its recipient.</p>
+<p>In short, the model holds in exactly one regime, and leaks at each of its three boundaries — <b>low cost</b> (raise it and Liebig re-enters for the defence), <b>symmetric context</b> (group-chat words prove nothing about the harder ones), and <b>a single clean choice</b> (avoidance, freeze, and shame that compounds daily are not decisions).</p>
+<p class="callout"><b>Remark 8.</b> Each of these limitations has been available to the author for the full six weeks. He has invoked none of them either. The model, whatever its flaws, has at least been running the experiment. He has not been reading the results.</p>
+
+<h2>Conclusion</h2>
+<p>We have not argued that constraints are imaginary. They are not. Liebig’s Law is the most humane theorem in the physical sciences, and it will forgive nearly anything: the airfare, the distance, the double shift, the dying parent, the year that took everything. Desire does not manufacture resources, and any theory that says otherwise is cruel and also wrong.</p>
+<p>But Liebig forgives a shortage <em>relative to a requirement</em>, and you did not ask him for an aeroplane. You asked for four seconds.</p>
+<p>There is no nitrogen defence for four seconds. The soil was rich. The field was watered. Every nutrient he possessed, he possessed in surplus, and he possessed it publicly, and he spent it — and he spent it somewhere else, and he let you watch.</p>
+<p>Within the regime where looking is valid, every stave in the barrel stands full to overflowing but one. The law does not convict him; it is not built to convict. It does something narrower and harder to shake off: given a genuinely cheap act, freely forgone, it names the stave most likely to be short. It has been naming the same one, without hesitation, every single day for six weeks.</p>
+<p class="callout"><b>In agronomy, formally, with a citation going back to 1840, that stave has a name. The name is not a proof, and it is not a verdict. It is only, on the balance of all the evidence he has published himself — no longer plausibly busy.</b></p>`,
+        },
+        {
+          cat: "Paper 02 · Statistical Thermodynamics",
+          byline: "Ceetada",
+          title: "The Heat Death of a Group Chat",
+          lead: "A group chat is a closed system, so by the Second Law its entropy can only rise. Left alone, it drifts inexorably toward its final state: one unanswered “we should all catch up soon.”",
+          stat: "0.4%",
+          statLbl: "probability of spontaneous revival",
+          punch: "The chat isn’t dead — only thermodynamically inevitable.",
+          eq: "dS/dt ≥ 0",
+          full: COMING,
+        },
+        {
+          cat: "Paper 03 · Decision Theory",
+          byline: "Ceetada",
+          title: "A First-Principles Proof That Buying a Yoga Mat Is Exercise",
+          lead: "Under a generous enough discount rate, the utility of intending to work out converges on the utility of actually working out. The purchase, therefore, already counts.",
+          stat: "5%",
+          statLbl: "chance the mat is ever unrolled",
+          punch: "The mat is, mathematically, a completed workout.",
+          eq: "U(intent) → U(action) as r → ∞",
+          full: COMING,
+        },
+      ];
+
+      function renderPaper(p) {
+        return (
+          '<div class="paper">' +
+          '<div class="kicker"><span class="cat">' + p.cat +
+          '</span><span class="byline">' + p.byline + "</span></div>" +
+          "<h3>" + p.title + "</h3>" +
+          '<p class="lead">' + p.lead + "</p>" +
+          '<div class="stat"><span class="n">' + p.stat +
+          '</span><span class="lbl">' + p.statLbl + "</span></div>" +
+          '<p class="punch">' + p.punch + "</p>" +
+          '<div class="foot"><span class="eq">' + p.eq + "</span>" +
+          '<a class="read" href="#">Read the full paper <span class="arw">&rarr;</span></a></div>' +
+          "</div>"
+        );
+      }
+
+      const sheet = document.getElementById("sheet");
+      const turner = document.getElementById("turner");
+      const prevBtn = document.getElementById("prev");
+      const nextBtn = document.getElementById("next");
+      const dotsNav = document.getElementById("dotsNav");
+      let idx = 0, animating = false;
+
+      papers.forEach((_, i) => {
+        const b = document.createElement("button");
+        b.setAttribute("aria-label", "Go to paper " + (i + 1));
+        b.addEventListener("click", () => jump(i));
+        dotsNav.appendChild(b);
+      });
+      const navDots = Array.from(dotsNav.children);
+
+      function syncControls() {
+        prevBtn.disabled = idx === 0;
+        nextBtn.disabled = idx === papers.length - 1;
+        navDots.forEach((d, i) => d.classList.toggle("active", i === idx));
+      }
+      function paint() { sheet.innerHTML = renderPaper(papers[idx]); syncControls(); }
+
+      function go(dir) {
+        const target = idx + dir;
+        if (animating || target < 0 || target >= papers.length) return;
+        animating = true;
+        if (dir > 0) {
+          sheet.innerHTML = renderPaper(papers[target]);
+          turner.innerHTML = renderPaper(papers[idx]);
+          turner.classList.add("on");
+          turner.style.transition = "none"; turner.style.transform = "rotateY(0deg)";
+          void turner.offsetWidth;
+          turner.style.transition = ""; turner.style.transform = "rotateY(-180deg)";
+        } else {
+          sheet.innerHTML = renderPaper(papers[idx]);
+          turner.innerHTML = renderPaper(papers[target]);
+          turner.classList.add("on");
+          turner.style.transition = "none"; turner.style.transform = "rotateY(-180deg)";
+          void turner.offsetWidth;
+          turner.style.transition = ""; turner.style.transform = "rotateY(0deg)";
+        }
+        idx = target; syncControls();
+      }
+      turner.addEventListener("transitionend", (e) => {
+        if (e.propertyName !== "transform") return;
+        turner.classList.remove("on");
+        sheet.innerHTML = renderPaper(papers[idx]);
+        animating = false;
+      });
+      function jump(i) { if (i === idx || animating) return; go(i > idx ? 1 : -1); }
+
+      prevBtn.addEventListener("click", () => go(-1));
+      nextBtn.addEventListener("click", () => go(1));
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight") go(1);
+        if (e.key === "ArrowLeft") go(-1);
+      });
+      let sx = null;
+      const book = document.getElementById("book");
+      book.addEventListener("pointerdown", (e) => (sx = e.clientX));
+      book.addEventListener("pointerup", (e) => {
+        if (sx === null) return;
+        const dx = e.clientX - sx;
+        if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
+        sx = null;
+      });
+      paint();
+
+      // ---------- full-paper reader ----------
+      const reader = document.getElementById("reader");
+      const docBody = document.getElementById("docBody");
+      function openReader(i) {
+        docBody.innerHTML = papers[i].full || "<p>Full paper coming soon.</p>";
+        reader.classList.add("open");
+        reader.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        docBody.scrollTop = 0;
+      }
+      function closeReader() {
+        reader.classList.remove("open");
+        reader.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+      }
+      document.addEventListener("click", (e) => {
+        const read = e.target.closest(".read");
+        if (read) { e.preventDefault(); openReader(idx); return; }
+        if (e.target.closest("[data-close]")) closeReader();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && reader.classList.contains("open")) closeReader();
+      });
+    </script>
+  </body>
+</html>
