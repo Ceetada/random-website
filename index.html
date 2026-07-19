@@ -261,6 +261,11 @@
       .flip-hint { text-align: center; font-size: 0.72rem; color: var(--faint);
         letter-spacing: 0.08em; margin-top: 0.9rem; }
 
+      /* ---- homepage "how a paper happens" illustration ---- */
+      .how { width: 100%; max-width: 620px; padding: 0 1.5rem; }
+      .how .eyebrow { text-align: center; margin: 0 0 1.1rem; }
+      .how svg { width: 100%; height: auto; display: block; }
+
       footer.site { color: var(--faint); font-size: 0.75rem; letter-spacing: 0.06em;
         text-align: center; padding: 0 0 1rem; }
 
@@ -389,6 +394,54 @@
         </div>
       </section>
     </main>
+
+    <section class="how" aria-label="How a paper happens">
+      <p class="eyebrow">How a paper happens</p>
+      <svg viewBox="0 0 560 200" role="img"
+        aria-label="An overthought worry runs through real math and comes out a clean verdict">
+        <!-- flow arrows -->
+        <g stroke-dasharray="4 3" stroke-width="1.6" fill="none">
+          <line x1="142" y1="82" x2="214" y2="82" stroke="#3cc7bd"/>
+          <line x1="346" y1="82" x2="418" y2="82" stroke="#d9a441"/>
+        </g>
+        <polygon points="214,82 205,77 205,87" fill="#3cc7bd"/>
+        <polygon points="418,82 409,77 409,87" fill="#d9a441"/>
+
+        <!-- 1 · the thought: a bubble with a tangled scribble -->
+        <ellipse cx="82" cy="80" rx="54" ry="42" fill="rgba(255,255,255,0.02)" stroke="#cfcec7" stroke-width="1.3"/>
+        <circle cx="42" cy="126" r="5" fill="none" stroke="#cfcec7" stroke-width="1.1"/>
+        <circle cx="32" cy="140" r="3" fill="none" stroke="#cfcec7" stroke-width="1"/>
+        <path d="M58,86 C62,60 96,64 94,82 C92,96 66,94 74,74 C80,60 104,66 108,88"
+          fill="none" stroke="#d9a441" stroke-width="1.6" stroke-linecap="round"/>
+        <text x="82" y="176" text-anchor="middle" fill="#8a8a82" font-size="12" font-family="monospace">an overthought worry</text>
+
+        <!-- 2 · the math: the character examining symbols -->
+        <text x="238" y="52" fill="#3cc7bd" font-size="15" font-family="monospace">&#8747;</text>
+        <text x="300" y="50" fill="#3cc7bd" font-size="13" font-family="monospace">&#931;</text>
+        <text x="236" y="108" fill="#3cc7bd" font-size="12" font-family="monospace">P(H)</text>
+        <g fill="#e6e5dd">
+          <circle cx="288" cy="70" r="12"/>
+          <rect x="281" y="81" width="14" height="30" rx="6"/>
+          <rect x="282" y="109" width="4" height="20"/>
+          <rect x="290" y="109" width="4" height="20"/>
+          <rect x="270" y="84" width="20" height="4" rx="2" transform="rotate(24 280 86)"/>
+        </g>
+        <circle cx="285" cy="68" r="1.8" fill="#0c0e0d"/>
+        <circle cx="292" cy="68" r="1.8" fill="#0c0e0d"/>
+        <!-- magnifier the character holds -->
+        <circle cx="266" cy="98" r="9" fill="none" stroke="#d9a441" stroke-width="1.6"/>
+        <line x1="272" y1="105" x2="279" y2="112" stroke="#d9a441" stroke-width="1.8" stroke-linecap="round"/>
+        <text x="280" y="176" text-anchor="middle" fill="#8a8a82" font-size="12" font-family="monospace">run real math</text>
+
+        <!-- 3 · the verdict: a stamped card -->
+        <rect x="448" y="44" width="64" height="76" rx="7" fill="rgba(255,255,255,0.02)" stroke="#cfcec7" stroke-width="1.3"/>
+        <line x1="460" y1="62" x2="500" y2="62" stroke="#5a5a52" stroke-width="1.4"/>
+        <line x1="460" y1="72" x2="492" y2="72" stroke="#5a5a52" stroke-width="1.4"/>
+        <path d="M462,96 l7,7 l14,-16" fill="none" stroke="#3cc7bd" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="480" y="114" text-anchor="middle" fill="#d9a441" font-size="10" font-family="monospace" letter-spacing="1">Q.E.D.</text>
+        <text x="480" y="176" text-anchor="middle" fill="#8a8a82" font-size="12" font-family="monospace">a clean verdict</text>
+      </svg>
+    </section>
 
     <section class="archive" id="archive">
       <div class="archive-head">
