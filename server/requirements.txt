@@ -1,0 +1,4 @@
+# Front-end server only. The Netryx Astra engine has its own (heavy) deps —
+# torch, torchvision, timm, mast3r, etc. See the upstream repo's requirements.txt
+# and set NETRYX_HOME to that checkout to enable live geolocation.
+flask>=3.0

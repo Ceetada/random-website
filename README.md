@@ -7,21 +7,36 @@ MegaLoc retrieval and MASt3R dense matching.
 
 ## What this is
 
-A static site (no build step, no dependencies) that:
+It:
 
 - explains the three-stage **Retrieval → Matching → Consensus** pipeline,
-- lets you drop in a photo and **visualise each stage running**, ending on a
-  coordinate pinned to a stylised map,
-- is honest that the demo is a UI simulation — the real geolocation needs the
-  Python engine and GPU.
+- lets you drop in a photo and **geolocate it** — really, when the backend +
+  engine are installed; as a labeled simulation otherwise,
+- projects the result onto a stylised map and reports coordinates, confidence,
+  and inlier count.
 
 ## Run it
 
+**Front-end + backend (recommended)** — one command, geolocation API included:
+
 ```bash
-python3 -m http.server 8000   # then open http://localhost:8000
+./run.sh                 # → http://localhost:8000  (simulation mode)
 ```
 
-Or just open `index.html`.
+**Live geolocation** — point it at a checkout of the real engine:
+
+```bash
+NETRYX_HOME=/abs/path/to/Netryx-Astra-V2-Geolocation-Tool ./run.sh
+```
+
+See [`server/README.md`](server/README.md) for the full engine setup (PyTorch,
+MASt3R, and a city index).
+
+**Static only** — no backend; the demo runs a client-side simulation:
+
+```bash
+python3 -m http.server 8000   # or just open index.html
+```
 
 ## Files
 
@@ -29,13 +44,17 @@ Or just open `index.html`.
 | --- | --- |
 | `index.html` | Structure and copy |
 | `styles.css` | Dark cinematic theme, HUD panels, map, animations, responsive |
-| `script.js` | Drag-and-drop upload + simulated pipeline + scroll reveals |
+| `script.js` | Upload → calls `/api/geolocate`, animates the pipeline, projects the pin (falls back to a client-side sim if no backend) |
+| `server/app.py` | Flask server: serves the site + `/api/geolocate`, `/api/health` |
+| `server/engine.py` | Headless adapter that drives the real Netryx pipeline (or a labeled simulation) |
+| `run.sh` | One-command launcher |
 
-## Wiring it to the real engine
+## How live geolocation works
 
-The demo's `runPipeline()` in `script.js` is the only place to change. Replace
-the staged timers with a `fetch()` to a small server that wraps the Netryx
-Astra Python CLI, and feed the returned `{ place, lat, lng, confidence, matches }`
-into `showResult()`.
+`server/engine.py` reimplements the core of the upstream `test_super.py`
+`_run_search` **without its Tkinter GUI**, reusing the module's own primitives
+(`encode_query`, `search_compact_index`, MASt3R matching, tile stitching,
+equirectangular projection). Every response is tagged `engine: "live"` or
+`engine: "simulation"` — a simulated fix is never presented as a real one.
 
 > Not affiliated with the original authors — this is a concept front-end.
