@@ -1,0 +1,77 @@
+<!doctype html>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TADA — Find where a photo was taken</title>
+<meta name="description" content="TADA recovers the GPS coordinates a photograph was taken from, and drops it on a real map." />
+<link rel="stylesheet" href="assets/vendor/leaflet.css" />
+<link rel="stylesheet" href="styles.css" />
+
+<header class="bar">
+  <a class="wordmark" href="./" aria-label="TADA home">
+    <span class="wordmark-pin" aria-hidden="true"></span>
+    TADA
+  </a>
+  <a class="ghlink" href="https://github.com/sparkyniner/Netryx-Astra-V2-Geolocation-Tool" target="_blank" rel="noopener">
+    Built on Netryx Astra <span aria-hidden="true">↗</span>
+  </a>
+</header>
+
+<main class="hero">
+  <!-- ── control panel ── -->
+  <section class="panel">
+    <p class="eyebrow">Visual geolocation</p>
+    <h1>Find where a<br />photo was taken.</h1>
+    <p class="sub">
+      Drop in a single image. TADA matches it against street-level imagery and
+      pins the spot it was captured — no location metadata needed.
+    </p>
+
+    <div class="tool">
+      <div class="drop" id="drop" tabindex="0" role="button" aria-label="Upload a photo">
+        <input type="file" id="file" accept="image/*" hidden />
+        <img id="preview" alt="" hidden />
+        <div class="drop-empty" id="dropEmpty">
+          <span class="drop-plus" aria-hidden="true">+</span>
+          <b>Drop a photo</b>
+          <span class="drop-hint">or click to browse</span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" id="run" disabled>Locate photo</button>
+        <button class="btn btn-ghost" id="sample" type="button">Try a sample</button>
+      </div>
+
+      <div class="progress" id="progress" hidden>
+        <div class="progress-bar"><i></i></div>
+        <span id="progressText">Locating…</span>
+      </div>
+
+      <div class="readout" id="readout" hidden>
+        <div class="readout-row">
+          <span>Location</span><b id="rPlace">—</b>
+        </div>
+        <div class="readout-row">
+          <span>Coordinates</span><b class="coord" id="rCoord">—</b>
+        </div>
+        <div class="readout-row">
+          <span>Confidence</span>
+          <b class="conf"><i id="rConf">—</i><span class="meter"><i id="rBar"></i></span></b>
+        </div>
+      </div>
+    </div>
+
+    <p class="note" id="note">
+      Hosted demo — results are illustrative. Run the engine locally for real fixes.
+    </p>
+  </section>
+
+  <!-- ── real map ── -->
+  <section class="mapwrap">
+    <div id="map" aria-label="Map showing the located coordinate"></div>
+    <span class="map-tag" id="mapTag" hidden></span>
+  </section>
+</main>
+
+<script src="assets/vendor/leaflet.js"></script>
+<script src="script.js"></script>

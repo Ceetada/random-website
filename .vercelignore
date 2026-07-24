@@ -1,0 +1,5 @@
+# Deploy only the static site. The Python backend is for local/real-engine use
+# and must not be treated as a build target by Vercel.
+server/
+run.sh
+.gitignore
