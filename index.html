@@ -1,196 +1,77 @@
+<!doctype html>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Netryx Astra V2 — Photo-to-Coordinates Geolocation</title>
-<meta name="description" content="Pinpoint GPS coordinates from a single photograph. A visual-geolocation pipeline built on MegaLoc retrieval and MASt3R dense matching." />
+<title>TADA — Find where a photo was taken</title>
+<meta name="description" content="TADA recovers the GPS coordinates a photograph was taken from, and drops it on a real map." />
+<link rel="stylesheet" href="assets/vendor/leaflet.css" />
 <link rel="stylesheet" href="styles.css" />
 
-<div class="grid-bg" aria-hidden="true"></div>
-<div class="scanline" aria-hidden="true"></div>
-
-<!-- ───────────────────────── NAV ───────────────────────── -->
-<header class="nav" id="top">
-  <a class="brand" href="#top" aria-label="Netryx Astra home">
-    <span class="brand-mark" aria-hidden="true"></span>
-    <span class="brand-name">NETRYX<b>·</b>ASTRA</span>
-    <span class="brand-ver">V2</span>
+<header class="bar">
+  <a class="wordmark" href="./" aria-label="TADA home">
+    <span class="wordmark-pin" aria-hidden="true"></span>
+    TADA
   </a>
-  <nav class="nav-links" aria-label="Primary">
-    <a href="#how">Pipeline</a>
-    <a href="#demo">Demo</a>
-    <a href="#features">Features</a>
-    <a href="#specs">Specs</a>
-  </nav>
-  <a class="btn btn-ghost nav-cta" href="https://github.com/sparkyniner/Netryx-Astra-V2-Geolocation-Tool" target="_blank" rel="noopener">
-    View source <span aria-hidden="true">↗</span>
+  <a class="ghlink" href="https://github.com/sparkyniner/Netryx-Astra-V2-Geolocation-Tool" target="_blank" rel="noopener">
+    Built on Netryx Astra <span aria-hidden="true">↗</span>
   </a>
 </header>
 
-<!-- ───────────────────────── HERO ───────────────────────── -->
-<main>
-  <section class="hero">
-    <p class="eyebrow"><span class="dot"></span> OSINT · Forensic geolocation · Offline-capable</p>
-    <h1>
-      Turn a single photo into
-      <span class="hl">GPS coordinates</span>
-    </h1>
-    <p class="lede">
-      Netryx Astra matches your image against street-view panorama databases to
-      recover the exact spot it was taken — cropped, blurry, or degraded. No
-      metadata required.
+<main class="hero">
+  <!-- ── control panel ── -->
+  <section class="panel">
+    <p class="eyebrow">Visual geolocation</p>
+    <h1>Find where a<br />photo was taken.</h1>
+    <p class="sub">
+      Drop in a single image. TADA matches it against street-level imagery and
+      pins the spot it was captured — no location metadata needed.
     </p>
-    <div class="hero-cta">
-      <a class="btn btn-primary" href="#demo">Try the demo <span aria-hidden="true">→</span></a>
-      <a class="btn btn-ghost" href="https://github.com/sparkyniner/Netryx-Astra-V2-Geolocation-Tool" target="_blank" rel="noopener">Get the tool</a>
-    </div>
 
-    <div class="hero-stats" role="list">
-      <div role="listitem"><b>8448→1024</b><span>descriptor dims</span></div>
-      <div role="listitem"><b>500</b><span>candidates / query</span></div>
-      <div role="listitem"><b>~50 m</b><span>consensus grid</span></div>
-      <div role="listitem"><b>100%</b><span>offline-capable</span></div>
-    </div>
-  </section>
-
-  <!-- ─────────────────────── PIPELINE ─────────────────────── -->
-  <section class="how" id="how">
-    <div class="section-head">
-      <span class="tag">/ how it works</span>
-      <h2>Three stages, from pixels to a pin</h2>
-      <p>Every query flows through the same deterministic pipeline. Nothing leaves your machine.</p>
-    </div>
-
-    <ol class="stages">
-      <li class="stage">
-        <span class="stage-no">01</span>
-        <h3>Retrieval</h3>
-        <p>The query image becomes an 8448-dim descriptor via <b>MegaLoc</b> (DINOv2 ViT-B/14), PCA-reduced to 1024, then compared against the index to shortlist the top <b>500</b> candidate locations.</p>
-      </li>
-      <li class="stage">
-        <span class="stage-no">02</span>
-        <h3>Matching</h3>
-        <p><b>MASt3R</b> performs dense, 3D-aware pixel correspondence between your photo and each candidate — surfacing hundreds of reliable matches even from partial overlap.</p>
-      </li>
-      <li class="stage">
-        <span class="stage-no">03</span>
-        <h3>Consensus</h3>
-        <p>Matches are clustered into ~50 m grid cells and scored on spatial coherence. The most self-consistent cluster wins and yields the final coordinate.</p>
-      </li>
-    </ol>
-  </section>
-
-  <!-- ───────────────────────── DEMO ───────────────────────── -->
-  <section class="demo" id="demo">
-    <div class="section-head">
-      <span class="tag">/ interactive demo</span>
-      <h2>Watch the pipeline run</h2>
-      <p>Drop in any photo — it runs the real retrieval → matching → consensus engine when the backend is live, and a labeled visual simulation when it isn't.</p>
-      <span class="ebadge" id="engineBadge" hidden><i class="ebadge-dot"></i><span id="engineText">checking engine…</span></span>
-    </div>
-
-    <div class="console">
-      <!-- Left: input + pipeline -->
-      <div class="console-left">
-        <div class="drop" id="drop" tabindex="0" role="button" aria-label="Upload a photo to geolocate">
-          <input type="file" id="file" accept="image/*" hidden />
-          <img id="preview" alt="" hidden />
-          <div class="drop-empty" id="dropEmpty">
-            <span class="drop-icon" aria-hidden="true">◍</span>
-            <b>Drop a photo</b>
-            <span>or click to browse · JPG / PNG</span>
-            <button class="link" id="sampleBtn" type="button">use a sample image</button>
-          </div>
+    <div class="tool">
+      <div class="drop" id="drop" tabindex="0" role="button" aria-label="Upload a photo">
+        <input type="file" id="file" accept="image/*" hidden />
+        <img id="preview" alt="" hidden />
+        <div class="drop-empty" id="dropEmpty">
+          <span class="drop-plus" aria-hidden="true">+</span>
+          <b>Drop a photo</b>
+          <span class="drop-hint">or click to browse</span>
         </div>
-
-        <button class="btn btn-primary run" id="run" disabled>Run geolocation <span aria-hidden="true">→</span></button>
-
-        <ul class="pipe" id="pipe" aria-live="polite">
-          <li data-stage="0"><span class="pl-dot"></span><span class="pl-name">Retrieval</span><span class="pl-status">idle</span></li>
-          <li data-stage="1"><span class="pl-dot"></span><span class="pl-name">Matching</span><span class="pl-status">idle</span></li>
-          <li data-stage="2"><span class="pl-dot"></span><span class="pl-name">Consensus</span><span class="pl-status">idle</span></li>
-        </ul>
       </div>
 
-      <!-- Right: map + result -->
-      <div class="console-right">
-        <div class="map" id="map" aria-label="Result map">
-          <div class="map-grid" aria-hidden="true"></div>
-          <div class="crosshair" aria-hidden="true"><span></span><span></span></div>
-          <div class="pin" id="pin" aria-hidden="true"><span class="pin-pulse"></span><span class="pin-core"></span></div>
-          <div class="map-empty" id="mapEmpty">Awaiting query…</div>
-        </div>
+      <div class="actions">
+        <button class="btn btn-primary" id="run" disabled>Locate photo</button>
+        <button class="btn btn-ghost" id="sample" type="button">Try a sample</button>
+      </div>
 
-        <div class="result" id="result" hidden>
-          <div class="result-row">
-            <span>Location</span><b id="rPlace">—</b>
-          </div>
-          <div class="result-row">
-            <span>Coordinates</span><b class="mono" id="rCoord">—</b>
-          </div>
-          <div class="result-row">
-            <span>Confidence</span>
-            <b class="conf"><i id="rConf">—</i><span class="bar"><i id="rBar"></i></span></b>
-          </div>
-          <div class="result-row">
-            <span>Matches</span><b class="mono" id="rMatch">—</b>
-          </div>
+      <div class="progress" id="progress" hidden>
+        <div class="progress-bar"><i></i></div>
+        <span id="progressText">Locating…</span>
+      </div>
+
+      <div class="readout" id="readout" hidden>
+        <div class="readout-row">
+          <span>Location</span><b id="rPlace">—</b>
+        </div>
+        <div class="readout-row">
+          <span>Coordinates</span><b class="coord" id="rCoord">—</b>
+        </div>
+        <div class="readout-row">
+          <span>Confidence</span>
+          <b class="conf"><i id="rConf">—</i><span class="meter"><i id="rBar"></i></span></b>
         </div>
       </div>
     </div>
+
+    <p class="note" id="note">
+      Hosted demo — results are illustrative. Run the engine locally for real fixes.
+    </p>
   </section>
 
-  <!-- ─────────────────────── FEATURES ─────────────────────── -->
-  <section class="features" id="features">
-    <div class="section-head">
-      <span class="tag">/ built for the field</span>
-      <h2>Everything an investigator needs</h2>
-    </div>
-    <div class="feat-grid">
-      <article class="feat"><span class="feat-i">⛁</span><h3>Fully offline</h3><p>Download an index once and geolocate with no network — nothing about your evidence leaves the machine.</p></article>
-      <article class="feat"><span class="feat-i">⇄</span><h3>Community Hub</h3><p>Share and pull pre-built city indexes through Hugging Face — no accounts required.</p></article>
-      <article class="feat"><span class="feat-i">◫</span><h3>Portable <code>.netryx</code></h3><p>Bundle an entire index into one file to move between machines and teammates.</p></article>
-      <article class="feat"><span class="feat-i">✶</span><h3>Robust to damage</h3><p>Handles cropped, blurry and heavily degraded photos where EXIF and reverse-image search fail.</p></article>
-      <article class="feat"><span class="feat-i">◎</span><h3>Cross-platform</h3><p>Apple Silicon (MPS), NVIDIA and AMD on Linux, NVIDIA on Windows.</p></article>
-      <article class="feat"><span class="feat-i">⌘</span><h3>Import / export</h3><p>Move indexes in and out freely — your data, your infrastructure.</p></article>
-    </div>
-  </section>
-
-  <!-- ───────────────────────── SPECS ───────────────────────── -->
-  <section class="specs" id="specs">
-    <div class="specs-inner">
-      <div class="section-head">
-        <span class="tag">/ under the hood</span>
-        <h2>Specs &amp; honest limits</h2>
-      </div>
-      <div class="specs-cols">
-        <ul class="spec-list">
-          <li><span>Language</span><b>Python 3.10+</b></li>
-          <li><span>Retrieval</span><b>MegaLoc · DINOv2 ViT-B/14</b></li>
-          <li><span>Matching</span><b>MASt3R (ECCV 2024)</b></li>
-          <li><span>Sharing</span><b>Hugging Face Hub</b></li>
-        </ul>
-        <div class="limits">
-          <p class="limits-title">Know before you rely on it</p>
-          <ul>
-            <li>Accuracy is coverage-dependent — no index, no fix.</li>
-            <li>Repetitive architecture can produce false positives.</li>
-            <li>Processing takes minutes per query, not real-time.</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ───────────────────────── CTA ───────────────────────── -->
-  <section class="cta">
-    <h2>Run it on your own evidence</h2>
-    <p>Open-source, offline-first, and free. Clone the repo and point it at a city index.</p>
-    <a class="btn btn-primary big" href="https://github.com/sparkyniner/Netryx-Astra-V2-Geolocation-Tool" target="_blank" rel="noopener">Open on GitHub <span aria-hidden="true">↗</span></a>
+  <!-- ── real map ── -->
+  <section class="mapwrap">
+    <div id="map" aria-label="Map showing the located coordinate"></div>
+    <span class="map-tag" id="mapTag" hidden></span>
   </section>
 </main>
 
-<footer class="foot">
-  <span class="brand-name">NETRYX<b>·</b>ASTRA V2</span>
-  <p>A front-end concept for the open-source geolocation tool. Not affiliated with the original authors — <a href="https://github.com/sparkyniner/Netryx-Astra-V2-Geolocation-Tool" target="_blank" rel="noopener">source ↗</a></p>
-</footer>
-
+<script src="assets/vendor/leaflet.js"></script>
 <script src="script.js"></script>

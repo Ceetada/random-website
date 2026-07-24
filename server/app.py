@@ -91,7 +91,7 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", "8000"))
     st = engine.engine_status()
     mode = "LIVE engine" if st.get("available") and st.get("has_index") else "SIMULATION"
-    print(f"\n  Netryx Astra front-end  →  http://localhost:{port}")
+    print(f"\n  TADA  →  http://localhost:{port}")
     print(f"  Geolocation mode: {mode}")
     if not st.get("available"):
         print(f"  ({st.get('reason')})")

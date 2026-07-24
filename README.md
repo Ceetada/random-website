@@ -1,60 +1,44 @@
-# Netryx Astra V2 — front-end
+# TADA — find where a photo was taken
 
-A clean, dark, HUD-style landing page and **interactive demo** for the
-open-source [Netryx Astra V2 Geolocation Tool](https://github.com/sparkyniner/Netryx-Astra-V2-Geolocation-Tool)
-— a system that recovers GPS coordinates from a single photograph using
-MegaLoc retrieval and MASt3R dense matching.
+A single-screen web app: drop in a photo, TADA recovers the coordinates it was
+taken from and drops a pin on a **real map**. White, cartographic, and simple.
 
-## What this is
-
-It:
-
-- explains the three-stage **Retrieval → Matching → Consensus** pipeline,
-- lets you drop in a photo and **geolocate it** — really, when the backend +
-  engine are installed; as a labeled simulation otherwise,
-- projects the result onto a stylised map and reports coordinates, confidence,
-  and inlier count.
+It's a front-end for the open-source
+[Netryx Astra V2](https://github.com/sparkyniner/Netryx-Astra-V2-Geolocation-Tool)
+geolocation engine (MegaLoc retrieval + MASt3R dense matching).
 
 ## Run it
 
-**Front-end + backend (recommended)** — one command, geolocation API included:
+**Static (hosted demo)** — real map, sample results, no backend:
 
 ```bash
-./run.sh                 # → http://localhost:8000  (simulation mode)
+python3 -m http.server 8000    # or just open index.html
 ```
 
-**Live geolocation** — point it at a checkout of the real engine:
+**With the geolocation backend** — real fixes when the engine is installed:
 
 ```bash
-NETRYX_HOME=/abs/path/to/Netryx-Astra-V2-Geolocation-Tool ./run.sh
+./run.sh                                           # simulation mode
+NETRYX_HOME=/path/to/Netryx-Astra ./run.sh         # live geolocation
 ```
 
-See [`server/README.md`](server/README.md) for the full engine setup (PyTorch,
-MASt3R, and a city index).
+See [`server/README.md`](server/README.md) for engine setup.
 
-**Static only** — no backend; the demo runs a client-side simulation:
+## What's here
 
-```bash
-python3 -m http.server 8000   # or just open index.html
-```
-
-## Files
-
-| File | Purpose |
+| Path | Purpose |
 | --- | --- |
-| `index.html` | Structure and copy |
-| `styles.css` | Dark cinematic theme, HUD panels, map, animations, responsive |
-| `script.js` | Upload → calls `/api/geolocate`, animates the pipeline, projects the pin (falls back to a client-side sim if no backend) |
-| `server/app.py` | Flask server: serves the site + `/api/geolocate`, `/api/health` |
-| `server/engine.py` | Headless adapter that drives the real Netryx pipeline (or a labeled simulation) |
-| `run.sh` | One-command launcher |
+| `index.html` | The single hero page |
+| `styles.css` | White cartographic theme, vendored Archivo + IBM Plex Mono |
+| `script.js` | Upload → `/api/geolocate` (with sample fallback) → real Leaflet/OSM map |
+| `assets/vendor/` | Self-hosted Leaflet + fonts (no CDN, no external JS/CSS) |
+| `server/` | Flask backend that drives the real engine or a labeled simulation |
+| `.github/workflows/pages.yml` | Deploys the site to GitHub Pages |
 
-## How live geolocation works
+## Notes
 
-`server/engine.py` reimplements the core of the upstream `test_super.py`
-`_run_search` **without its Tkinter GUI**, reusing the module's own primitives
-(`encode_query`, `search_compact_index`, MASt3R matching, tile stitching,
-equirectangular projection). Every response is tagged `engine: "live"` or
-`engine: "simulation"` — a simulated fix is never presented as a real one.
-
-> Not affiliated with the original authors — this is a concept front-end.
+- The map is real OpenStreetMap tiles via Leaflet; everything else is
+  self-hosted, so the site has no third-party script/style dependencies.
+- On the hosted static demo there is no Python engine, so results are sample
+  coordinates shown on the real map. Run the backend for real geolocation.
+- Not affiliated with the Netryx Astra authors — this is a concept front-end.
